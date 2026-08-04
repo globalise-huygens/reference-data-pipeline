@@ -1,0 +1,141 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "Place",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "classified_as": {
+            "@embed": "@always",
+            "_label": {}
+        }
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "part_of": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "place_is_defined_by": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "is_approximated_by_declarative_place": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "is_appellative_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_appellation": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "classified_as": {
+                "@embed": "@always",
+                "_label": {}
+            }
+        },
+        "ascribes_appellative_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_topographical_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_topographical_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_classificatory_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_classification": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_classification_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_similarity_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_similarity_target": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_similarity_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {},
+        "classified_as": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "part_of": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "identified_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {}
+        }
+    }
+}

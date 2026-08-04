@@ -1,0 +1,14 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "type": "ConceptScheme",
+    "_label": {},
+    "prefLabel": {},
+    "identifier": {},
+    "hasTopConcept": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "Concept",
+        "prefLabel": {},
+        "_label": {}
+    }
+}

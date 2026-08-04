@@ -1,0 +1,69 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "type": "Concept",
+    "_label": {},
+    "prefLabel": {},
+    "altLabel": {},
+    "hiddenLabel": {},
+    "definition": {},
+    "broader": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "Concept",
+        "prefLabel": {},
+        "altLabel": {},
+        "_label": {},
+        "topConceptOf": {
+            "@embed": "@always"
+        },
+        "broader": {
+            "@embed": "@always"
+        }
+    },
+    "narrower": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "Concept",
+        "prefLabel": {},
+        "altLabel": {},
+        "_label": {}
+    },
+    "related": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "Concept",
+        "prefLabel": {},
+        "altLabel": {},
+        "_label": {}
+    },
+    "exactMatch": {},
+    "closeMatch": {},
+    "broadMatch": {},
+    "narrowMatch": {},
+    "relatedMatch": {},
+    "inScheme": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "ConceptScheme",
+        "prefLabel": {},
+        "_label": {}
+    },
+    "memberOf": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "skos:Collection",
+        "prefLabel": {},
+        "_label": {}
+    },
+    "topConceptOf": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "ConceptScheme",
+        "prefLabel": {},
+        "_label": {}
+    },
+    "notation": {},
+    "example": {},
+    "source": {},
+    "references": {}
+}

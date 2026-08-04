@@ -1,0 +1,39 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "Voyage",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {}
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "moved": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "moved_to": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "moved_from": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "timespan": {
+        "@embed": "@always",
+        "_label": {},
+        "begin_of_the_begin": {},
+        "end_of_the_end": {}
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {}
+    }
+}

@@ -1,0 +1,49 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "FinancialExchange",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {}
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "has_exchange_value_subject": {
+        "@embed": "@always",
+        "_label": {},
+        "value": {},
+        "unit": {
+            "@embed": "@always",
+            "_label": {}
+        }
+    },
+    "ascribes_exchange_value_equivalent": {
+        "@embed": "@always",
+        "_label": {},
+        "value": {},
+        "unit": {
+            "@embed": "@always",
+            "_label": {}
+        }
+    },
+    "is_dimension_of_commodity_type": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "timespan": {
+        "@embed": "@always",
+        "_label": {},
+        "begin_of_the_begin": {},
+        "end_of_the_end": {}
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {}
+    }
+}

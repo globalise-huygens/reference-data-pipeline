@@ -1,0 +1,233 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "Person",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "classified_as": {
+            "@embed": "@always",
+            "_label": {}
+        }
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "born": {
+        "@embed": "@always",
+        "_label": {},
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "took_place_at": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "died": {
+        "@embed": "@always",
+        "_label": {},
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "took_place_at": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_appellative_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_appellation": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "classified_as": {
+                "@embed": "@always",
+                "_label": {}
+            }
+        },
+        "ascribes_appellative_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_social_status_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_social_status": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_social_status_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_social_status_in_relation_to": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_residence_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_residence_place": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_residence_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_familial_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_relative": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_familial_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_similarity_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_similarity_target": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_similarity_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "has_geographic_scope": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "is_classificatory_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_classification": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_classification_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {},
+        "classified_as": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "part_of": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "identified_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {}
+        }
+    },
+    "part_of": {
+        "@embed": "@always",
+        "_label": {}
+    }
+}

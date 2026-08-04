@@ -1,0 +1,17 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "type": "skos:Collection",
+    "_label": {},
+    "prefLabel": {},
+    "altLabel": {},
+    "hiddenLabel": {},
+    "definition": {},
+    "member": {
+        "@embed": "@always",
+        "@explicit": true,
+        "_label": {},
+        "prefLabel": {},
+        "altLabel": {},
+        "type": {}
+    }
+}

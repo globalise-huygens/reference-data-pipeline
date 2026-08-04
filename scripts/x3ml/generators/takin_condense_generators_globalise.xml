@@ -1,0 +1,1467 @@
+<generator_policy>
+<!--     General Generators Description
+This is the Takin.solutions/SARI standard URI generators policy version 3.0.
+First put in is 7/11/2025.
+Modified: January 2026 - All generator names prefixed with "Custom_" for 3M compatibility
+ -->
+<!--    BASIC GENERATORS FORMULA   -->
+<generator name="Custom_URIAppellationShortURI" prefix="sari" shorten="yes">
+<pattern>{entity_id}/appellation/{appellation_id}</pattern>
+</generator>
+<generator name="Custom_EntityURI" prefix="sari">
+<pattern>{hierarchy}/{hierarchy_id}</pattern>
+</generator>
+<generator name="Custom_EntityContentURI" prefix="sari">
+<pattern>{hierarchy}/{content}/{hierarchy_id}</pattern>
+</generator>
+<generator name="Custom_EntityShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}</pattern>
+</generator>
+<generator name="Custom_EntityContentShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}</pattern>
+</generator>
+<generator name="Custom_GenericAppellationShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/appellation/{appellation_id}</pattern>
+</generator>
+<generator name="Custom_GenericContentAppellationShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/appellation/{appellation_id}</pattern>
+</generator>
+<generator name="Custom_GenericConditionURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/condition/{condition_type}</pattern>
+</generator>
+<generator name="Custom_GenericCoverageURI" prefix="sari">
+<pattern>{hierarchy}/{hierarchy_id}/is_about/{entity}/{entity_id}</pattern>
+</generator>
+<generator name="Custom_GenericContentCoverageURI" prefix="sari">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{content}/is_about/{entity}/{entity_id}</pattern>
+</generator>
+<generator name="Custom_GenericDimensionURI" prefix="sari" uuid="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{dimension_type}/dimension/</pattern>
+</generator>
+<generator name="Custom_GenericUniqueEventURI" prefix="sari">
+<pattern>{hierarchy}/{hierarchy_id}/{type}</pattern>
+</generator>
+<generator name="Custom_GenericContentUniqueEventContentURI" prefix="sari">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{type}</pattern>
+</generator>
+<generator name="Custom_GenericMultiEventURI" prefix="sari" uuid="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{type}/</pattern>
+</generator>
+<generator name="Custom_GenericContentMultiEventURI" prefix="sari" uuid="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{type}/</pattern>
+</generator>
+<generator name="Custom_GenericEventRoleURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{type}/role/{role}/person/{person_id}</pattern>
+</generator>
+<generator name="Custom_GenericEventRoleGroupURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{type}/role/{role}/group/{group_id}</pattern>
+</generator>
+<generator name="Custom_GenericContentEventRoleURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{type}/role/{role}/person/{person_id}</pattern>
+</generator>
+<generator name="Custom_GenericEventShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{type}</pattern>
+</generator>
+<generator name="Custom_GenericEventTimespanURI" prefix="sari" uuid="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{type}/timespan/</pattern>
+</generator>
+<generator name="Custom_GenericContentEventTimespanURI" prefix="sari" uuid="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{type}/timespan/</pattern>
+</generator>
+<generator name="Custom_GenericStatementShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{hierarchy_id}/{statement_type}/{statement_id}</pattern>
+</generator>
+<generator name="Custom_GenericContentStatementShortURI" prefix="sari" shorten="yes">
+<pattern>{hierarchy}/{content}/{hierarchy_id}/{statement_type}/{statement_id}</pattern>
+</generator>
+<generator name="Custom_TypeURI" prefix="sari">
+<pattern>type/{type_id}</pattern>
+</generator>
+<generator name="Custom_TypeShortURI" prefix="sari" shorten="yes">
+<pattern>type/{type_id}</pattern>
+</generator>
+<!--    GENERIC HASH GENERATORS FORMULA   -->
+<generator name="Custom_GenericOneArgHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericOneArgHierarchyHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTwoArgHierarchyHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericThreeArgHierarchyHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+<set-arg name="term_simple2"/>
+<set-arg name="term_simple2_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyHashedTypeURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="type"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyOneArgHashedTypeURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="type"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyTwoArgHashedTypeURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="type"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyContentHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericHierarchyContentTypeHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="type"/>
+</custom>
+</generator>
+<generator name="Custom_GenericOneArgHierarchyContentHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTwoArgHierarchyContentHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTwoArgHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericThreeArgHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_simple_HASHED_CONTENTS"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+<set-arg name="term_simple2"/>
+<set-arg name="term_simple2_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTwoArgTypeHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTwoArgHierarchyContentTypeHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id_HASHED_CONTENTS"/>
+<set-arg name="type"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericThreeArgTypeHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="term_simple1"/>
+<set-arg name="term_simple1_HASHED_CONTENTS"/>
+<set-arg name="term_simple2"/>
+<set-arg name="term_simple2_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--    GENERIC HASH GENERATORS   -->
+<generator name="Custom_EventGenericTimespanAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericTimespanAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_GenericRoleTimespanAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="role"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--    EVENT STATUS HASH GENERATORS   -->
+<generator name="Custom_EventEventalLocativeStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventEventalLocativeStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventEventalLocativeStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventEventalLocativeStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventFunctionStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventFunctionStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventFunctionStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventFunctionStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventReferentialStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventReferentialStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventReferentialStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventReferentialStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventTemporalStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="temporal_status"/>
+<set-arg name="temporal_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventTemporalStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="temporal_status"/>
+<set-arg name="temporal_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventTemporalStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="temporal_status"/>
+<set-arg name="temporal_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventTemporalStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="type"/>
+<set-arg name="temporal_status"/>
+<set-arg name="temporal_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     STATUSES     -->
+<!--     Classification Status     -->
+<generator name="Custom_ClassificationStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Classification Status Content     -->
+<generator name="Custom_ClassificationStatusContentHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusContentTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusContentStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ClassificationStatusContentAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="content"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="classification_status"/>
+<set-arg name="classification_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Function Status     -->
+<generator name="Custom_FunctionStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FunctionStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FunctionStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FunctionStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="function_status"/>
+<set-arg name="function_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Referential Status     -->
+<generator name="Custom_ReferentialStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ReferentialStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ReferentialStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ReferentialStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="referential_status"/>
+<set-arg name="referential_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Similarity Status     -->
+<generator name="Custom_SimilarityStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="similarity_status"/>
+<set-arg name="similarity_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SimilarityStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="similarity_status"/>
+<set-arg name="similarity_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SimilarityStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="similarity_status"/>
+<set-arg name="similarity_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SimilarityStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="similarity_status"/>
+<set-arg name="similarity_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Appellative Status     -->
+<generator name="Custom_AppellativeStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="appellative_status"/>
+<set-arg name="appellative_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AppellativeStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="appellative_status"/>
+<set-arg name="appellative_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AppellativeStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="appellative_status"/>
+<set-arg name="appellative_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AppellativeStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="appellative_status"/>
+<set-arg name="appellative_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Membership Status     -->
+<generator name="Custom_MembershipStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="membership_status"/>
+<set-arg name="membership_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_MembershipStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="membership_status"/>
+<set-arg name="membership_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_MembershipStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="membership_status"/>
+<set-arg name="membership_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_MembershipStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="membership_status"/>
+<set-arg name="membership_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Set Status     -->
+<generator name="Custom_SetStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="set_status"/>
+<set-arg name="set_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SetStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="set_status"/>
+<set-arg name="set_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SetStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="set_status"/>
+<set-arg name="set_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SetStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="set_status"/>
+<set-arg name="set_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Dating Status     -->
+<generator name="Custom_DatingStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="dating_status"/>
+<set-arg name="dating_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_DatingStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="dating_status"/>
+<set-arg name="dating_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_DatingStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="dating_status"/>
+<set-arg name="dating_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_DatingStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="dating_status"/>
+<set-arg name="dating_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Property Right Status     -->
+<generator name="Custom_PropertyRightStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="property_right_status"/>
+<set-arg name="propert_right_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PropertyRightStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="property_right_status"/>
+<set-arg name="property_right_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PropertyRightStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="property_right_status"/>
+<set-arg name="property_right_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PropertyRightStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="property_right_status"/>
+<set-arg name="property_right_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Locative Status     -->
+<generator name="Custom_LocativeStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="locative_status"/>
+<set-arg name="locative_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_LocativeStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="locative_status"/>
+<set-arg name="locative_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_LocativeStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="locative_status"/>
+<set-arg name="locative_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_LocativeStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="locative_status"/>
+<set-arg name="locative_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Promissory Status     -->
+<generator name="Custom_PromissoryStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="promissory_status"/>
+<set-arg name="promissory_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PromissoryStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="promissory_status"/>
+<set-arg name="promissory_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PromissoryStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="promissory_status"/>
+<set-arg name="promissory_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PromissoryStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="promissory_status"/>
+<set-arg name="promissory_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Social Relation Status     -->
+<generator name="Custom_SocialRelationStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_relation_status"/>
+<set-arg name="social_relation_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialRelationStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_relation_status"/>
+<set-arg name="social_relation_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialRelationStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_relation_status"/>
+<set-arg name="social_relation_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialRelationStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_relation_status"/>
+<set-arg name="social_relation_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Contact Point Status     -->
+<generator name="Custom_ContactPointStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="contact_point_status"/>
+<set-arg name="contact_point_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ContactPointStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="contact_point_status"/>
+<set-arg name="contact_point_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ContactPointStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="contact_point_status"/>
+<set-arg name="contact_point_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ContactPointStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="contact_point_status"/>
+<set-arg name="contact_point_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Social Status     -->
+<generator name="Custom_SocialStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_status"/>
+<set-arg name="social_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_status"/>
+<set-arg name="social_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_status"/>
+<set-arg name="social_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_SocialStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="social_status"/>
+<set-arg name="social_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Authority Status     -->
+<generator name="Custom_AuthorityStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="authority_status"/>
+<set-arg name="authority_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AuthorityStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="authority_status"/>
+<set-arg name="authority_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AuthorityStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="authority_status"/>
+<set-arg name="authority_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_AuthorityStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="authority_status"/>
+<set-arg name="authority_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Custodial Status     -->
+<generator name="Custom_CustodialStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="custodial_status"/>
+<set-arg name="custodial_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_CustodialStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="custodial_status"/>
+<set-arg name="custodial_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_CustodialStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="custodial_status"/>
+<set-arg name="custodial_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_CustodialStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="custodial_status"/>
+<set-arg name="custodial_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Ownership Status     -->
+<generator name="Custom_OwnershipStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="ownership_status"/>
+<set-arg name="ownership_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_OwnershipStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="ownership_status"/>
+<set-arg name="ownership_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_OwnershipStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="ownership_status"/>
+<set-arg name="ownership_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_OwnershipStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="ownership_status"/>
+<set-arg name="ownership_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Residential Status     -->
+<generator name="Custom_ResidentialStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="residential_status"/>
+<set-arg name="residential_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ResidentialStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="residential_status"/>
+<set-arg name="residential_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ResidentialStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="residential_status"/>
+<set-arg name="residential_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ResidentialStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="residential_status"/>
+<set-arg name="residential_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Physical Locative Status     -->
+<generator name="Custom_PhysicalLocativeStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="physical_locative_status"/>
+<set-arg name="physical_locative_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PhysicalLocativeStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="physical_locative_status"/>
+<set-arg name="physical_locative_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PhysicalLocativeStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="physical_locative_status"/>
+<set-arg name="physical_locative_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_PhysicalLocativeStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="physical_locative_status"/>
+<set-arg name="physical_locative_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Topographical Status     -->
+<generator name="Custom_TopographicalStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="topographical_status"/>
+<set-arg name="topographical_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TopographicalStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="topographical_status"/>
+<set-arg name="topographical_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TopographicalStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="topographical_status"/>
+<set-arg name="topographical_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TopographicalStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="topographical_status"/>
+<set-arg name="topographical_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Text Sequence Status     -->
+<generator name="Custom_TextSequenceStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="text_sequence_status"/>
+<set-arg name="text_sequence_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TextSequenceStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="text_sequence_status"/>
+<set-arg name="text_sequence_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TextSequenceStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="text_sequence_status"/>
+<set-arg name="text_sequence_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_TextSequenceStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="text_sequence_status"/>
+<set-arg name="text_sequence_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Evental Locative Status     -->
+<generator name="Custom_EventalLocativeStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventalLocativeStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventalLocativeStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_EventalLocativeStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="evental_locative_status"/>
+<set-arg name="evental_locative_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Obligation Status     -->
+<generator name="Custom_ObligationStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="obligation_status"/>
+<set-arg name="obligation_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ObligationStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="obligation_status"/>
+<set-arg name="obligation_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ObligationStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="obligation_status"/>
+<set-arg name="obligation_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_ObligationStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="obligation_status"/>
+<set-arg name="obligation_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Family Status     -->
+<generator name="Custom_FamilyStatusHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="family_status"/>
+<set-arg name="family_status_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FamilyStatusTimespanHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="family_status"/>
+<set-arg name="family_status_HASHED_CONTENTS"/>
+<set-arg name="timespan"/>
+<set-arg name="timespan_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FamilyStatusStatementHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="family_status"/>
+<set-arg name="family_status_HASHED_CONTENTS"/>
+<set-arg name="statement"/>
+<set-arg name="statement_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_FamilyStatusAppellationHashedURI" prefix="sari">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="hierarchy_id"/>
+<set-arg name="family_status"/>
+<set-arg name="family_status_HASHED_CONTENTS"/>
+<set-arg name="appellation"/>
+<set-arg name="appellation_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<!--     Label Generators     -->
+<generator name="Custom_OneArgumentLabel">
+<pattern>{premise} {text}</pattern>
+</generator>
+<generator name="Custom_TwoArgumentsLabel">
+<pattern>{premise} {text} {premise1} {text1}</pattern>
+</generator>
+<generator name="Custom_ThreeArgumentsLabel">
+<pattern>{premise} {text} {premise1} {text1} {premise2} {text2}</pattern>
+</generator>
+<generator name="Custom_LatLong">
+<pattern>({lat} {long})</pattern>
+</generator>
+<generator name="Custom_SimpleLabel">
+<pattern>{label}</pattern>
+</generator>
+<!--     Built In Custom Generators     -->
+<generator name="Custom_DateNormalizer">
+<custom generatorClass="gr.forth.DateNormalizer">
+<set-arg name="bound" type="constant"/>
+<set-arg name="report" type="constant"/>
+<set-arg name="text"/>
+</custom>
+</generator>
+<generator name="Custom_MultiHashingGenerator" prefix="sari" shorten="yes">
+<custom generatorClass="gr.forth.MultiHashingGenerator">
+<set-arg name="hierarchy"/>
+<set-arg name="object_HASHED_CONTENTS"/>
+<set-arg name="term_simple"/>
+<set-arg name="term_HASHED_CONTENTS"/>
+</custom>
+</generator>
+<generator name="Custom_URIorUUID">
+<custom generatorClass="gr.forth.URIorUUID">
+<set-arg name="text"/>
+</custom>
+</generator>
+<generator name="Custom_typedLiteralGen">
+<custom generatorClass="gr.forth.TypedLiteralGenerator">
+<set-arg name="text"/>
+</custom>
+</generator>
+</generator_policy>

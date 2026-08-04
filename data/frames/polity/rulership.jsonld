@@ -1,0 +1,47 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "Sovereignty",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {}
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "timespan": {
+        "@embed": "@always",
+        "_label": {},
+        "begin_of_the_begin": {},
+        "end_of_the_end": {}
+    },
+    "aaao:ZP125_was_context_for_exercise_of": {
+        "@embed": "@always",
+        "_label": {},
+        "aaao:ZP126_exercised_role_of_type": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {}
+    }
+}

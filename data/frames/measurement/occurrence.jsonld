@@ -1,0 +1,55 @@
+{
+    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@embed": "@always",
+    "type": "Event",
+    "_label": {},
+    "identified_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {}
+    },
+    "classified_as": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "timespan": {
+        "@embed": "@always",
+        "_label": {},
+        "begin_of_the_begin": {},
+        "end_of_the_end": {}
+    },
+    "involved": {
+        "@embed": "@always",
+        "_label": {}
+    },
+    "is_event_location_subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "ascribes_place": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "ascribes_event_location_relation": {
+            "@embed": "@always",
+            "_label": {}
+        },
+        "timespan": {
+            "@embed": "@always",
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_end": {}
+        },
+        "referred_to_by": {
+            "@embed": "@always",
+            "_label": {},
+            "content": {},
+            "note": {}
+        }
+    },
+    "referred_to_by": {
+        "@embed": "@always",
+        "_label": {},
+        "content": {},
+        "note": {}
+    }
+}

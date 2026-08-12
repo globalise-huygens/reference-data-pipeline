@@ -27,6 +27,9 @@ S3_FLAGS ?=
 
 S3_DIR := data/output/s3
 
+OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
+NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
+
 #------------------------------------------------------------
 
 .PHONY: build-all
@@ -64,6 +67,11 @@ ORG_XLSX := $(wildcard data/input/organization/*.xlsx)
 data/input/organization/csv/.stamp: $(ORG_XLSX)
 	@mkdir -p data/input/organization/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/organization/csv
+	@for f in data/input/organization/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/organization/xml/.stamp: data/input/organization/csv/.stamp
@@ -103,6 +111,11 @@ PLACE_XLSX := data/input/place/GLOBALISE\ -\ Places\ in\ the\ Dutch\ East\ India
 data/input/place/csv/.stamp: $(PLACE_XLSX)
 	@mkdir -p data/input/place/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/place/csv
+	@for f in data/input/place/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/place/xml/.stamp: data/input/place/csv/.stamp
@@ -117,10 +130,14 @@ data/input/place/xml/.stamp: data/input/place/csv/.stamp
 
 data/output/place/rdf/.stamp: data/input/place/xml/.stamp
 	@mkdir -p data/output/place/rdf
-	$(RUN_X3ML) data/input/place/xml Sheet3_Places_Location_Detail.xml data/mappings/place/Mapping622.x3ml data/output/place/rdf 622_location
-	$(RUN_X3ML) data/input/place/xml Sheet4_Places_Labels_Detail.xml data/mappings/place/Mapping623.x3ml data/output/place/rdf 623_labels
-	$(RUN_X3ML) data/input/place/xml Sheet5_Places_Types_Detail.xml data/mappings/place/Mapping624.x3ml data/output/place/rdf 624_types
-	$(RUN_X3ML) data/input/place/xml Sheet6_Places_Regions_Detail.xml data/mappings/place/Mapping626.x3ml data/output/place/rdf 626_regions
+	#$(RUN_X3ML) data/input/place/xml Sheet3_Places_Location_Detail.xml data/mappings/place/Mapping622.x3ml data/output/place/rdf 622_location
+	#$(RUN_X3ML) data/input/place/xml Sheet4_Places_Labels_Detail.xml data/mappings/place/Mapping623.x3ml data/output/place/rdf 623_labels
+	#$(RUN_X3ML) data/input/place/xml Sheet5_Places_Types_Detail.xml data/mappings/place/Mapping624.x3ml data/output/place/rdf 624_types
+	#$(RUN_X3ML) data/input/place/xml Sheet6_Places_Regions_Detail.xml data/mappings/place/Mapping626.x3ml data/output/place/rdf 626_regions
+	$(RUN_X3ML) data/input/place/xml places.xml data/mappings/place/Mapping622.x3ml data/output/place/rdf 622_location
+	$(RUN_X3ML) data/input/place/xml labels.xml data/mappings/place/Mapping623.x3ml data/output/place/rdf 623_labels
+	$(RUN_X3ML) data/input/place/xml types.xml data/mappings/place/Mapping624.x3ml data/output/place/rdf 624_types
+	$(RUN_X3ML) data/input/place/xml place_relations.xml data/mappings/place/Mapping626.x3ml data/output/place/rdf 626_regions
 	@touch $@
 
 data/output/place/place.ttl: data/output/place/rdf/.stamp
@@ -139,6 +156,11 @@ PERSON_ZIP := $(wildcard data/input/person/persons_data_dataverse.zip)
 data/input/person/csv/.stamp: $(PERSON_ZIP)
 	@mkdir -p data/input/person/csv
 	unzip -o -q "$<" "*.csv" -d data/input/person/csv
+	@for f in data/input/person/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/person/xml/.stamp: data/input/person/csv/.stamp
@@ -177,6 +199,11 @@ POLITY_XLSX := data/input/polity/GLOBALISE-\ Polities\ Dataset.xlsx
 data/input/polity/csv/.stamp: $(POLITY_XLSX)
 	@mkdir -p data/input/polity/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/polity/csv
+	@for f in data/input/polity/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/polity/xml/.stamp: data/input/polity/csv/.stamp
@@ -216,6 +243,11 @@ SHIP_XLSX := $(wildcard data/input/ship/*.xlsx)
 data/input/ship/csv/.stamp: $(SHIP_XLSX)
 	@mkdir -p data/input/ship/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/ship/csv
+	@for f in data/input/ship/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/ship/xml/.stamp: data/input/ship/csv/.stamp
@@ -257,6 +289,11 @@ MEAS_XLSX := $(wildcard data/input/measurement/*.xlsx)
 data/input/measurement/csv/.stamp: $(MEAS_XLSX)
 	@mkdir -p data/input/measurement/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/measurement/csv
+	@for f in data/input/measurement/csv/*.csv; do \
+		if [ -f "$$f" ]; then \
+			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+		fi; \
+	done
 	@touch $@
 
 data/input/measurement/xml/.stamp: data/input/measurement/csv/.stamp
@@ -289,12 +326,10 @@ $(S3_DIR)/.measurement.stamp: data/output/measurement/measurement.ttl
 # 7. Thesaurus Pipeline
 #------------------------------------------------------------
 THESAURUS_TRIG := data/input/concept/thesaurus.trig
-OLD_BASE := https://digitaalerfgoed.poolparty.biz/globalise/
-NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
 
 $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG)
 	@mkdir -p $(S3_DIR) data/output/concept
-	sed "s|$(OLD_BASE)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
+	sed -E "s|$(OLD_BASE)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
 	$(PYTHON) scripts/convert_to_json.py thesaurus data/output/concept/thesaurus.trig $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 

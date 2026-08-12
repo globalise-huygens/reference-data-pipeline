@@ -123,7 +123,7 @@ data/input/place/xml/.stamp: data/input/place/csv/.stamp
 	@for f in data/input/place/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			stem=$$(basename "$$f" .csv); \
-			$(PYTHON) scripts/csv_to_xml.py --skip-existing "$$f" "data/input/place/xml/$${stem}.xml"; \
+			$(PYTHON) scripts/csv_to_xml.py --split-pipes --skip-existing "$$f" "data/input/place/xml/$${stem}.xml"; \
 		fi; \
 	done
 	@touch $@

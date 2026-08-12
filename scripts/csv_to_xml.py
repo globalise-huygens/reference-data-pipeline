@@ -14,6 +14,61 @@ from utils import xml_element_name
 DEFAULT_ROWS_PER_FILE = 10000
 
 
+def split_pipe_separated_values(value: str) -> list[str]:
+    """
+    Split a cell value on pipe separators while discarding empty entries.
+
+    Examples:
+        >>> split_pipe_separated_values('alpha|beta')
+        ['alpha', 'beta']
+        >>> split_pipe_separated_values('alpha | beta')
+        ['alpha', 'beta']
+        >>> split_pipe_separated_values('alpha')
+        ['alpha']
+    """
+    return [part.strip() for part in value.split("|") if part.strip()]
+
+
+def expand_row_by_pipe_values(
+    row: dict[str, str], ordered_columns: list[str]
+) -> list[dict[str, str]]:
+    """
+    Expand a row into aligned sub-rows when multiple columns contain pipe-delimited values.
+
+    Example:
+        >>> expand_row_by_pipe_values({
+        ...     'source': 'a|b|c',
+        ...     'page': '1|2|3',
+        ...     'label': 'x',
+        ... }, ['source', 'page', 'label'])
+        [{'source': 'a', 'page': '1', 'label': 'x'}, {'source': 'b', 'page': '2', 'label': 'x'}, {'source': 'c', 'page': '3', 'label': 'x'}]
+    """
+    split_columns = [
+        col for col in ordered_columns if "|" in (row.get(col) or "").strip()
+    ]
+
+    if not split_columns:
+        return [row]
+
+    split_values = {
+        col: split_pipe_separated_values((row.get(col) or "").strip())
+        for col in split_columns
+    }
+    max_length = max(len(values) for values in split_values.values())
+    if max_length == 0:
+        return [row]
+
+    expanded_rows: list[dict[str, str]] = []
+    for idx in range(max_length):
+        expanded = {col: (row.get(col) or "").strip() for col in ordered_columns}
+        for col in split_columns:
+            expanded[col] = (
+                split_values[col][idx] if idx < len(split_values[col]) else ""
+            )
+        expanded_rows.append(expanded)
+    return expanded_rows
+
+
 def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     """
     Parse CLI arguments for CSV to XML conversion.
@@ -51,6 +106,11 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
         "--person-chunking",
         action="store_true",
         help="Chunk person CSVs by person ID from persons.csv across all person CSV files.",
+    )
+    parser.add_argument(
+        "--split-pipes",
+        action="store_true",
+        help="Treat a pipe character as a value separator and emit repeated XML elements for each item.",
     )
     return parser.parse_args(args_list)
 
@@ -137,6 +197,7 @@ def write_item(
     row: dict[str, str],
     ordered_columns: list[str],
     elem_tags: list[tuple[str, str]] | None = None,
+    split_pipe_values: bool = False,
 ) -> None:
     """
     Write a single CSV row dictionary as an XML item element.
@@ -146,6 +207,7 @@ def write_item(
         row (dict[str, str]): Row data mapping column names to values.
         ordered_columns (list[str]): Ordered list of column header names.
         elem_tags (list[tuple[str, str]], optional): Pre-computed (column, xml_element_name) pairs.
+        split_pipe_values (bool): Whether to treat pipe-separated values as repeated XML values.
 
     Examples:
         >>> import io
@@ -153,7 +215,31 @@ def write_item(
         >>> write_item(h, {"name": "Test & Demo"}, ["name"])
         >>> h.getvalue()
         '  <item>\\n    <name>Test &amp; Demo</name>\\n  </item>\\n'
+        >>> h = io.StringIO()
+        >>> write_item(h, {"name": "alpha | beta"}, ["name"], split_pipe_values=True)
+        >>> h.getvalue()
+        '  <item>\\n    <name>alpha</name>\\n  </item>\\n  <item>\\n    <name>beta</name>\\n  </item>\\n'
     """
+
+    if split_pipe_values:
+        expanded_rows = expand_row_by_pipe_values(row, ordered_columns)
+        if len(expanded_rows) > 1:
+            for expanded_row in expanded_rows:
+                handle.write("  <item>\n")
+                if elem_tags is None:
+                    elem_tags = [
+                        (col, xml_element_name(col)) for col in ordered_columns
+                    ]
+                for col, element_name in elem_tags:
+                    value = (expanded_row.get(col) or "").strip()
+                    if value:
+                        handle.write(
+                            f"    <{element_name}>{escape(value)}</{element_name}>\n"
+                        )
+                    else:
+                        handle.write(f"    <{element_name}></{element_name}>\n")
+                handle.write("  </item>\n")
+            return
 
     handle.write("  <item>\n")
     if elem_tags is None:
@@ -167,7 +253,12 @@ def write_item(
     handle.write("  </item>\n")
 
 
-def csv_to_xml(input_path: str, output_path: str, rows_per_file: int) -> None:
+def csv_to_xml(
+    input_path: str,
+    output_path: str,
+    rows_per_file: int,
+    split_pipe_values: bool = False,
+) -> None:
     """
     Convert CSV file to XML items, splitting into multiple files if row count exceeds chunk limit.
 
@@ -175,6 +266,7 @@ def csv_to_xml(input_path: str, output_path: str, rows_per_file: int) -> None:
         input_path (str): Input CSV filepath.
         output_path (str): Target XML output path.
         rows_per_file (int): Maximum rows per XML chunk file.
+        split_pipe_values (bool): Whether to split pipe-delimited cell values into repeated XML elements.
 
     Raises:
         ValueError: If rows_per_file is non-positive or CSV has no headers.
@@ -214,7 +306,13 @@ def csv_to_xml(input_path: str, output_path: str, rows_per_file: int) -> None:
                 write_xml_header(current_handle)
                 rows_in_current_file = 0
 
-            write_item(current_handle, row, ordered, elem_tags)
+            write_item(
+                current_handle,
+                row,
+                ordered,
+                elem_tags,
+                split_pipe_values=split_pipe_values,
+            )
             rows_in_current_file += 1
             total_rows += 1
 
@@ -242,6 +340,7 @@ def person_csvs_to_xml(
     xml_dir: str,
     rows_per_file: int = DEFAULT_ROWS_PER_FILE,
     skip_existing: bool = False,
+    split_pipe_values: bool = False,
 ) -> None:
     """
     Convert all person CSV files to XML chunks partitioned by person identifier from persons.csv.
@@ -251,6 +350,7 @@ def person_csvs_to_xml(
         xml_dir (str): Target output directory for XML chunk files.
         rows_per_file (int): Number of persons per XML chunk file.
         skip_existing (bool): Skip conversion if target XML files already exist.
+        split_pipe_values (bool): Whether to split pipe-delimited cell values into repeated XML elements.
     """
     persons_csv = os.path.join(csv_dir, "persons.csv")
     if not os.path.isfile(persons_csv):
@@ -260,7 +360,9 @@ def person_csvs_to_xml(
 
     first_chunk = os.path.join(xml_dir, "persons_part0001.xml")
     if skip_existing and os.path.exists(first_chunk):
-        print(f"Skipping person CSV conversion (XML chunks in '{xml_dir}' already exist).")
+        print(
+            f"Skipping person CSV conversion (XML chunks in '{xml_dir}' already exist)."
+        )
         return
 
     uri_to_chunk: dict[str, int] = {}
@@ -272,11 +374,7 @@ def person_csvs_to_xml(
     num_chunks = max(uri_to_chunk.values()) if uri_to_chunk else 1
 
     csv_files = sorted(
-        [
-            os.path.join(csv_dir, f)
-            for f in os.listdir(csv_dir)
-            if f.endswith(".csv")
-        ]
+        [os.path.join(csv_dir, f) for f in os.listdir(csv_dir) if f.endswith(".csv")]
     )
 
     for csv_path in csv_files:
@@ -297,16 +395,22 @@ def person_csvs_to_xml(
             for row in reader:
                 uri = row.get("URI", "")
                 c_idx = uri_to_chunk.get(uri, 1)
-                h = handles[c_idx - 1]
-                h.write("  <item>\n")
-                for col, elem in elem_tags:
-                    val = (row.get(col) or "").strip()
-                    if val:
-                        h.write(f"    <{elem}>{escape(val)}</{elem}>\n")
-                    else:
-                        h.write(f"    <{elem}></{elem}>\n")
-                h.write("  </item>\n")
-                total_rows += 1
+                expanded_rows = (
+                    expand_row_by_pipe_values(row, ordered)
+                    if split_pipe_values
+                    else [row]
+                )
+                for expanded_row in expanded_rows:
+                    h = handles[c_idx - 1]
+                    h.write("  <item>\n")
+                    for col, elem in elem_tags:
+                        val = (expanded_row.get(col) or "").strip()
+                        if val:
+                            h.write(f"    <{elem}>{escape(val)}</{elem}>\n")
+                        else:
+                            h.write(f"    <{elem}></{elem}>\n")
+                    h.write("  </item>\n")
+                    total_rows += 1
 
         for h in handles:
             write_xml_footer(h)
@@ -335,7 +439,13 @@ def main() -> int:
             else os.path.join(os.path.dirname(csv_dir), "xml")
         )
         try:
-            person_csvs_to_xml(csv_dir, xml_dir, args.rows_per_file, args.skip_existing)
+            person_csvs_to_xml(
+                csv_dir,
+                xml_dir,
+                args.rows_per_file,
+                args.skip_existing,
+                split_pipe_values=args.split_pipes,
+            )
         except ValueError as err:
             print(f"Error: {err}")
             return 1
@@ -360,7 +470,7 @@ def main() -> int:
             return 0
 
     try:
-        csv_to_xml(input_path, output_path, args.rows_per_file)
+        csv_to_xml(input_path, output_path, args.rows_per_file, args.split_pipes)
     except ValueError as err:
         print(f"Error: {err}")
         return 1
@@ -373,4 +483,3 @@ if __name__ == "__main__":
 
     doctest.testmod()
     raise SystemExit(main())
-

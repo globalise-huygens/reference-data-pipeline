@@ -167,14 +167,14 @@
             <link template="SRDF.375_classificatory_status_classification">
                 <path>
                     <source_relation>
-                        <relation>../place_type_URI</relation>
+                        <relation>../place_type_uri</relation>
                     </source_relation>
                     <target_relation>
                         <relationship>aaao:ZP12_ascribes_classification</relationship>
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../place_type_URI</source_node>
+                    <source_node>../place_type_uri</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E55_Type</type>

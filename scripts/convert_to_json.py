@@ -737,6 +737,14 @@ def convert_thesaurus(
                 uri=res,
             )
 
+        if res in schemes:
+            g = add_inverse_relations(
+                g,
+                ds,
+                uri=res,
+                predicates=(SKOS.inScheme,),
+            )
+
         g = add_referenced_data(g, ds)
 
         if res in schemes:

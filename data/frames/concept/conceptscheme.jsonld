@@ -10,5 +10,12 @@
         "type": "Concept",
         "prefLabel": {},
         "_label": {}
+    },
+    "contains": {
+        "@embed": "@always",
+        "@explicit": true,
+        "type": "Concept",
+        "prefLabel": {},
+        "_label": {}
     }
 }

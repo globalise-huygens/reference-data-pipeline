@@ -1091,7 +1091,8 @@ def add_relations(
     uri: Node | None = None,
 ) -> Graph:
     """
-    Add outgoing statements for selected predicates and shallow context on object nodes.
+    Recursively add outgoing statements for selected predicates and shallow context on
+    object nodes.
 
     Args:
         g (Graph): Target RDF graph to update.
@@ -1104,10 +1105,19 @@ def add_relations(
     """
     targets = [uri] if uri else list(g.subjects())
 
-    for target in targets:
+    visited: set[Node] = set()
+    predicates = tuple(predicates)
+
+    while targets:
+        target = targets.pop()
+        if target in visited:
+            continue
+        visited.add(target)
+
         for pred in predicates:
             for obj in ds.objects(target, pred):
                 g.add((target, pred, obj))
+                targets.append(obj)  # Add object to targets for further traversal
 
                 for extra_pred in PREDICATES_FOR_SHALLOW_RESOURCE:
                     for value in ds.objects(obj, extra_pred):

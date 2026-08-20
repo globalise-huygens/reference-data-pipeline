@@ -264,6 +264,13 @@ def bind_namespaces(target: Graph, namespaces: Iterable[tuple[str, URIRef]]) -> 
     Args:
         target (Graph): The RDF graph to bind prefixes to.
         namespaces (Iterable[tuple[str, URIRef]]): Collection of prefix and namespace URIRef pairs.
+
+    Examples:
+        >>> from rdflib import Graph, URIRef
+        >>> graph = Graph()
+        >>> bind_namespaces(graph, [("example", URIRef("https://example.org/"))])
+        >>> str(dict(graph.namespaces())["example"])
+        'https://example.org/'
     """
     for prefix, namespace in namespaces:
         target.bind(prefix, namespace, replace=False)
@@ -1069,6 +1076,18 @@ def add_inverse_relations(
 
     Returns:
         Graph: Updated target RDF graph.
+
+    Examples:
+        >>> from rdflib import Graph, Literal, URIRef
+        >>> source = Graph()
+        >>> target = URIRef("https://example.org/target")
+        >>> child = URIRef("https://example.org/child")
+        >>> relation = URIRef("https://example.org/parentOf")
+        >>> _ = source.add((child, relation, target))
+        >>> _ = source.add((child, RDFS.label, Literal("Child")))
+        >>> result = add_inverse_relations(Graph(), source, target, (relation,))
+        >>> (child, relation, target) in result and (child, RDFS.label, Literal("Child")) in result
+        True
     """
     for pred in predicates:
         for subj in ds.subjects(pred, uri):
@@ -1102,6 +1121,18 @@ def add_relations(
 
     Returns:
         Graph: Updated target RDF graph.
+
+    Examples:
+        >>> from rdflib import Graph, Literal, URIRef
+        >>> source = Graph()
+        >>> parent = URIRef("https://example.org/parent")
+        >>> child = URIRef("https://example.org/child")
+        >>> relation = URIRef("https://example.org/contains")
+        >>> _ = source.add((parent, relation, child))
+        >>> _ = source.add((child, RDFS.label, Literal("Child")))
+        >>> result = add_relations(Graph(), source, (relation,), parent)
+        >>> (parent, relation, child) in result and (child, RDFS.label, Literal("Child")) in result
+        True
     """
     targets = [uri] if uri else list(g.subjects())
 
@@ -1136,6 +1167,18 @@ def add_referenced_data(g: Graph, ds: Dataset | Graph) -> Graph:
 
     Returns:
         Graph: Expanded RDF graph.
+
+    Examples:
+        >>> from rdflib import Graph, Literal, URIRef
+        >>> source = Graph()
+        >>> subject = URIRef("https://example.org/subject")
+        >>> referenced = URIRef("https://example.org/referenced")
+        >>> predicate = URIRef("https://example.org/references")
+        >>> _ = source.add((subject, predicate, referenced))
+        >>> _ = source.add((referenced, RDFS.label, Literal("Referenced")))
+        >>> result = add_referenced_data(Graph() + source, source)
+        >>> (referenced, RDFS.label, Literal("Referenced")) in result
+        True
     """
     referenced_nodes = set(g.objects()) - set(g.subjects())
 
@@ -1167,6 +1210,18 @@ def add_labels(
 
     Returns:
         Graph | Dataset: Updated RDF graph or dataset.
+
+    Examples:
+        >>> from rdflib import Graph, Literal, URIRef
+        >>> graph = Graph()
+        >>> resource = URIRef("https://example.org/resource")
+        >>> resource_class = URIRef("https://example.org/Resource")
+        >>> alternate_label = URIRef("https://example.org/title")
+        >>> _ = graph.add((resource, RDF.type, resource_class))
+        >>> _ = graph.add((resource, alternate_label, Literal("Resource title")))
+        >>> result = add_labels(graph, (resource_class,), (alternate_label,))
+        >>> list(result.objects(resource, RDFS.label))
+        [rdflib.term.Literal('Resource title')]
     """
     for target_class in target_classes:
         for subject in graph.subjects(RDF.type, target_class):

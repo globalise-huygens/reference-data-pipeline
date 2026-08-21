@@ -353,6 +353,7 @@ test:
         clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus
 
 clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
+	rm -f .cache.sqlite
 
 clean-organization:
 	rm -rf data/input/organization/csv data/input/organization/csv/.stamp

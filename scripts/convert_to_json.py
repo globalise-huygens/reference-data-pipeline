@@ -55,9 +55,9 @@ CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
     },
     "organization": {
         "title": "Organization Collection",
-        "type": "Organization",
+        "type": "Group",
         "class_uri": "http://www.cidoc-crm.org/cidoc-crm/E74_Group",
-        "uri_prefix": "organization:",
+        "uri_prefix": "group:",
         "page_prefix": "",
     },
     "polity": {

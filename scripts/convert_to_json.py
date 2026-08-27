@@ -9,18 +9,16 @@ import csv
 import glob
 import json
 import os
-from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Iterable
 
+import duckdb
 import requests_cache
 from pyld import jsonld  # type: ignore[import-untyped]
 from rdflib import Dataset, Graph, Literal, URIRef, Namespace
 from rdflib.namespace import DCTERMS, RDF, RDFS, SKOS
 from rdflib.term import Node
 from tqdm import tqdm
-
-import pyarrow.parquet as pq
 
 from utils import (
     S3UploadConfig,
@@ -337,9 +335,8 @@ def load_corpus_annotations(
     """
     Read corpus annotation identifiers grouped by their linked reference-data URI.
 
-    The parquet source is read in batches so its 20+ million rows are not loaded
-    into memory. Only rows matching ``entity_type`` with both an entity URI and
-    annotation URI are retained.
+    Queries the parquet file with DuckDB to push down filters and group
+    distinct annotations per entity efficiently without reading the full dataset into Python.
 
     Args:
         parquet_path: Path to the links-data parquet file.
@@ -351,39 +348,38 @@ def load_corpus_annotations(
     Examples:
         >>> import tempfile
         >>> from pathlib import Path
-        >>> import pyarrow as pa
-        >>> import pyarrow.parquet as pq
+        >>> import duckdb
         >>> with tempfile.TemporaryDirectory() as directory:
         ...     parquet_path = Path(directory) / "links.parquet"
-        ...     _ = pq.write_table(
-        ...         pa.table({
-        ...             "annotation_id": ["https://example.org/annotation/2", "https://example.org/annotation/1", "https://example.org/annotation/1", "https://example.org/annotation/3"],
-        ...             "entity_uri": ["https://example.org/person:123", "https://example.org/person:123", "https://example.org/person:123", "https://example.org/place:456"],
-        ...             "entity_type": ["Person", "Person", "Person", "Place"],
-        ...         }),
-        ...         parquet_path,
+        ...     _ = duckdb.execute(
+        ...         f"COPY (SELECT * FROM (VALUES "
+        ...         f"('https://example.org/annotation/2', 'https://example.org/person:123', 'Person'), "
+        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person'), "
+        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person'), "
+        ...         f"('https://example.org/annotation/3', 'https://example.org/place:456', 'Place')"
+        ...         f") AS t(annotation_id, entity_uri, entity_type)) TO '{parquet_path}' (FORMAT PARQUET)"
         ...     )
         ...     load_corpus_annotations(str(parquet_path), "Person")
         {'https://example.org/person:123': ['https://example.org/annotation/1', 'https://example.org/annotation/2']}
     """
-    annotations: defaultdict[str, set[str]] = defaultdict(set)
-    parquet_file = pq.ParquetFile(parquet_path)
-    for batch in parquet_file.iter_batches(
-        columns=["annotation_id", "entity_uri", "entity_type"], batch_size=65_536
-    ):
-        for annotation_id, entity_uri, row_entity_type in zip(
-            batch.column("annotation_id").to_pylist(),
-            batch.column("entity_uri").to_pylist(),
-            batch.column("entity_type").to_pylist(),
-            strict=True,
-        ):
-            if annotation_id and entity_uri and row_entity_type == entity_type:
-                annotations[str(entity_uri)].add(str(annotation_id))
+    query = """
+        SELECT
+            entity_uri,
+            list(DISTINCT annotation_id ORDER BY annotation_id) AS annotations
+        FROM read_parquet(?)
+        WHERE entity_type = ?
+          AND entity_uri IS NOT NULL
+          AND annotation_id IS NOT NULL
+        GROUP BY entity_uri
+        ORDER BY entity_uri
+    """
+    conn = duckdb.connect()
+    try:
+        rows = conn.execute(query, [parquet_path, entity_type]).fetchall()
+    finally:
+        conn.close()
 
-    return {
-        entity_uri: sorted(annotation_ids)
-        for entity_uri, annotation_ids in annotations.items()
-    }
+    return {str(row[0]): [str(ann_id) for ann_id in row[1]] for row in rows}
 
 
 def annotation_collection_uri(entity_uri: str) -> str:

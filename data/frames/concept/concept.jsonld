@@ -65,5 +65,10 @@
     "notation": {},
     "example": {},
     "source": {},
-    "references": {}
+    "references": {},
+    "subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "type": {}
+    }
 }

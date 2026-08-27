@@ -26,6 +26,7 @@ GZIP_FLAG ?= --gzipped
 S3_FLAGS ?=
 
 S3_DIR := data/output/s3
+LINKS_PARQUET := data/input/links_data.parquet
 
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
 NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
@@ -34,6 +35,10 @@ NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
 
 .PHONY: build-all
 build-all: organization place person polity ship measurement thesaurus catalog
+
+.PHONY: links
+links:
+	$(PYTHON) scripts/regenerate_links_data.py
 
 .PHONY: organization
 organization: $(S3_DIR)/.organization.stamp
@@ -58,10 +63,6 @@ thesaurus: $(S3_DIR)/.thesaurus.stamp
 
 .PHONY: catalog
 catalog: $(S3_DIR)/.catalog.stamp
-
-.PHONY: links
-links:
-	$(PYTHON) scripts/regenerate_links_data.py
 
 #------------------------------------------------------------
 # 1. Organization Pipeline
@@ -331,7 +332,10 @@ $(S3_DIR)/.measurement.stamp: data/output/measurement/measurement.ttl
 #------------------------------------------------------------
 THESAURUS_TRIG := data/input/concept/thesaurus.trig
 
-$(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG)
+$(LINKS_PARQUET):
+	$(PYTHON) scripts/regenerate_links_data.py
+
+$(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	@mkdir -p $(S3_DIR) data/output/concept
 	sed -E "s|$(OLD_BASE)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
 	$(PYTHON) scripts/convert_to_json.py thesaurus data/output/concept/thesaurus.trig $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
@@ -354,13 +358,10 @@ test:
 	$(PYTHON) -m doctest scripts/convert_to_json.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
-        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-links
+        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus
 
-clean: clean-json clean-ttl clean-rdf clean-xml clean-csv clean-links
+clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
 	rm -f .cache.sqlite
-
-clean-links:
-	rm -f data/input/links_data.parquet
 
 clean-organization:
 	rm -rf data/input/organization/csv data/input/organization/csv/.stamp
@@ -436,8 +437,8 @@ help:
 	@echo -e "  $(BLUE)ship$(RESET)                       - to run ship ETL pipeline"
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
+	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate corpus annotation links parquet"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
-	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate data/input/links_data.parquet from Object Store"
 	@echo
 	@echo -e "  $(BLUE)clean-organization$(RESET)          - to remove intermediate files & output for organization"
 	@echo -e "  $(BLUE)clean-place$(RESET)                 - to remove intermediate files & output for place"
@@ -446,7 +447,6 @@ help:
 	@echo -e "  $(BLUE)clean-ship$(RESET)                  - to remove intermediate files & output for ship"
 	@echo -e "  $(BLUE)clean-measurement$(RESET)           - to remove intermediate files & output for measurement"
 	@echo -e "  $(BLUE)clean-thesaurus$(RESET)             - to remove intermediate files & output for thesaurus"
-	@echo -e "  $(BLUE)clean-links$(RESET)                 - to remove generated links parquet data"
 	@echo
 	@echo -e "  $(BLUE)test$(RESET)                       - to run doctests across all python scripts"
 	@echo -e "  $(BLUE)clean$(RESET)                      - to remove all generated intermediate files and outputs"

@@ -214,8 +214,8 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--annotation-page-size",
         type=int,
-        default=100,
-        help="Items per AnnotationPage (default: 100)",
+        default=1000,
+        help="Items per AnnotationPage (default: 1000)",
     )
     parser.add_argument(
         "--category-key",
@@ -256,7 +256,7 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--skip-annotations",
         action="store_true",
-        help="Skip corpus AnnotationCollection generation for entity frames",
+        help="Skip corpus AnnotationCollection generation for entity and concept frames",
     )
     add_s3_arguments(parser)
 
@@ -330,20 +330,23 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
 
 
 def load_corpus_annotations(
-    parquet_path: str, entity_type: str
+    parquet_path: str,
+    entity_type: str | None = None,
+    uri_column: str = "entity_uri",
 ) -> dict[str, list[str]]:
     """
-    Read corpus annotation identifiers grouped by their linked reference-data URI.
+    Read corpus annotation identifiers grouped by reference-data or concept URI.
 
     Queries the parquet file with DuckDB to push down filters and group
-    distinct annotations per entity efficiently without reading the full dataset into Python.
+    distinct annotations per URI efficiently without reading the full dataset into Python.
 
     Args:
         parquet_path: Path to the links-data parquet file.
-        entity_type: Value of the parquet ``entity_type`` column to retain.
+        entity_type: Optional value of the parquet ``entity_type`` column to filter by.
+        uri_column: Column containing target URIs ('entity_uri' or 'concept_uri').
 
     Returns:
-        Mapping of reference-data URI to sorted corpus annotation URIs.
+        Mapping of reference-data or concept URI to sorted corpus annotation URIs.
 
     Examples:
         >>> import tempfile
@@ -353,29 +356,39 @@ def load_corpus_annotations(
         ...     parquet_path = Path(directory) / "links.parquet"
         ...     _ = duckdb.execute(
         ...         f"COPY (SELECT * FROM (VALUES "
-        ...         f"('https://example.org/annotation/2', 'https://example.org/person:123', 'Person'), "
-        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person'), "
-        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person'), "
-        ...         f"('https://example.org/annotation/3', 'https://example.org/place:456', 'Place')"
-        ...         f") AS t(annotation_id, entity_uri, entity_type)) TO '{parquet_path}' (FORMAT PARQUET)"
+        ...         f"('https://example.org/annotation/2', 'https://example.org/person:123', 'Person', 'https://example.org/thesaurus:123'), "
+        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person', 'https://example.org/thesaurus:123'), "
+        ...         f"('https://example.org/annotation/1', 'https://example.org/person:123', 'Person', 'https://example.org/thesaurus:123'), "
+        ...         f"('https://example.org/annotation/3', 'https://example.org/place:456', 'Place', 'https://example.org/thesaurus:456')"
+        ...         f") AS t(annotation_id, entity_uri, entity_type, concept_uri)) TO '{parquet_path}' (FORMAT PARQUET)"
         ...     )
         ...     load_corpus_annotations(str(parquet_path), "Person")
+        ...     load_corpus_annotations(str(parquet_path), uri_column="concept_uri")
         {'https://example.org/person:123': ['https://example.org/annotation/1', 'https://example.org/annotation/2']}
+        {'https://example.org/thesaurus:123': ['https://example.org/annotation/1', 'https://example.org/annotation/2'], 'https://example.org/thesaurus:456': ['https://example.org/annotation/3']}
     """
-    query = """
+    if uri_column not in {"entity_uri", "concept_uri"}:
+        raise ValueError(f"Unsupported uri_column: {uri_column}")
+
+    where_clauses = [f"{uri_column} IS NOT NULL", "annotation_id IS NOT NULL"]
+    params: list[str] = [parquet_path]
+    if entity_type is not None:
+        where_clauses.append("entity_type = ?")
+        params.append(entity_type)
+
+    where_sql = " AND ".join(where_clauses)
+    query = f"""
         SELECT
-            entity_uri,
+            {uri_column},
             list(DISTINCT annotation_id ORDER BY annotation_id) AS annotations
         FROM read_parquet(?)
-        WHERE entity_type = ?
-          AND entity_uri IS NOT NULL
-          AND annotation_id IS NOT NULL
-        GROUP BY entity_uri
-        ORDER BY entity_uri
+        WHERE {where_sql}
+        GROUP BY {uri_column}
+        ORDER BY {uri_column}
     """
     conn = duckdb.connect()
     try:
-        rows = conn.execute(query, [parquet_path, entity_type]).fetchall()
+        rows = conn.execute(query, params).fetchall()
     finally:
         conn.close()
 
@@ -432,7 +445,7 @@ def output_annotation_collection(
     gzipped: bool = False,
     s3_client: Any | None = None,
     s3_config: S3UploadConfig | None = None,
-    page_size: int = 100,
+    page_size: int = 1000,
 ) -> None:
     """
     Write an entity's AnnotationCollection and paginated AnnotationPages.
@@ -457,6 +470,7 @@ def output_annotation_collection(
     relative_path = local_identifier_path(entity_uri)
     page_directory = f"{relative_path}.annotations"
     collection_output_name = f"{relative_path}.annotations.json"
+    page_size = max(1, page_size)
     total_pages = max(1, (len(annotation_ids) + page_size - 1) // page_size)
 
     collection_doc = {
@@ -629,6 +643,7 @@ def generate_hydra_collection_from_persons_csv(
             )
 
     members.sort(key=lambda m: m["@id"])
+    page_size = max(1, page_size)
     total_items = len(members)
     total_pages = max(1, (total_items + page_size - 1) // page_size)
     base_collection_uri = f"{URI_BASE}{uri_prefix}index"
@@ -754,7 +769,7 @@ def convert_entity(
                     gzipped,
                     s3_dict,
                     annotations_by_entity,
-                    getattr(args, "annotation_page_size", 100),
+                    getattr(args, "annotation_page_size", 1000),
                 )
                 for ttl_file in ttl_files
             ]
@@ -776,7 +791,7 @@ def convert_entity(
                     gzipped=gzipped,
                     s3_client=s3_client,
                     s3_config=s3_config,
-                    page_size=getattr(args, "page_size", 500),
+                    page_size=getattr(args, "page_size", 1000),
                 )
             generate_hydra_catalog(
                 output_dir,
@@ -842,7 +857,7 @@ def convert_entity(
                 gzipped,
                 s3_client,
                 s3_config,
-                getattr(args, "annotation_page_size", 100),
+                getattr(args, "annotation_page_size", 1000),
             )
         framed = frame_graph(graph, frame_doc, str(res))
         output_framed_json(
@@ -867,7 +882,7 @@ def convert_entity(
             gzipped=gzipped,
             s3_client=s3_client,
             s3_config=s3_config,
-            page_size=getattr(args, "page_size", 500),
+            page_size=getattr(args, "page_size", 1000),
             category_title=getattr(args, "category_title", None),
             member_type=getattr(args, "member_type", None),
             class_uri=getattr(args, "class_uri", None)
@@ -905,6 +920,9 @@ def convert_thesaurus(
     s3_client: Any | None = None,
     s3_config: S3UploadConfig | None = None,
     page_size: int = 1000,
+    links_parquet: str | None = None,
+    skip_annotations: bool = False,
+    annotation_page_size: int = 1000,
 ) -> int:
     """
     Convert SKOS thesaurus concept schemes, concepts, and collections to framed JSON.
@@ -919,6 +937,9 @@ def convert_thesaurus(
         s3_client (Any, optional): Initialized Boto3 S3 client. Defaults to None.
         s3_config (S3UploadConfig, optional): S3 upload configuration. Defaults to None.
         page_size (int, optional): Page size for Hydra collections. Defaults to 1000.
+        links_parquet (str, optional): Path to links parquet file for concept corpus annotations. Defaults to None.
+        skip_annotations (bool, optional): Skip corpus annotations for concepts. Defaults to False.
+        annotation_page_size (int, optional): Page size for concept AnnotationPages. Defaults to 1000.
 
     Returns:
         int: Exit status code (0 for success, 1 for error).
@@ -931,6 +952,16 @@ def convert_thesaurus(
 
     with open(collection_frame_path, "r", encoding="utf-8") as infile:
         collection_frame_doc = json.load(infile)
+
+    annotations_by_concept: dict[str, list[str]] = {}
+    if not skip_annotations and links_parquet:
+        resolved_parquet = os.path.abspath(os.path.expanduser(links_parquet))
+        if not os.path.isfile(resolved_parquet):
+            print(f"Error: links parquet file '{resolved_parquet}' not found.")
+            return 1
+        annotations_by_concept = load_corpus_annotations(
+            resolved_parquet, uri_column="concept_uri"
+        )
 
     ds = parse_rdf_graph(input_path)
 
@@ -980,6 +1011,7 @@ def convert_thesaurus(
 
     action = "Uploading" if s3_config else "Writing"
     for res in tqdm(resource_list, desc=f"{action} thesaurus frames", unit="frame"):
+        annotation_ids = annotations_by_concept.get(str(res), [])
         rel_path = identifier_path(local_identifier(res))
         output_name = os.path.join(
             os.path.dirname(rel_path), f"{os.path.basename(rel_path)}.json"
@@ -987,7 +1019,11 @@ def convert_thesaurus(
 
         if not s3_config:
             target_path = os.path.join(output_dir, output_name)
-            if os.path.exists(target_path) and os.path.getsize(target_path) > 0:
+            if (
+                not annotation_ids
+                and os.path.exists(target_path)
+                and os.path.getsize(target_path) > 0
+            ):
                 continue
 
         g = ds.cbd(res, include_reifications=False)
@@ -1018,6 +1054,19 @@ def convert_thesaurus(
             )
 
         g = add_referenced_data(g, ds)
+
+        if res in concepts and annotation_ids:
+            concept_label = add_annotation_collection_reference(g, str(res))
+            output_annotation_collection(
+                str(res),
+                concept_label,
+                annotation_ids,
+                output_dir,
+                gzipped,
+                s3_client,
+                s3_config,
+                annotation_page_size,
+            )
 
         if res in schemes:
             frame = scheme_frame_doc
@@ -1171,7 +1220,7 @@ def generate_hydra_collection(
     gzipped: bool = False,
     s3_client: Any | None = None,
     s3_config: S3UploadConfig | None = None,
-    page_size: int = 500,
+    page_size: int = 1000,
     category_title: str | None = None,
     member_type: str | None = None,
     class_uri: str | None = None,
@@ -1187,7 +1236,7 @@ def generate_hydra_collection(
         gzipped (bool, optional): Whether output is gzipped. Defaults to False.
         s3_client (Any, optional): Boto3 S3 client. Defaults to None.
         s3_config (S3UploadConfig, optional): S3 configuration. Defaults to None.
-        page_size (int, optional): Items per page. Defaults to 500.
+        page_size (int, optional): Items per page. Defaults to 1000.
         category_title (str, optional): Title override for the collection. Defaults to None.
         member_type (str, optional): @type override for members. Defaults to None.
         class_uri (str, optional): RDF class URI for custom JSON-LD context mapping. Defaults to None.
@@ -1212,6 +1261,7 @@ def generate_hydra_collection(
 
     resource_list = sorted(resources, key=str)
 
+    page_size = max(1, page_size)
     total_items = len(resource_list)
     total_pages = max(1, (total_items + page_size - 1) // page_size)
 
@@ -1487,22 +1537,45 @@ def add_labels(
         >>> result = add_labels(graph, (resource_class,), (alternate_label,))
         >>> list(result.objects(resource, RDFS.label))
         [rdflib.term.Literal('Resource title')]
+        >>> g2 = Graph()
+        >>> r2 = URIRef("https://example.org/resource2")
+        >>> _ = g2.add((r2, RDF.type, resource_class))
+        >>> _ = g2.add((r2, alternate_label, Literal("English", lang="en")))
+        >>> _ = g2.add((r2, alternate_label, Literal("Nederlands", lang="nl")))
+        >>> res2 = add_labels(g2, (resource_class,), (alternate_label,), default_language="nl")
+        >>> list(res2.objects(r2, RDFS.label))
+        [rdflib.term.Literal('Nederlands')]
     """
     for target_class in target_classes:
         for subject in graph.subjects(RDF.type, target_class):
             if not list(graph.objects(subject, label_predicate)):
+                candidates: list[Node] = []
                 for fallback in fallback_predicates:
-                    for obj in graph.objects(subject, fallback):
-                        label: Node
-                        if label_predicate == RDFS.label:
-                            label = Literal(str(obj))
-                        else:
-                            label = obj
+                    candidates.extend(graph.objects(subject, fallback))
 
-                        graph.add((subject, label_predicate, label))
+                if not candidates:
+                    continue
 
-                        if default_language:
-                            break
+                chosen: Node | None = None
+                if default_language:
+                    matching = [
+                        c
+                        for c in candidates
+                        if isinstance(c, Literal) and c.language == default_language
+                    ]
+                    if matching:
+                        chosen = matching[0]
+
+                if chosen is None:
+                    chosen = candidates[0]
+
+                label: Node
+                if label_predicate == RDFS.label:
+                    label = Literal(str(chosen))
+                else:
+                    label = chosen
+
+                graph.add((subject, label_predicate, label))
 
     return graph
 
@@ -1580,6 +1653,9 @@ def main() -> int:
             s3_client=s3_client,
             s3_config=s3_config,
             page_size=args.page_size,
+            links_parquet=args.links_parquet,
+            skip_annotations=args.skip_annotations,
+            annotation_page_size=args.annotation_page_size,
         )
 
     elif args.mode == "catalog":

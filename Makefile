@@ -59,6 +59,10 @@ thesaurus: $(S3_DIR)/.thesaurus.stamp
 .PHONY: catalog
 catalog: $(S3_DIR)/.catalog.stamp
 
+.PHONY: links
+links:
+	$(PYTHON) scripts/regenerate_links_data.py
+
 #------------------------------------------------------------
 # 1. Organization Pipeline
 #------------------------------------------------------------
@@ -350,10 +354,13 @@ test:
 	$(PYTHON) -m doctest scripts/convert_to_json.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
-        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus
+        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-links
 
-clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
+clean: clean-json clean-ttl clean-rdf clean-xml clean-csv clean-links
 	rm -f .cache.sqlite
+
+clean-links:
+	rm -f data/input/links_data.parquet
 
 clean-organization:
 	rm -rf data/input/organization/csv data/input/organization/csv/.stamp
@@ -430,6 +437,7 @@ help:
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
+	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate data/input/links_data.parquet from Object Store"
 	@echo
 	@echo -e "  $(BLUE)clean-organization$(RESET)          - to remove intermediate files & output for organization"
 	@echo -e "  $(BLUE)clean-place$(RESET)                 - to remove intermediate files & output for place"
@@ -438,6 +446,7 @@ help:
 	@echo -e "  $(BLUE)clean-ship$(RESET)                  - to remove intermediate files & output for ship"
 	@echo -e "  $(BLUE)clean-measurement$(RESET)           - to remove intermediate files & output for measurement"
 	@echo -e "  $(BLUE)clean-thesaurus$(RESET)             - to remove intermediate files & output for thesaurus"
+	@echo -e "  $(BLUE)clean-links$(RESET)                 - to remove generated links parquet data"
 	@echo
 	@echo -e "  $(BLUE)test$(RESET)                       - to run doctests across all python scripts"
 	@echo -e "  $(BLUE)clean$(RESET)                      - to remove all generated intermediate files and outputs"

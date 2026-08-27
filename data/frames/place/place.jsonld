@@ -137,5 +137,10 @@
             "_label": {},
             "content": {}
         }
+    },
+    "subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "type": {}
     }
 }

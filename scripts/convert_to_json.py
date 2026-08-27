@@ -9,15 +9,18 @@ import csv
 import glob
 import json
 import os
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any, Iterable
 
 import requests_cache
 from pyld import jsonld  # type: ignore[import-untyped]
-from rdflib import Dataset, Graph, Literal, URIRef
+from rdflib import Dataset, Graph, Literal, URIRef, Namespace
 from rdflib.namespace import DCTERMS, RDF, RDFS, SKOS
 from rdflib.term import Node
-from tqdm import tqdm  # type: ignore[import-untyped]
+from tqdm import tqdm
+
+import pyarrow.parquet as pq
 
 from utils import (
     S3UploadConfig,
@@ -37,6 +40,10 @@ DEFAULT_CONTEXT = "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:
 PROJECT_URI_TOKEN = "data.globalise.huygens.knaw.nl"
 URI_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
 SARI_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+
+OA = Namespace("http://www.w3.org/ns/oa#")
+CRM = Namespace("http://www.cidoc-crm.org/cidoc-crm/")
+CRMDIG = Namespace("http://www.ics.forth.gr/isl/CRMdig/")
 
 CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
     "person": {
@@ -163,6 +170,14 @@ PREDICATES_FOR_SHALLOW_RESOURCE = frozenset(
 )
 
 
+ANNOTATION_ENTITY_TYPE_BY_ROOT_TYPE = {
+    "http://www.cidoc-crm.org/cidoc-crm/E21_Person": "Person",
+    "http://www.cidoc-crm.org/cidoc-crm/E53_Place": "Place",
+    "http://www.cidoc-crm.org/cidoc-crm/E74_Group": "Group",
+    "http://www.cidoc-crm.org/cidoc-crm/E22_Human-Made_Object": "HumanMadeObject",
+}
+
+
 def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     """
     Parse command-line arguments for the JSON export script.
@@ -195,8 +210,14 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--page-size",
         type=int,
-        default=500,
-        help="Items per page for Hydra collection index pages (default: 500)",
+        default=1000,
+        help="Items per page for Hydra collection index pages (default: 1000)",
+    )
+    parser.add_argument(
+        "--annotation-page-size",
+        type=int,
+        default=100,
+        help="Items per AnnotationPage (default: 100)",
     )
     parser.add_argument(
         "--category-key",
@@ -228,6 +249,16 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument(
         "--persons-csv",
         help="Path to persons.csv for generating Hydra collection index",
+    )
+    parser.add_argument(
+        "--links-parquet",
+        default=os.path.join(BASE_DIR, "data", "input", "links_data.parquet"),
+        help="Parquet inventory of corpus annotations (default: data/input/links_data.parquet)",
+    )
+    parser.add_argument(
+        "--skip-annotations",
+        action="store_true",
+        help="Skip corpus AnnotationCollection generation for entity frames",
     )
     add_s3_arguments(parser)
 
@@ -300,6 +331,194 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
     return framed
 
 
+def load_corpus_annotations(
+    parquet_path: str, entity_type: str
+) -> dict[str, list[str]]:
+    """
+    Read corpus annotation identifiers grouped by their linked reference-data URI.
+
+    The parquet source is read in batches so its 20+ million rows are not loaded
+    into memory. Only rows matching ``entity_type`` with both an entity URI and
+    annotation URI are retained.
+
+    Args:
+        parquet_path: Path to the links-data parquet file.
+        entity_type: Value of the parquet ``entity_type`` column to retain.
+
+    Returns:
+        Mapping of reference-data URI to sorted corpus annotation URIs.
+
+    Examples:
+        >>> import tempfile
+        >>> from pathlib import Path
+        >>> import pyarrow as pa
+        >>> import pyarrow.parquet as pq
+        >>> with tempfile.TemporaryDirectory() as directory:
+        ...     parquet_path = Path(directory) / "links.parquet"
+        ...     _ = pq.write_table(
+        ...         pa.table({
+        ...             "annotation_id": ["https://example.org/annotation/2", "https://example.org/annotation/1", "https://example.org/annotation/1", "https://example.org/annotation/3"],
+        ...             "entity_uri": ["https://example.org/person:123", "https://example.org/person:123", "https://example.org/person:123", "https://example.org/place:456"],
+        ...             "entity_type": ["Person", "Person", "Person", "Place"],
+        ...         }),
+        ...         parquet_path,
+        ...     )
+        ...     load_corpus_annotations(str(parquet_path), "Person")
+        {'https://example.org/person:123': ['https://example.org/annotation/1', 'https://example.org/annotation/2']}
+    """
+    annotations: defaultdict[str, set[str]] = defaultdict(set)
+    parquet_file = pq.ParquetFile(parquet_path)
+    for batch in parquet_file.iter_batches(
+        columns=["annotation_id", "entity_uri", "entity_type"], batch_size=65_536
+    ):
+        for annotation_id, entity_uri, row_entity_type in zip(
+            batch.column("annotation_id").to_pylist(),
+            batch.column("entity_uri").to_pylist(),
+            batch.column("entity_type").to_pylist(),
+            strict=True,
+        ):
+            if annotation_id and entity_uri and row_entity_type == entity_type:
+                annotations[str(entity_uri)].add(str(annotation_id))
+
+    return {
+        entity_uri: sorted(annotation_ids)
+        for entity_uri, annotation_ids in annotations.items()
+    }
+
+
+def annotation_collection_uri(entity_uri: str) -> str:
+    """
+    Return the URI of an entity's corpus AnnotationCollection.
+
+    Examples:
+        >>> annotation_collection_uri("https://example.org/person:123")
+        'https://example.org/person:123.annotations'
+    """
+    return f"{entity_uri}.annotations"
+
+
+def add_annotation_collection_reference(graph: Graph, entity_uri: str) -> str:
+    """
+    Add an AnnotationCollection relation to an entity graph and return its label.
+
+    Examples:
+        >>> entity_uri = "https://example.org/person:123"
+        >>> graph = Graph()
+        >>> _ = graph.add((URIRef(entity_uri), RDFS.label, Literal("Anna Bijns")))
+        >>> add_annotation_collection_reference(graph, entity_uri)
+        'Anna Bijns'
+        >>> collection_uri = URIRef("https://example.org/person:123.annotations")
+        >>> (URIRef(entity_uri), CRM.P129i_is_subject_of, collection_uri) in graph
+        True
+        >>> set(graph.objects(collection_uri, RDF.type)) == {CRMDIG.D1_Digital_Object, OA.AnnotationCollection}
+        True
+        >>> list(graph.objects(collection_uri, RDFS.label))
+        [rdflib.term.Literal('Corpus mentions of Anna Bijns')]
+    """
+    entity = URIRef(entity_uri)
+    collection = URIRef(annotation_collection_uri(entity_uri))
+    label = extract_title(graph, entity)
+
+    graph.add((entity, CRM.P129i_is_subject_of, collection))
+
+    graph.add((collection, RDF.type, CRMDIG.D1_Digital_Object))
+    graph.add((collection, RDF.type, OA.AnnotationCollection))
+    graph.add((collection, RDFS.label, Literal(f"Corpus mentions of {label}")))
+
+    return label
+
+
+def output_annotation_collection(
+    entity_uri: str,
+    entity_label: str,
+    annotation_ids: list[str],
+    output_dir: str,
+    gzipped: bool = False,
+    s3_client: Any | None = None,
+    s3_config: S3UploadConfig | None = None,
+    page_size: int = 100,
+) -> None:
+    """
+    Write an entity's AnnotationCollection and paginated AnnotationPages.
+
+    Examples:
+        >>> import tempfile
+        >>> from pathlib import Path
+        >>> entity_uri = "https://example.org/person:123"
+        >>> annotation_ids = ["https://example.org/annotation/1", "https://example.org/annotation/2", "https://example.org/annotation/3"]
+        >>> with tempfile.TemporaryDirectory() as directory:
+        ...     output_annotation_collection(
+        ...         entity_uri, "Anna Bijns", annotation_ids, directory, page_size=2
+        ...     )
+        ...     output_dir = Path(directory)
+        ...     collection = json.loads((output_dir / "person" / "123.annotations.json").read_text())
+        ...     first_page = json.loads((output_dir / "person" / "123.annotations" / "page-1.json").read_text())
+        ...     second_page = json.loads((output_dir / "person" / "123.annotations" / "page-2.json").read_text())
+        ...     (collection["total"], len(first_page["items"]), first_page["next"] == second_page["id"], len(second_page["items"]))
+        (3, 2, True, 1)
+    """
+    collection_uri = annotation_collection_uri(entity_uri)
+    relative_path = local_identifier_path(entity_uri)
+    page_directory = f"{relative_path}.annotations"
+    collection_output_name = f"{relative_path}.annotations.json"
+    total_pages = max(1, (len(annotation_ids) + page_size - 1) // page_size)
+
+    collection_doc = {
+        "@context": [
+            "http://www.w3.org/ns/anno.jsonld",
+            "http://www.w3.org/ns/ldp.jsonld",
+        ],
+        "id": collection_uri,
+        "type": ["BasicContainer", "AnnotationCollection"],
+        "label": f"Corpus mentions of {entity_label}",
+        "total": len(annotation_ids),
+        "first": f"{collection_uri}/page-1.json",
+        "last": f"{collection_uri}/page-{total_pages}.json",
+    }
+    output_framed_json(
+        collection_doc,
+        collection_output_name,
+        output_dir,
+        gzipped,
+        s3_client,
+        s3_config,
+    )
+
+    for page_number in range(1, total_pages + 1):
+        page_uri = f"{collection_uri}/page-{page_number}.json"
+        start_index = (page_number - 1) * page_size
+        end_index = page_number * page_size
+        page_doc: dict[str, Any] = {
+            "@context": [
+                "http://www.w3.org/ns/anno.jsonld",
+                "http://www.w3.org/ns/ldp.jsonld",
+            ],
+            "id": page_uri,
+            "type": "AnnotationPage",
+            "partOf": collection_uri,
+            "items": [
+                {
+                    "id": annotation_id,
+                    "type": "Annotation",
+                }
+                for annotation_id in annotation_ids[start_index:end_index]
+            ],
+        }
+        if page_number > 1:
+            page_doc["previous"] = f"{collection_uri}/page-{page_number - 1}.json"
+        if page_number < total_pages:
+            page_doc["next"] = f"{collection_uri}/page-{page_number + 1}.json"
+
+        output_framed_json(
+            page_doc,
+            os.path.join(page_directory, f"page-{page_number}.json"),
+            output_dir,
+            gzipped,
+            s3_client,
+            s3_config,
+        )
+
+
 def _process_entity_chunk(
     input_ttl: str,
     output_dir: str,
@@ -307,6 +526,8 @@ def _process_entity_chunk(
     root_type_uri_str: str,
     gzipped: bool,
     s3_config_dict: dict[str, Any] | None,
+    annotations_by_entity: dict[str, list[str]],
+    annotation_page_size: int,
 ) -> int:
     resource_type = URIRef(root_type_uri_str)
     s3_config = S3UploadConfig(**s3_config_dict) if s3_config_dict else None
@@ -332,6 +553,7 @@ def _process_entity_chunk(
         os.makedirs(output_dir, exist_ok=True)
 
     for res in sorted(resources, key=str):
+        annotation_ids = annotations_by_entity.get(str(res), [])
         relative_path = local_identifier_path(res)
         output_name = os.path.join(
             os.path.dirname(relative_path),
@@ -340,11 +562,28 @@ def _process_entity_chunk(
 
         if not s3_config:
             target_path = os.path.join(output_dir, output_name)
-            if os.path.exists(target_path) and os.path.getsize(target_path) > 0:
+            if (
+                not annotation_ids
+                and os.path.exists(target_path)
+                and os.path.getsize(target_path) > 0
+            ):
                 continue
 
         graph = g.cbd(res, include_reifications=False)
         graph = add_referenced_data(graph, g)
+
+        if annotation_ids:
+            entity_label = add_annotation_collection_reference(graph, str(res))
+            output_annotation_collection(
+                str(res),
+                entity_label,
+                annotation_ids,
+                output_dir,
+                gzipped,
+                s3_client,
+                s3_config,
+                annotation_page_size,
+            )
         framed = frame_graph(graph, frame_doc, str(res))
         output_framed_json(
             framed,
@@ -363,7 +602,7 @@ def generate_hydra_collection_from_persons_csv(
     gzipped: bool = False,
     s3_client: Any | None = None,
     s3_config: S3UploadConfig | None = None,
-    page_size: int = 500,
+    page_size: int = 1000,
 ) -> None:
     meta = CATEGORY_HYDRA_METADATA.get("person", {})
     cat_title = meta.get("title", "Person Collection")
@@ -471,6 +710,17 @@ def convert_entity(
         print(f"Error: frame file '{frame_path}' not found.")
         return 1
 
+    annotations_by_entity: dict[str, list[str]] = {}
+    annotation_entity_type = ANNOTATION_ENTITY_TYPE_BY_ROOT_TYPE.get(str(resource_type))
+    if annotation_entity_type and not getattr(args, "skip_annotations", False):
+        links_parquet = os.path.abspath(os.path.expanduser(args.links_parquet))
+        if not os.path.isfile(links_parquet):
+            print(f"Error: links parquet file '{links_parquet}' not found.")
+            return 1
+        annotations_by_entity = load_corpus_annotations(
+            links_parquet, annotation_entity_type
+        )
+
     if os.path.isdir(input_path):
         ttl_files = sorted(
             glob.glob(os.path.join(input_path, "**", "*.ttl"), recursive=True)
@@ -507,6 +757,8 @@ def convert_entity(
                     str(resource_type),
                     gzipped,
                     s3_dict,
+                    annotations_by_entity,
+                    getattr(args, "annotation_page_size", 100),
                 )
                 for ttl_file in ttl_files
             ]
@@ -565,6 +817,7 @@ def convert_entity(
 
     action = "Uploading" if s3_config else "Writing"
     for res in tqdm(resource_list, desc=f"{action} entity frames", unit="frame"):
+        annotation_ids = annotations_by_entity.get(str(res), [])
         relative_path = local_identifier_path(res)
         output_name = os.path.join(
             os.path.dirname(relative_path),
@@ -573,12 +826,28 @@ def convert_entity(
 
         if not s3_config:
             target_path = os.path.join(output_dir, output_name)
-            if os.path.exists(target_path) and os.path.getsize(target_path) > 0:
+            if (
+                not annotation_ids
+                and os.path.exists(target_path)
+                and os.path.getsize(target_path) > 0
+            ):
                 continue
 
         graph = g.cbd(res, include_reifications=False)
         graph = add_referenced_data(graph, g)
 
+        if annotation_ids:
+            entity_label = add_annotation_collection_reference(graph, str(res))
+            output_annotation_collection(
+                str(res),
+                entity_label,
+                annotation_ids,
+                output_dir,
+                gzipped,
+                s3_client,
+                s3_config,
+                getattr(args, "annotation_page_size", 100),
+            )
         framed = frame_graph(graph, frame_doc, str(res))
         output_framed_json(
             framed,
@@ -639,7 +908,7 @@ def convert_thesaurus(
     gzipped: bool = False,
     s3_client: Any | None = None,
     s3_config: S3UploadConfig | None = None,
-    page_size: int = 500,
+    page_size: int = 1000,
 ) -> int:
     """
     Convert SKOS thesaurus concept schemes, concepts, and collections to framed JSON.
@@ -653,7 +922,7 @@ def convert_thesaurus(
         gzipped (bool, optional): Whether output should be gzipped. Defaults to False.
         s3_client (Any, optional): Initialized Boto3 S3 client. Defaults to None.
         s3_config (S3UploadConfig, optional): S3 upload configuration. Defaults to None.
-        page_size (int, optional): Page size for Hydra collections. Defaults to 500.
+        page_size (int, optional): Page size for Hydra collections. Defaults to 1000.
 
     Returns:
         int: Exit status code (0 for success, 1 for error).

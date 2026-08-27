@@ -241,5 +241,10 @@
     "part_of": {
         "@embed": "@always",
         "_label": {}
+    },
+    "subject_of": {
+        "@embed": "@always",
+        "_label": {},
+        "type": {}
     }
 }

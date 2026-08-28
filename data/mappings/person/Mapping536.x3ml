@@ -192,7 +192,7 @@
                         <entity variable="classification">
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">../identity/tex()</arg>
+                                <arg name="text" type="xpath">../identity/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P2_has_type</relationship>

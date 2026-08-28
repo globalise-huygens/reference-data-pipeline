@@ -10,11 +10,11 @@ import glob
 import json
 import os
 from concurrent.futures import ProcessPoolExecutor
+from pathlib import Path
 from typing import Any, Iterable
 
 import duckdb
-import requests_cache
-from pyld import jsonld  # type: ignore[import-untyped]
+from pyld import SqliteCacheRequestsDocumentLoader, jsonld  # type: ignore[import-untyped]
 from rdflib import Dataset, Graph, Literal, URIRef, Namespace
 from rdflib.namespace import DCTERMS, RDF, RDFS, SKOS
 from rdflib.term import Node
@@ -130,7 +130,8 @@ CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
     },
 }
 
-requests_cache.install_cache(".cache", backend="sqlite", expire_after=3600)
+CACHE_FILE = Path(BASE_DIR) / ".cache.sqlite"
+DOCUMENT_LOADER = SqliteCacheRequestsDocumentLoader(sqlite_file_path=CACHE_FILE)
 
 CONCEPT_RELATION_PREDICATES = frozenset(
     {
@@ -324,7 +325,11 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
     else:
         frame_doc.pop("@id", None)
 
-    framed = jsonld.frame(json.loads(graph.serialize(format="json-ld")), frame_doc)
+    framed = jsonld.frame(
+        json.loads(graph.serialize(format="json-ld")),
+        frame_doc,
+        options={"documentLoader": DOCUMENT_LOADER},
+    )
 
     return framed
 

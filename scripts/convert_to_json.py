@@ -30,6 +30,7 @@ from utils import (
     local_identifier,
     local_identifier_path,
     output_framed_json,
+    replace_concept_uris,
     safe_segment,
 )
 
@@ -969,6 +970,7 @@ def convert_thesaurus(
         )
 
     ds = parse_rdf_graph(input_path)
+    replace_concept_uris(ds)
 
     ds = add_labels(
         ds,

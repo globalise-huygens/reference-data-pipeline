@@ -19,11 +19,13 @@ from typing import Any
 from urllib.parse import quote
 
 import boto3
-from rdflib import BNode, Graph, Literal, Namespace, URIRef
+import openpyxl
+from rdflib import BNode, Dataset, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import DCTERMS, SKOS
 from rdflib.term import Node
 
 PROJECT_URI_TOKEN = "data.globalise.huygens.knaw.nl"
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 @dataclass(frozen=True)
@@ -393,6 +395,50 @@ def serialise_framed_json(framed: Any, gzipped: bool) -> bytes:
     return payload
 
 
+def output_bytes(
+    payload: bytes,
+    relative_path: str,
+    output_dir: str,
+    gzipped: bool,
+    s3_client: Any | None,
+    s3_config: S3UploadConfig | None,
+    content_type: str = "application/octet-stream",
+) -> None:
+    """
+    Output a raw byte payload either to local disk or directly to S3 object store.
+
+    Args:
+        payload (bytes): Encoded payload bytes to write.
+        relative_path (str): Relative file output path (e.g. "document/123.json").
+        output_dir (str): Base local output directory.
+        gzipped (bool): Whether payload is gzip compressed (sets ContentEncoding on S3).
+        s3_client (Any, optional): Initialized Boto3 S3 client. Defaults to None.
+        s3_config (S3UploadConfig, optional): S3 configuration object. Defaults to None.
+        content_type (str, optional): Value for the S3 ContentType header. Defaults to
+            "application/octet-stream".
+    """
+    if s3_client and s3_config:
+        object_key = f"{s3_config.prefix}{relative_path.replace(os.sep, '/')}"
+        put_args: dict[str, Any] = {
+            "Bucket": s3_config.bucket,
+            "Key": object_key,
+            "Body": payload,
+            "ContentType": content_type,
+        }
+        if gzipped:
+            put_args["ContentEncoding"] = "gzip"
+        if getattr(s3_config, "acl", None):
+            put_args["ACL"] = s3_config.acl
+
+        s3_client.put_object(**put_args)
+        return
+
+    target_path = os.path.join(output_dir, relative_path)
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    with open(target_path, "wb") as outfile:
+        outfile.write(payload)
+
+
 def output_framed_json(
     framed: Any,
     relative_path: str,
@@ -413,27 +459,15 @@ def output_framed_json(
         s3_config (S3UploadConfig, optional): S3 configuration object. Defaults to None.
     """
     payload = serialise_framed_json(framed, gzipped=gzipped)
-
-    if s3_client and s3_config:
-        object_key = f"{s3_config.prefix}{relative_path.replace(os.sep, '/')}"
-        put_args: dict[str, Any] = {
-            "Bucket": s3_config.bucket,
-            "Key": object_key,
-            "Body": payload,
-            "ContentType": "application/ld+json; charset=utf-8",
-        }
-        if gzipped:
-            put_args["ContentEncoding"] = "gzip"
-        if getattr(s3_config, "acl", None):
-            put_args["ACL"] = s3_config.acl
-
-        s3_client.put_object(**put_args)
-        return
-
-    target_path = os.path.join(output_dir, relative_path)
-    os.makedirs(os.path.dirname(target_path), exist_ok=True)
-    with open(target_path, "wb") as outfile:
-        outfile.write(payload)
+    output_bytes(
+        payload,
+        relative_path,
+        output_dir,
+        gzipped,
+        s3_client,
+        s3_config,
+        content_type="application/ld+json; charset=utf-8",
+    )
 
 
 def html_to_markdown(text: str) -> str:
@@ -707,6 +741,152 @@ def convert_hash_uris_to_bnodes(
         graph.add((new_s, new_p, new_o))
 
     return len(uri_to_bnode)
+
+
+OLD_CONCEPT_BASE_PATTERN = re.compile(
+    r"^https?://digitaalerfgoed\.poolparty\.biz/globalise/(.*)$"
+)
+NEW_CONCEPT_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:"
+
+
+def load_concept_uri_replacements(
+    xlsx_path: str | None = None,
+) -> dict[URIRef, URIRef]:
+    """
+    Load mapping of deleted concept URIs to replacement concept URIs from an Excel file,
+    rewriting PoolParty base URIs to SARI thesaurus base URIs.
+
+    Args:
+        xlsx_path (str, optional): Path to the Excel file containing old and new concept URIs.
+            Defaults to data/input/deleted URI's and concepts.xlsx.
+
+    Returns:
+        dict[URIRef, URIRef]: Dictionary mapping old concept URIRefs to replacement URIRefs.
+
+    Examples:
+        >>> mapping = load_concept_uri_replacements()
+        >>> isinstance(mapping, dict)
+        True
+    """
+    if xlsx_path is None:
+        xlsx_path = os.path.join(
+            BASE_DIR, "data", "input", "deleted URI's and concepts.xlsx"
+        )
+
+    if not os.path.isfile(xlsx_path):
+        return {}
+
+    wb = openpyxl.load_workbook(xlsx_path, read_only=True, data_only=True)
+    sheet = wb.active
+    if sheet is None:
+        return {}
+
+    mapping: dict[URIRef, URIRef] = {}
+    for row in sheet.iter_rows(values_only=True):
+        if not row or len(row) < 2:
+            continue
+        old_val, new_val = row[0], row[1]
+        if not old_val or not new_val:
+            continue
+        old_str = str(old_val).strip()
+        new_str = str(new_val).strip()
+        if old_str.lower() in ("deleted uri", "old uri") or new_str.lower() in (
+            "concept was merged into",
+            "new uri",
+        ):
+            continue
+        if ";" in new_str:
+            new_str = new_str.split(";")[0].strip()
+        if ";" in old_str:
+            old_uris = [u.strip() for u in old_str.split(";") if u.strip()]
+        else:
+            old_uris = [old_str]
+
+        # Apply simple replace of base URIs
+        new_str_replaced = OLD_CONCEPT_BASE_PATTERN.sub(
+            rf"{NEW_CONCEPT_BASE}\1", new_str
+        )
+        new_uri = URIRef(new_str_replaced)
+
+        for u in old_uris:
+            if u and new_str:
+                u_replaced = OLD_CONCEPT_BASE_PATTERN.sub(rf"{NEW_CONCEPT_BASE}\1", u)
+                mapping[URIRef(u)] = new_uri
+                mapping[URIRef(u_replaced)] = new_uri
+
+    wb.close()
+    return mapping
+
+
+def replace_concept_uris(
+    graph: Any,
+    mapping: dict[URIRef, URIRef] | None = None,
+    xlsx_path: str | None = None,
+) -> int:
+    """
+    Replace deprecated or deleted concept URIs with their new URIs in an RDF graph or dataset.
+
+    Args:
+        graph (Any): Target RDF graph or dataset to modify in place.
+        mapping (dict[URIRef, URIRef], optional): Mapping from old URIRef to new URIRef. If None,
+            loads replacements from the Excel file specified by xlsx_path or the default location.
+        xlsx_path (str, optional): Custom path to the Excel file containing URI replacements.
+
+    Returns:
+        int: Number of triples/quads modified in the graph or dataset.
+
+    Examples:
+        >>> from rdflib import Graph, URIRef, Literal
+        >>> g = Graph()
+        >>> old_u = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:old")
+        >>> new_u = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:new")
+        >>> p = URIRef("https://example.org/property")
+        >>> _ = g.add((URIRef("https://example.org/entity/1"), p, old_u))
+        >>> replace_concept_uris(g, mapping={old_u: new_u})
+        1
+        >>> list(g.objects(URIRef("https://example.org/entity/1"), p))
+        [rdflib.term.URIRef('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:new')]
+    """
+    if mapping is None:
+        mapping = (
+            load_concept_uri_replacements(xlsx_path)
+            if xlsx_path
+            else load_concept_uri_replacements()
+        )
+
+    if not mapping:
+        return 0
+
+    if isinstance(graph, Dataset):
+        quads_to_remove: list[tuple[Node, Node, Node, Any]] = []
+        quads_to_add: list[tuple[Node, Node, Node, Any]] = []
+        for s, p, o, ctx in graph.quads((None, None, None, None)):
+            new_s = mapping[s] if isinstance(s, URIRef) and s in mapping else s
+            new_p = mapping[p] if isinstance(p, URIRef) and p in mapping else p
+            new_o = mapping[o] if isinstance(o, URIRef) and o in mapping else o
+            if new_s != s or new_p != p or new_o != o:
+                quads_to_remove.append((s, p, o, ctx))
+                quads_to_add.append((new_s, new_p, new_o, ctx))
+        for q in quads_to_remove:
+            graph.remove(q)  # type: ignore[arg-type]
+        for q in quads_to_add:
+            graph.add(q)  # type: ignore[arg-type]
+        return len(quads_to_remove)
+    else:
+        triples_to_remove: list[tuple[Node, Node, Node]] = []
+        triples_to_add: list[tuple[Node, Node, Node]] = []
+        for s, p, o in graph.triples((None, None, None)):
+            new_s = mapping[s] if isinstance(s, URIRef) and s in mapping else s
+            new_p = mapping[p] if isinstance(p, URIRef) and p in mapping else p
+            new_o = mapping[o] if isinstance(o, URIRef) and o in mapping else o
+            if new_s != s or new_p != p or new_o != o:
+                triples_to_remove.append((s, p, o))
+                triples_to_add.append((new_s, new_p, new_o))
+        for t in triples_to_remove:
+            graph.remove(t)
+        for t in triples_to_add:
+            graph.add(t)
+        return len(triples_to_remove)
 
 
 if __name__ == "__main__":

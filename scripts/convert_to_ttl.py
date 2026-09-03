@@ -12,7 +12,12 @@ import sys
 from rdflib import Graph, Literal, Namespace, XSD
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from utils import convert_hash_uris_to_bnodes, expand_date_literal, normalize_uris
+from utils import (
+    convert_hash_uris_to_bnodes,
+    expand_date_literal,
+    normalize_uris,
+    replace_concept_uris,
+)
 
 import re
 from concurrent.futures import ProcessPoolExecutor
@@ -123,8 +128,9 @@ def load_graph(rdf_dir: str) -> Graph:
     """
     Load all Turtle files in a directory into a single normalized RDF graph.
 
-    URIs in the SARI/GLOBALISE namespace are transformed from slash-separated to colon-hash format,
-    and dates are normalized to dateTime literals.
+    Deprecated concept URIs are replaced with new URIs, URIs in the SARI/GLOBALISE
+    namespace are transformed from slash-separated to colon-hash format, and dates
+    are normalized to dateTime literals.
 
     Args:
         rdf_dir (str): Directory containing .ttl files.
@@ -143,6 +149,7 @@ def load_graph(rdf_dir: str) -> Graph:
     for ttl_file in ttl_files:
         graph.parse(ttl_file, format="turtle")
 
+    replace_concept_uris(graph)
     transformed_count = normalize_uris(graph)
     bnode_count = convert_hash_uris_to_bnodes(graph)
     if transformed_count > 0 or bnode_count > 0:
@@ -169,6 +176,7 @@ def combine_single_chunk(chunk_files: list[str], output_path: str) -> str:
     for ttl_file in chunk_files:
         graph.parse(ttl_file, format="turtle")
 
+    replace_concept_uris(graph)
     normalize_uris(graph)
     convert_hash_uris_to_bnodes(graph)
     normalize_dates_to_datetimes(graph)

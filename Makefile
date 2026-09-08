@@ -28,13 +28,16 @@ S3_FLAGS ?=
 S3_DIR := data/output/s3
 LINKS_PARQUET := data/input/links_data.parquet
 
+# SQLite DB produced by the GLOBALISE document review app (override in .env if needed)
+DOCUMENTS_DB_URL ?= sqlite:////home/leon/Documents/GLOBALISE/review/documents/globalise_documents.db
+
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
 NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
 
 #------------------------------------------------------------
 
 .PHONY: build-all
-build-all: organization place person polity ship measurement thesaurus catalog
+build-all: organization place person polity ship measurement thesaurus document catalog
 
 .PHONY: links
 links:
@@ -60,6 +63,9 @@ measurement: $(S3_DIR)/.measurement.stamp
 
 .PHONY: thesaurus
 thesaurus: $(S3_DIR)/.thesaurus.stamp
+
+.PHONY: document
+document: $(S3_DIR)/.document.stamp
 
 .PHONY: catalog
 catalog: $(S3_DIR)/.catalog.stamp
@@ -341,6 +347,23 @@ $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	$(PYTHON) scripts/convert_to_json.py thesaurus data/output/concept/thesaurus.trig $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 
+#------------------------------------------------------------
+# 8. Document Pipeline
+#------------------------------------------------------------
+# These scripts read directly from a SQLite DB (produced by the separate
+# GLOBALISE document review app) and write final JSON-LD/CSV straight to
+# the S3 output directory, so there is no CSV/XML/X3ML/RDF conversion step.
+$(S3_DIR)/.document.stamp:
+	@mkdir -p $(S3_DIR)/document $(S3_DIR)/objects
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents_csv.py $(S3_DIR)/document $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents.py $(S3_DIR)/objects $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_manifests.py $(S3_DIR)/objects/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_collection.py $(S3_DIR)/objects/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	@touch $@
+
+#------------------------------------------------------------
+# 9. Catalog Pipeline
+#------------------------------------------------------------
 $(S3_DIR)/.catalog.stamp:
 	@mkdir -p $(S3_DIR)
 	$(PYTHON) scripts/convert_to_json.py catalog $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
@@ -358,7 +381,7 @@ test:
 	$(PYTHON) -m doctest scripts/convert_to_json.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
-        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus
+        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document
 
 clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
 	rm -f .cache.sqlite
@@ -409,6 +432,9 @@ clean-measurement:
 clean-thesaurus:
 	rm -rf data/output/concept $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/concept*.jsonld.gz $(S3_DIR)/concept*.jsonld
 
+clean-document:
+	rm -rf $(S3_DIR)/.document.stamp $(S3_DIR)/document $(S3_DIR)/objects/document $(S3_DIR)/objects/inventory
+
 clean-json:
 	rm -rf $(S3_DIR)/* $(S3_DIR)/.*.stamp data/output/concept
 
@@ -438,6 +464,7 @@ help:
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
 	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate corpus annotation links parquet"
+	@echo -e "  $(BLUE)document$(RESET)                   - to export documents/manifests/collection JSON-LD & CSV from the review DB"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
 	@echo
 	@echo -e "  $(BLUE)clean-organization$(RESET)          - to remove intermediate files & output for organization"
@@ -447,6 +474,7 @@ help:
 	@echo -e "  $(BLUE)clean-ship$(RESET)                  - to remove intermediate files & output for ship"
 	@echo -e "  $(BLUE)clean-measurement$(RESET)           - to remove intermediate files & output for measurement"
 	@echo -e "  $(BLUE)clean-thesaurus$(RESET)             - to remove intermediate files & output for thesaurus"
+	@echo -e "  $(BLUE)clean-document$(RESET)              - to remove intermediate files & output for document"
 	@echo
 	@echo -e "  $(BLUE)test$(RESET)                       - to run doctests across all python scripts"
 	@echo -e "  $(BLUE)clean$(RESET)                      - to remove all generated intermediate files and outputs"
@@ -461,3 +489,4 @@ help:
 	@echo -e "  $(YELLOW)JAVA_OPTS=opts$(RESET)             - Memory flags for X3ML Java JVM (default: $(JAVA_OPTS))"
 	@echo -e "  $(YELLOW)GZIP_FLAG=flag$(RESET)             - Gzip flag (default: --gzipped, use GZIP_FLAG=\"\" for raw JSON)"
 	@echo -e "  $(YELLOW)S3_BUCKET=name$(RESET)             - Direct upload to S3 bucket (or set in .env file)"
+	@echo -e "  $(YELLOW)DOCUMENTS_DB_URL=url$(RESET)       - SQLite DB URL for the document pipeline (default: $(DOCUMENTS_DB_URL))"

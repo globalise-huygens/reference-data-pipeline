@@ -65,8 +65,8 @@ def parse_args():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=os.environ.get("MANIFEST_OUTPUT_DIR", "data/s3/objects/inventory"),
-        help="Base local output directory (default: data/s3/objects/inventory, or MANIFEST_OUTPUT_DIR env var)",
+        default=os.environ.get("MANIFEST_OUTPUT_DIR", "data/output/s3/inventory"),
+        help="Base local output directory (default: data/output/s3/inventory, or MANIFEST_OUTPUT_DIR env var)",
     )
     parser.add_argument(
         "--gzipped", action="store_true", help="Output gzipped JSON files"

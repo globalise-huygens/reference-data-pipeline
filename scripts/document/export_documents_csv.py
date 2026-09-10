@@ -47,48 +47,68 @@ TYPE_URI_PREFIX = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesa
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
 engine = create_engine(DATABASE_URL, echo=False)
 
-# Create tables if they don't exist
-Base.metadata.create_all(engine)
-
 
 def get_settlement(document):
     """Get the settlement UUID and label for a document."""
-    if document.location:
-        settlement_id = document.location.id
-        if document.location.labels:
-            settlement_label = document.location.labels[0].label
+    loc = getattr(document, "location", None)
+    if loc:
+        settlement_id = getattr(loc, "id", "") or ""
+        labels = getattr(loc, "labels", None)
+        if labels and labels[0] and getattr(labels[0], "label", None):
+            settlement_label = labels[0].label
         else:
-            settlement_label = document.location.glob_id
+            settlement_label = getattr(loc, "glob_id", "") or ""
         return settlement_id, settlement_label
     return "", ""
 
 
 def get_inventory_number(document):
     """Get the inventory number for a document."""
-    if document.inventory:
-        return document.inventory.inventory_number
+    inv = getattr(document, "inventory", None)
+    if inv:
+        return getattr(inv, "inventory_number", "") or ""
     return ""
 
 
 def get_start_end_scan_filenames(document):
     """Get the first and last scan filenames for a document, sorted by scan name."""
-    if not document.pages:
+    pages = getattr(document, "pages", None)
+    if not pages:
         return "", ""
 
     sorted_pages = sorted(
-        document.pages,
-        key=lambda p: ((p.page and p.page.scan and p.page.scan.filename) or ""),
+        pages,
+        key=lambda p: (
+            p.page.scan.filename
+            if (
+                p
+                and getattr(p, "page", None)
+                and getattr(p.page, "scan", None)
+                and getattr(p.page.scan, "filename", None)
+            )
+            else ""
+        ),
     )
-    first_page_link = sorted_pages[0]
-    last_page_link = sorted_pages[-1]
+    first_page_link = sorted_pages[0] if sorted_pages else None
+    last_page_link = sorted_pages[-1] if sorted_pages else None
 
     start_scan_filename = ""
     end_scan_filename = ""
 
-    if first_page_link.page and first_page_link.page.scan:
+    if (
+        first_page_link
+        and getattr(first_page_link, "page", None)
+        and getattr(first_page_link.page, "scan", None)
+        and getattr(first_page_link.page.scan, "filename", None)
+    ):
         start_scan_filename = first_page_link.page.scan.filename or ""
 
-    if last_page_link.page and last_page_link.page.scan:
+    if (
+        last_page_link
+        and getattr(last_page_link, "page", None)
+        and getattr(last_page_link.page, "scan", None)
+        and getattr(last_page_link.page.scan, "filename", None)
+    ):
         end_scan_filename = last_page_link.page.scan.filename or ""
 
     return start_scan_filename, end_scan_filename
@@ -96,12 +116,22 @@ def get_start_end_scan_filenames(document):
 
 def get_ordered_page_links(document):
     """Get document page links sorted by scan filename."""
-    if not document.pages:
+    pages = getattr(document, "pages", None)
+    if not pages:
         return []
 
     return sorted(
-        document.pages,
-        key=lambda p: ((p.page and p.page.scan and p.page.scan.filename) or ""),
+        pages,
+        key=lambda p: (
+            p.page.scan.filename
+            if (
+                p
+                and getattr(p, "page", None)
+                and getattr(p.page, "scan", None)
+                and getattr(p.page.scan, "filename", None)
+            )
+            else ""
+        ),
     )
 
 
@@ -123,14 +153,22 @@ def get_start_end_scan_types(document):
     start_scan_type = ""
     end_scan_type = ""
 
-    if first_page_link.page and first_page_link.page.scan:
+    if (
+        first_page_link
+        and getattr(first_page_link, "page", None)
+        and getattr(first_page_link.page, "scan", None)
+    ):
         scan_type = getattr(first_page_link.page.scan, "scan_type", None)
         if scan_type:
             start_scan_type = (
                 scan_type.value if hasattr(scan_type, "value") else str(scan_type)
             )
 
-    if last_page_link.page and last_page_link.page.scan:
+    if (
+        last_page_link
+        and getattr(last_page_link, "page", None)
+        and getattr(last_page_link.page, "scan", None)
+    ):
         scan_type = getattr(last_page_link.page.scan, "scan_type", None)
         if scan_type:
             end_scan_type = (
@@ -170,20 +208,24 @@ def get_date_end(document):
 
 def get_identification_method(document):
     """Get the identification method name."""
-    if document.method:
-        return document.method.name
+    method = getattr(document, "method", None)
+    if method:
+        return getattr(method, "name", "") or ""
     return ""
 
 
 def get_document_type_uuids(document):
     """Get a comma-separated list of linked document type UUIDs."""
-    if not document.document_types_linked:
+    types_linked = getattr(document, "document_types_linked", None)
+    if not types_linked:
         return ""
 
     type_ids = sorted(
         f"{TYPE_URI_PREFIX}{link.document_type.id}"
-        for link in document.document_types_linked
-        if link.document_type and link.document_type.id
+        for link in types_linked
+        if link
+        and getattr(link, "document_type", None)
+        and getattr(link.document_type, "id", None)
     )
     return ",".join(type_ids)
 
@@ -228,7 +270,9 @@ def export_documents_csv(output_dir, gzipped, s3_client, s3_config):
         )
 
         # Write data rows
-        for document in tqdm(documents, desc="Exporting documents to CSV", unit="document"):
+        for document in tqdm(
+            documents, desc="Exporting documents to CSV", unit="document"
+        ):
             start_scan_filename, end_scan_filename = get_start_end_scan_filenames(
                 document
             )
@@ -268,7 +312,9 @@ def export_documents_csv(output_dir, gzipped, s3_client, s3_config):
             content_type="text/csv; charset=utf-8",
         )
 
-        logger.info(f"Exported {len(documents)} documents to {output_dir}/documents.csv")
+        logger.info(
+            f"Exported {len(documents)} documents to {output_dir}/documents.csv"
+        )
 
 
 def parse_args():
@@ -277,8 +323,8 @@ def parse_args():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=os.environ.get("DOCUMENTS_CSV_OUTPUT_DIR", "data/s3/document"),
-        help="Base local output directory (default: data/s3/document, or DOCUMENTS_CSV_OUTPUT_DIR env var)",
+        default=os.environ.get("DOCUMENTS_CSV_OUTPUT_DIR", "data/output/s3/document"),
+        help="Base local output directory (default: data/output/s3/document, or DOCUMENTS_CSV_OUTPUT_DIR env var)",
     )
     parser.add_argument(
         "--gzipped", action="store_true", help="Gzip-compress the output file"

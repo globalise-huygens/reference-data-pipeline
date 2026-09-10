@@ -354,17 +354,17 @@ $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 # GLOBALISE document review app) and write final JSON-LD/CSV straight to
 # the S3 output directory, so there is no CSV/XML/X3ML/RDF conversion step.
 $(S3_DIR)/.document.stamp:
-	@mkdir -p $(S3_DIR)/document $(S3_DIR)/objects
+	@mkdir -p $(S3_DIR)/document $(S3_DIR)/inventory
 	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents_csv.py $(S3_DIR)/document $(GZIP_FLAG) $(S3_FLAGS)
-	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents.py $(S3_DIR)/objects $(GZIP_FLAG) $(S3_FLAGS)
-	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_manifests.py $(S3_DIR)/objects/inventory $(GZIP_FLAG) $(S3_FLAGS)
-	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_collection.py $(S3_DIR)/objects/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents.py $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_manifests.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_collection.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 
 #------------------------------------------------------------
 # 9. Catalog Pipeline
 #------------------------------------------------------------
-$(S3_DIR)/.catalog.stamp:
+$(S3_DIR)/.catalog.stamp: $(S3_DIR)/.organization.stamp $(S3_DIR)/.place.stamp $(S3_DIR)/.person.stamp $(S3_DIR)/.polity.stamp $(S3_DIR)/.ship.stamp $(S3_DIR)/.measurement.stamp $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/.document.stamp
 	@mkdir -p $(S3_DIR)
 	$(PYTHON) scripts/convert_to_json.py catalog $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
@@ -379,6 +379,7 @@ test:
 	$(PYTHON) -m doctest scripts/csv_to_xml.py
 	$(PYTHON) -m doctest scripts/xlsx_to_csv.py
 	$(PYTHON) -m doctest scripts/convert_to_json.py
+	$(PYTHON) -m doctest scripts/document/export.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
         clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document
@@ -391,14 +392,14 @@ clean-organization:
 	rm -rf data/input/organization/xml data/input/organization/xml/.stamp
 	rm -rf data/output/organization/rdf data/output/organization/rdf/.stamp data/output/organization/rdf/.*.stamp
 	rm -rf data/output/organization/organization.ttl
-	rm -rf $(S3_DIR)/.organization.stamp $(S3_DIR)/organization*.jsonld.gz $(S3_DIR)/organization*.jsonld
+	rm -rf $(S3_DIR)/.organization.stamp $(S3_DIR)/group
 
 clean-place:
 	rm -rf data/input/place/csv data/input/place/csv/.stamp
 	rm -rf data/input/place/xml data/input/place/xml/.stamp
 	rm -rf data/output/place/rdf data/output/place/rdf/.stamp data/output/place/rdf/.*.stamp
 	rm -rf data/output/place/place.ttl
-	rm -rf $(S3_DIR)/.place.stamp $(S3_DIR)/place*.jsonld.gz $(S3_DIR)/place*.jsonld
+	rm -rf $(S3_DIR)/.place.stamp $(S3_DIR)/place
 
 clean-person:
 	rm -rf data/input/person/csv data/input/person/csv/.stamp
@@ -406,34 +407,34 @@ clean-person:
 	rm -rf data/output/person/rdf data/output/person/rdf/.stamp data/output/person/rdf/.*.stamp
 	rm -rf data/output/person/ttl data/output/person/ttl/.stamp data/output/person/ttl/.*.stamp
 	rm -rf data/output/person/person.ttl
-	rm -rf $(S3_DIR)/.person.stamp $(S3_DIR)/person*.jsonld.gz $(S3_DIR)/person*.jsonld
+	rm -rf $(S3_DIR)/.person.stamp $(S3_DIR)/person
 
 clean-polity:
 	rm -rf data/input/polity/csv data/input/polity/csv/.stamp
 	rm -rf data/input/polity/xml data/input/polity/xml/.stamp
 	rm -rf data/output/polity/rdf data/output/polity/rdf/.stamp data/output/polity/rdf/.*.stamp
 	rm -rf data/output/polity/polity.ttl
-	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity*.jsonld.gz $(S3_DIR)/polity*.jsonld $(S3_DIR)/rulership*.jsonld.gz $(S3_DIR)/rulership*.jsonld
+	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity $(S3_DIR)/rulership
 
 clean-ship:
 	rm -rf data/input/ship/csv data/input/ship/csv/.stamp
 	rm -rf data/input/ship/xml data/input/ship/xml/.stamp
 	rm -rf data/output/ship/rdf data/output/ship/rdf/.stamp data/output/ship/rdf/.*.stamp
 	rm -rf data/output/ship/ship.ttl
-	rm -rf $(S3_DIR)/.ship.stamp $(S3_DIR)/ship*.jsonld.gz $(S3_DIR)/ship*.jsonld $(S3_DIR)/voyage*.jsonld.gz $(S3_DIR)/voyage*.jsonld
+	rm -rf $(S3_DIR)/.ship.stamp $(S3_DIR)/ship $(S3_DIR)/voyage
 
 clean-measurement:
 	rm -rf data/input/measurement/csv data/input/measurement/csv/.stamp
 	rm -rf data/input/measurement/xml data/input/measurement/xml/.stamp
 	rm -rf data/output/measurement/rdf data/output/measurement/rdf/.stamp data/output/measurement/rdf/.*.stamp
 	rm -rf data/output/measurement/measurement.ttl
-	rm -rf $(S3_DIR)/.measurement.stamp $(S3_DIR)/conversion*.jsonld.gz $(S3_DIR)/conversion*.jsonld $(S3_DIR)/occurrence*.jsonld.gz $(S3_DIR)/occurrence*.jsonld
+	rm -rf $(S3_DIR)/.measurement.stamp $(S3_DIR)/conversion $(S3_DIR)/occurrence
 
 clean-thesaurus:
-	rm -rf data/output/concept $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/concept*.jsonld.gz $(S3_DIR)/concept*.jsonld
+	rm -rf data/output/concept $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/thesaurus
 
 clean-document:
-	rm -rf $(S3_DIR)/.document.stamp $(S3_DIR)/document $(S3_DIR)/objects/document $(S3_DIR)/objects/inventory
+	rm -rf $(S3_DIR)/.document.stamp $(S3_DIR)/document $(S3_DIR)/inventory $(S3_DIR)/objects
 
 clean-json:
 	rm -rf $(S3_DIR)/* $(S3_DIR)/.*.stamp data/output/concept

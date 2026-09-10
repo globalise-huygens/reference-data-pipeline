@@ -29,7 +29,7 @@ BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
 
 def natural_inv_sort_key(inv):
     """Sort inventory numbers naturally: numeric prefix then alphabetic suffix."""
-    s = inv.inventory_number or ""
+    s = getattr(inv, "inventory_number", None) or ""
     i = 0
     while i < len(s) and s[i].isdigit():
         i += 1
@@ -78,12 +78,15 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
             manifest_ref["navDate"] = f"{inventory.date_end}T00:00:00"
 
         # Add thumbnail from first scan
-        if inventory.scans:
-            first_scan = sorted(inventory.scans, key=lambda s: s.filename or "")[0]
+        if getattr(inventory, "scans", None):
+            first_scan = sorted(
+                inventory.scans, key=lambda s: getattr(s, "filename", "") or ""
+            )[0]
             thumb_url = first_scan.get_image_url(size="982,")
             service_id = None
-            if getattr(first_scan, "iiif_image_info", False):
-                service_id = first_scan.iiif_image_info.replace("/info.json", "")
+            image_info = getattr(first_scan, "iiif_image_info", None)
+            if image_info:
+                service_id = image_info.replace("/info.json", "")
             if thumb_url and service_id:
                 manifest_ref["thumbnail"] = [
                     {
@@ -93,8 +96,8 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
                         "width": first_scan.width,
                         "service": [
                             {
-                                "@id": service_id,
-                                "@type": "ImageService3",
+                                "id": service_id,
+                                "type": "ImageService3",
                                 "profile": "level2",
                                 "format": "image/jpeg",
                             }
@@ -181,7 +184,9 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
         collection, "collection.json", output_dir, gzipped, s3_client, s3_config
     )
 
-    print(f"Done. Collection with {len(items)} manifests written to {output_dir}/collection.json")
+    print(
+        f"Done. Collection with {len(items)} manifests written to {output_dir}/collection.json"
+    )
 
     session.close()
 
@@ -191,8 +196,8 @@ def parse_args():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=os.environ.get("MANIFEST_OUTPUT_DIR", "data/s3/objects/inventory"),
-        help="Base local output directory (default: data/s3/objects/inventory, or MANIFEST_OUTPUT_DIR env var)",
+        default=os.environ.get("COLLECTION_OUTPUT_DIR", "data/output/s3/inventory"),
+        help="Base local output directory (default: data/output/s3/inventory, or COLLECTION_OUTPUT_DIR env var)",
     )
     parser.add_argument(
         "--gzipped", action="store_true", help="Output gzipped JSON files"

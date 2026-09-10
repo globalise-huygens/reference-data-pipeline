@@ -28,6 +28,7 @@ from utils import (
     build_s3_upload_config,
     create_s3_client,
     output_framed_json,
+    generate_hydra_index_pages,
 )
 from models import Inventory, Document, Series
 from export import (
@@ -39,11 +40,12 @@ from export import (
 )
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
+BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
 
 
 def natural_inv_sort_key(inv):
     """Sort inventory numbers naturally: numeric prefix then alphabetic suffix."""
-    s = inv.inventory_number or ""
+    s = getattr(inv, "inventory_number", None) or ""
     i = 0
     while i < len(s) and s[i].isdigit():
         i += 1
@@ -57,7 +59,9 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     session = Session(engine)
 
     def emit(data, relative_path):
-        output_framed_json(data, relative_path, output_dir, gzipped, s3_client, s3_config)
+        output_framed_json(
+            data, relative_path, output_dir, gzipped, s3_client, s3_config
+        )
 
     print("Loading inventories...")
     inventories = session.query(Inventory).all()
@@ -75,9 +79,7 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         ann_data = inventory_to_annotations_jsonld(inventory)
         emit(
             ann_data,
-            os.path.join(
-                "inventory", f"{inventory.inventory_number}.annotations.json"
-            ),
+            os.path.join("inventory", f"{inventory.inventory_number}.annotations.json"),
         )
 
         # Export individual AnnotationCollections (.annotations.transcriptions, .annotations.entities, .annotations.events)
@@ -96,8 +98,35 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     elapsed_inv = time.time() - t0
     print(f"Exported {len(inventories)} inventories in {elapsed_inv:.1f}s.")
 
-    # 1b. Export the Series (Sets) into the same file system, resolving subsets and curated holdings.
-    print("Loading Series (Sets)...")
+    # Generate Hydra index pages for inventories
+    inv_members = []
+    for inv in inventories:
+        title_str = f"Inventory {inv.inventory_number}"
+        if getattr(inv, "titles", None):
+            t_list = [t.title for t in inv.titles if getattr(t, "title", None)]
+            if t_list:
+                title_str = f"Inventory {inv.inventory_number}: {'; '.join(t_list)}"
+        inv_members.append(
+            {
+                "@id": f"{BASE_URI}/inventory:{inv.inventory_number}",
+                "@type": "CuratedHolding",
+                "title": title_str,
+            }
+        )
+    print(f"Generating Hydra index pages for {len(inv_members)} inventories...")
+    generate_hydra_index_pages(
+        inv_members,
+        cat_title="Inventory Collection",
+        m_type="CuratedHolding",
+        c_uri="https://linked.art/ns/terms/CuratedHolding",
+        uri_prefix="inventory:",
+        emit_fn=emit,
+        page_size=1000,
+        base_uri=BASE_URI,
+    )
+
+    # 1b. Export the top-level global Set of all top-level series
+    print("Loading Series for global Set...")
     series_all = (
         session.query(Series)
         .options(selectinload(Series.sub_series), selectinload(Series.inventories))
@@ -105,39 +134,6 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     )
     print(f"Loaded {len(series_all)} series records.")
 
-    for s in tqdm(series_all, desc="Exporting series", unit="series"):
-        s_data = series_to_jsonld(s)
-
-        # Inject the members (which are sub-series and inventories)
-        members = []
-
-        # 1. Sub-sets
-        for sub_s in sorted(s.sub_series, key=lambda x: x.title or ""):
-            members.append(
-                {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/series:{sub_s.id}",
-                    "type": "Set",
-                    "_label": sub_s.title,
-                }
-            )
-
-        # 2. CuratedHoldings
-        sorted_invs = sorted(s.inventories, key=natural_inv_sort_key)
-        for inv in sorted_invs:
-            members.append(
-                {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
-                    "type": "CuratedHolding",
-                    "_label": f"Inventory {inv.inventory_number}",
-                }
-            )
-
-        if members:
-            s_data["member"] = members
-
-        emit(s_data, os.path.join("inventory", f"series_{s.id}.json"))
-
-    # 1c. Export the top-level global Set of all top-level series
     print("Generating top level Set metadata...")
     top_level_series = [s for s in series_all if s.part_of_id is None]
     top_level_series.sort(key=lambda x: x.title or "")
@@ -151,10 +147,12 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
             del s_data["member_of"]
 
         members = []
-        for sub_s in sorted(s.sub_series, key=lambda x: x.title or ""):
+        for sub_s in sorted(
+            s.sub_series or [], key=lambda x: getattr(x, "title", "") or ""
+        ):
             members.append(build_nested_member(sub_s))
 
-        for inv in sorted(s.inventories, key=natural_inv_sort_key):
+        for inv in sorted(s.inventories or [], key=natural_inv_sort_key):
             members.append(
                 {
                     "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
@@ -240,6 +238,28 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     elapsed_doc = time.time() - t1
     print(f"Exported {total_docs} documents in {elapsed_doc:.1f}s.")
 
+    # Generate Hydra index pages for documents
+    doc_members = []
+    for doc in documents:
+        doc_members.append(
+            {
+                "@id": f"{BASE_URI}/document:{doc.id}",
+                "@type": "PhysicalHumanMadeThing",
+                "title": getattr(doc, "title", None) or f"Document {doc.id}",
+            }
+        )
+    print(f"Generating Hydra index pages for {len(doc_members)} documents...")
+    generate_hydra_index_pages(
+        doc_members,
+        cat_title="Document Collection",
+        m_type="PhysicalHumanMadeThing",
+        c_uri="https://linked.art/ns/terms/PhysicalHumanMadeThing",
+        uri_prefix="document:",
+        emit_fn=emit,
+        page_size=1000,
+        base_uri=BASE_URI,
+    )
+
     print("\nDone.")
     session.close()
 
@@ -251,8 +271,8 @@ def parse_args():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=os.environ.get("DOCUMENTS_OUTPUT_DIR", "data/s3/objects"),
-        help="Base local output directory (default: data/s3/objects, or DOCUMENTS_OUTPUT_DIR env var)",
+        default=os.environ.get("DOCUMENTS_OUTPUT_DIR", "data/output/s3"),
+        help="Base local output directory (default: data/output/s3, or DOCUMENTS_OUTPUT_DIR env var)",
     )
     parser.add_argument(
         "--gzipped", action="store_true", help="Output gzipped JSON files"

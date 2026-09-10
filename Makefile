@@ -380,6 +380,8 @@ test:
 	$(PYTHON) -m doctest scripts/xlsx_to_csv.py
 	$(PYTHON) -m doctest scripts/convert_to_json.py
 	$(PYTHON) -m doctest scripts/document/export.py
+	$(PYTHON) -m doctest scripts/document/export_documents.py
+	$(PYTHON) -m doctest scripts/document/export_documents_csv.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
         clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document

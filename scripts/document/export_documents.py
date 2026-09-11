@@ -19,6 +19,9 @@ import time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
+from functools import partial
+from typing import Any, Dict
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, selectinload
 from tqdm import tqdm
@@ -30,7 +33,16 @@ from utils import (
     output_framed_json,
     generate_hydra_index_pages,
 )
-from models import Inventory, Document, Series
+from models import (
+    Document,
+    Document2DocumentType,
+    Document2ExternalID,
+    Inventory,
+    Page,
+    Page2Document,
+    Series,
+    Settlement,
+)
 from export import (
     document_physical_to_jsonld,
     inventory_to_jsonld,
@@ -54,17 +66,60 @@ def natural_inv_sort_key(inv):
     return (num, suffix)
 
 
+def build_nested_series_member(s) -> Dict[str, Any]:
+    """
+    Recursively build the full embedded structure for a Series and its sub-series/inventories.
+    """
+    s_data = series_to_jsonld(s)
+
+    # Remove 'member_of' if it exists since we're nesting top-down
+    if "member_of" in s_data:
+        del s_data["member_of"]
+
+    members = []
+    for sub_s in sorted(
+        s.sub_series or [], key=lambda x: getattr(x, "title", "") or ""
+    ):
+        members.append(build_nested_series_member(sub_s))
+
+    for inv in sorted(s.inventories or [], key=natural_inv_sort_key):
+        members.append(
+            {
+                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
+                "type": "CuratedHolding",
+                "_label": f"Inventory {inv.inventory_number}",
+            }
+        )
+
+    if members:
+        s_data["member"] = members
+
+    return s_data
+
+
 def export_documents(output_dir, gzipped, s3_client, s3_config):
     engine = create_engine(DATABASE_URL, echo=False)
     session = Session(engine)
 
-    def emit(data, relative_path):
-        output_framed_json(
-            data, relative_path, output_dir, gzipped, s3_client, s3_config
-        )
+    emit = partial(
+        output_framed_json,
+        output_dir=output_dir,
+        gzipped=gzipped,
+        s3_client=s3_client,
+        s3_config=s3_config,
+    )
 
     print("Loading inventories...")
-    inventories = session.query(Inventory).all()
+    inventories = (
+        session.query(Inventory)
+        .options(
+            selectinload(Inventory.titles),
+            selectinload(Inventory.member_of_series),
+            selectinload(Inventory.documents),
+            selectinload(Inventory.scans),
+        )
+        .all()
+    )
     inventories.sort(key=natural_inv_sort_key)
     print(f"Loaded {len(inventories)} inventories.")
 
@@ -138,34 +193,6 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     top_level_series = [s for s in series_all if s.part_of_id is None]
     top_level_series.sort(key=lambda x: x.title or "")
 
-    # Recursively build the full embedded structure
-    def build_nested_member(s):
-        s_data = series_to_jsonld(s)
-
-        # Remove 'member_of' if it exists since we're nesting top-down
-        if "member_of" in s_data:
-            del s_data["member_of"]
-
-        members = []
-        for sub_s in sorted(
-            s.sub_series or [], key=lambda x: getattr(x, "title", "") or ""
-        ):
-            members.append(build_nested_member(sub_s))
-
-        for inv in sorted(s.inventories or [], key=natural_inv_sort_key):
-            members.append(
-                {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
-                    "type": "CuratedHolding",
-                    "_label": f"Inventory {inv.inventory_number}",
-                }
-            )
-
-        if members:
-            s_data["member"] = members
-
-        return s_data
-
     set_data = {
         "@context": "https://linked.art/ns/v1/linked-art.json",
         "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:set",
@@ -184,7 +211,7 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
                 "content": "Set of all VOC inventories that are part of the Globalise corpus",
             }
         ],
-        "member": [build_nested_member(s) for s in top_level_series],
+        "member": [build_nested_series_member(s) for s in top_level_series],
         "subject_of": [
             {
                 "type": "LinguisticObject",
@@ -224,6 +251,18 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         session.query(Document)
         .join(Document.inventory)
         .filter(Inventory.inventory_number.in_(["1053", "3598"]))
+        .options(
+            selectinload(Document.document_types_linked).selectinload(
+                Document2DocumentType.document_type
+            ),
+            selectinload(Document.external_ids).selectinload(
+                Document2ExternalID.external
+            ),
+            selectinload(Document.location).selectinload(Settlement.labels),
+            selectinload(Document.pages)
+            .selectinload(Page2Document.page)
+            .selectinload(Page.scan),
+        )
         .all()
     )
 

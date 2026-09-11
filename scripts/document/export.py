@@ -4,7 +4,6 @@ Moved out of app.py to keep routes lean.
 """
 
 import os
-import re
 import sys
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
@@ -91,21 +90,13 @@ def load_scan_entities_from_parquet(
     return scan_to_entities
 
 
-def slugify(value: str) -> str:
-    """Simple slugify: lowercase, replace spaces/underscores with hyphens, strip non-alnum-hyphen."""
-    if not value:
-        return "unknown"
-
-    v = value.lower().strip()
-    v = re.sub(r"[\s_]+", "-", v)
-    v = re.sub(r"[^a-z0-9\-]", "", v)
-    return v or "unknown"
-
-
 def get_annotationcollections_for_inventory(
     inventory: Inventory,
 ) -> List[Dict[str, Any]]:
-    """Return a list of Linked Art AnnotationCollection objects for the given inventory (CuratedHolding)."""
+    """
+    Return a list of Linked Art AnnotationCollection objects for the given inventory (CuratedHolding).
+    """
+
     collections: List[Dict[str, Any]] = []
     if not inventory:
         return collections
@@ -200,7 +191,10 @@ def get_annotationcollections_for_inventory(
 
 
 def inventory_to_annotations_jsonld(inventory: Inventory) -> Dict[str, Any]:
-    """Serialize the annotations for an inventory (.annotations) as a Linked Art Set containing its AnnotationCollections."""
+    """
+    Serialize the annotations for an inventory (.annotations) as a Linked Art Set containing its AnnotationCollections.
+    """
+
     collections = (
         get_annotationcollections_for_inventory(inventory) if inventory else []
     )
@@ -219,8 +213,8 @@ def inventory_to_annotations_jsonld(inventory: Inventory) -> Dict[str, Any]:
 
 def scan_to_jsonld(scan) -> Dict[str, Any]:
     return {
-        "@context": "https://linked.art/ns/v1/linked-art.json",
-        "id": f"urn:uuid:{scan.id}",
+        # "@context": "https://linked.art/ns/v1/linked-art.json",
+        # "id": f"urn:uuid:{scan.id}",
         "type": "DigitalObject",
         "_label": f"Scan {scan.filename}",
         "classified_as": [
@@ -233,14 +227,18 @@ def scan_to_jsonld(scan) -> Dict[str, Any]:
         "identified_by": [
             {
                 "type": "Identifier",
-                "classified_as": None,  # TODO: map if needed
+                "classified_as": {
+                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:cae829ae-d2ed-4970-99f6-ceb987a4a1fb",
+                    "type": "Type",
+                    "_label": "National Archives image identifier",
+                },
                 "content": scan.na_identifier or "",
             },
-            {
-                "type": "Identifier",
-                "classified_as": None,  # TODO: map if needed
-                "content": scan.id,
-            },
+            # {
+            #     "type": "Identifier",
+            #     "classified_as": None,  # TODO: map if needed
+            #     "content": scan.id,
+            # },
         ],
         "dimension": [
             {
@@ -278,82 +276,15 @@ def scan_to_jsonld(scan) -> Dict[str, Any]:
         },
         "format": "image/jpeg",
         # 'digitally_carries' and 'digitally_shows' are placeholders for now
-        "digitally_carries": None,
-        "digitally_shows": None,
+        # "digitally_carries": None,
+        # "digitally_shows": None,
     }
-
-
-# Helper to serialize a Page to JSON-LD (preliminary, can be extended)
-# Some fields are placeholders or require further mapping
-
-
-def page_to_jsonld(page) -> Dict[str, Any]:
-    # Compose the id using a placeholder pattern; adjust as needed for your real IDs
-    page_id_url = (
-        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{page.id}"
-    )
-    # Determine recto/verso classification id and label
-    if page.recto_verso == RectoVerso.RECTO:
-        classification_id = "http://vocab.getty.edu/aat/300078817"  # Recto
-        recto_verso_label = "Recto"
-    elif page.recto_verso == RectoVerso.VERSO:
-        classification_id = "http://vocab.getty.edu/aat/300010292"  # Verso
-        recto_verso_label = "Verso"
-    else:
-        classification_id = (
-            "http://vocab.getty.edu/aat/300241583"  # Generic part type fallback???
-        )
-        recto_verso_label = "Page"
-
-    # Shallow reference to the associated Scan (if present)
-    scan_ref = None
-    if page.scan is not None:
-        scan_ref = scan_to_jsonld(page.scan)
-
-    return {
-        "@context": "https://linked.art/ns/v1/linked-art.json",
-        "id": page_id_url,
-        "type": "PhysicalHumanMadeThing",
-        "_label": f"Page {page.page_or_folio_number or page.id[:8]}",
-        "classified_as": [
-            {
-                "id": classification_id,
-                "type": "Type",
-                "_label": recto_verso_label,
-                "classified_as": [
-                    {
-                        "id": "http://vocab.getty.edu/aat/300241583",
-                        "type": "Type",
-                        "_label": "Part Type",
-                    }
-                ],
-            }
-        ],
-        "carries": {
-            "id": None,  # TODO: supply LinguisticObject id when available
-            "type": "LinguisticObject",
-            "_label": "Textual content of the page",
-            "language": scan_languages_jsonld(page.scan) or None,
-            "digitally_carried_by": {
-                "id": "",
-                "type": "DigitalObject",
-                "_label": f"PageXML of {page.scan.filename if page.scan else 'unknown scan'}",
-            },
-        },
-        "shows": {
-            "id": None,  # TODO: supply VisualItem id when available
-            "type": "VisualItem",
-            "_label": "Visual depiction of the page.",
-            "digitally_shown_by": scan_ref,
-        },
-    }
-
-
-# Physical Document JSON-LD (material manifestation of a conceptual document)
 
 
 def settlement_to_place_jsonld(settlement) -> Dict[str, Any]:
-    """Serialize a Settlement to a Linked Art Place object."""
+    """
+    Serialize a Settlement to a Linked Art Place object.
+    """
     labels = []
     if getattr(settlement, "labels", None):
         labels = [
@@ -419,7 +350,8 @@ LANGUAGE_MAP: Dict[str, Dict[str, Optional[str]]] = {
 
 
 def language_code_to_jsonld(code: str) -> Optional[Dict[str, Any]]:
-    """Map a single ISO 639-3 code to a Linked Art Language object.
+    """
+    Map a single ISO 639-3 code to a Linked Art Language object.
 
     Returns None for empty/unknown codes (i.e. no language detected).
     """
@@ -439,7 +371,10 @@ def language_code_to_jsonld(code: str) -> Optional[Dict[str, Any]]:
 
 
 def scan_languages_jsonld(scan) -> List[Dict[str, Any]]:
-    """Map a single Scan's raw `languages` field to a list of known Language objects."""
+    """
+    Map a single Scan's raw `languages` field to a list of known Language objects.
+    """
+
     raw = getattr(scan, "languages", None) if scan is not None else None
     if not raw:
         return []
@@ -458,7 +393,10 @@ def scan_languages_jsonld(scan) -> List[Dict[str, Any]]:
 
 
 def document_languages_jsonld(document) -> List[Dict[str, Any]]:
-    """Collect the distinct known languages across all scans linked to a document's pages."""
+    """
+    Collect the distinct known languages across all scans linked to a document's pages.
+    """
+
     languages: List[Dict[str, Any]] = []
     seen = set()
     for link in getattr(document, "pages", None) or []:
@@ -473,12 +411,19 @@ def document_languages_jsonld(document) -> List[Dict[str, Any]]:
     return languages
 
 
-def document_physical_to_jsonld(
-    document,
-    links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
-) -> Dict[str, Any]:
-    base_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}"
-    # Classification from linked (thesaurus) document types
+def document_classifications_jsonld(document) -> List[Dict[str, Any]]:
+    """
+    Generate Linked Art Type classifications from document_types_linked.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> dt = SimpleNamespace(id="uuid-1", pref_label_en="Letter", pref_label_nl="Brief")
+        >>> doc = SimpleNamespace(document_types_linked=[SimpleNamespace(document_type=dt)])
+        >>> document_classifications_jsonld(doc)
+        [{'id': 'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:uuid-1', 'type': 'Type', '_label': 'Letter (document type)', 'prefLabel': [{'@language': 'nl', '@value': 'Brief'}, {'@language': 'en', '@value': 'Letter'}]}]
+        >>> document_classifications_jsonld(SimpleNamespace(document_types_linked=[]))
+        []
+    """
     classified = []
     if getattr(document, "document_types_linked", None):
         for dt_link in document.document_types_linked:
@@ -499,137 +444,212 @@ def document_physical_to_jsonld(
                     "prefLabel": pref_label,
                 }
             )
+    return classified
 
-    # Title object
-    title_obj = None
+
+def document_title_jsonld(document) -> Optional[Dict[str, Any]]:
+    """
+    Generate Linked Art Title object for a document.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> document_title_jsonld(SimpleNamespace(title="Missive"))
+        {'type': 'Title', 'content': 'Missive', '_label': 'Title of the document'}
+        >>> document_title_jsonld(SimpleNamespace(title=None)) is None
+        True
+    """
+
     if getattr(document, "title", None):
-        title_obj = {
+        return {
             "type": "Title",
             "content": document.title,
             "_label": "Title of the document",
         }
+    return None
 
-    # Timespan
-    timespan = None
-    if (getattr(document, "date_earliest_begin", None) is not None) or (
-        getattr(document, "date_latest_end", None) is not None
+
+def document_timespan_jsonld(document) -> Optional[Dict[str, Any]]:
+    """
+    Generate Linked Art Timespan object for a document.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> from datetime import date
+        >>> doc = SimpleNamespace(
+        ...     date_earliest_begin=date(1650, 1, 1),
+        ...     date_latest_begin=date(1650, 1, 5),
+        ...     date_earliest_end=date(1650, 2, 1),
+        ...     date_latest_end=date(1650, 2, 10),
+        ...     date_text="1-5 Jan to 1-10 Feb 1650",
+        ... )
+        >>> ts = document_timespan_jsonld(doc)
+        >>> ts["type"]
+        'Timespan'
+        >>> ts["begin_of_the_begin"]
+        '1650-01-01T00:00:00'
+        >>> ts["end_of_the_end"]
+        '1650-02-10T23:59:59'
+        >>> ts["name"]["content"]
+        '1-5 Jan to 1-10 Feb 1650'
+        >>> document_timespan_jsonld(SimpleNamespace(date_earliest_begin=None, date_latest_end=None)) is None
+        True
+    """
+
+    if (getattr(document, "date_earliest_begin", None) is None) and (
+        getattr(document, "date_latest_end", None) is None
     ):
-        timespan = {
-            "type": "Timespan",
-            "begin_of_the_begin": (
-                str(document.date_earliest_begin) + "T00:00:00"
-                if getattr(document, "date_earliest_begin", None) is not None
-                else None
-            ),
-            "end_of_the_begin": (
-                str(document.date_latest_begin) + "T23:59:59"
-                if getattr(document, "date_latest_begin", None) is not None
-                else None
-            ),
-            "begin_of_the_end": (
-                str(document.date_earliest_end) + "T00:00:00"
-                if getattr(document, "date_earliest_end", None) is not None
-                else None
-            ),
-            "end_of_the_end": (
-                str(document.date_latest_end) + "T23:59:59"
-                if getattr(document, "date_latest_end", None) is not None
-                else None
-            ),
-        }
-        if getattr(document, "date_text", None):
-            timespan["name"] = {
-                "type": "Name",
-                "content": document.date_text,
-                "_label": document.date_text,
-            }  # type: ignore[assignment]
+        return None
 
-    # Parts: physical pages (recto/verso) from Page2Document
-    parts: List[Dict[str, Any]] = []
-    if getattr(document, "pages", None):
-        # Order by index
-        sorted_page_links = sorted(
-            document.pages,
-            key=lambda p: (
-                p.index if (p and getattr(p, "index", None) is not None) else 0
-            ),
-        )
-        for link in sorted_page_links:
-            pg = getattr(link, "page", None)
-            if pg is None:
-                continue
-            label: Optional[str]
-            if pg.page_or_folio_number and pg.recto_verso:
-                suffix = "r" if pg.recto_verso == RectoVerso.RECTO else "v"
-                label = f"Fol. {pg.page_or_folio_number}{suffix}"
-            elif pg.page_or_folio_number:
-                label = f"Page {pg.page_or_folio_number}"
-            else:
-                label = f"Physical Page {pg.id[:8]}"
-
-            # Determine recto/verso classification
-            if pg.recto_verso == RectoVerso.RECTO:
-                classification_id = "http://vocab.getty.edu/aat/300078817"  # Recto
-                recto_verso_label = "Recto"
-            elif pg.recto_verso == RectoVerso.VERSO:
-                classification_id = "http://vocab.getty.edu/aat/300010292"  # Verso
-                recto_verso_label = "Verso"
-            else:
-                classification_id = (
-                    "http://vocab.getty.edu/aat/300241583"  # Generic part
-                )
-                recto_verso_label = "Page"
-
-            # Build scan reference if available
-            scan_ref = None
-            if getattr(pg, "scan", None):
-                scan_ref = scan_to_jsonld(pg.scan)
-
-            # Create detailed part with carries and shows
-            part: Dict[str, Any] = {
-                # "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}#page:{pg.id}",
-                "type": "PhysicalHumanMadeThing",
-                "_label": label,
-                "classified_as": {
-                    "id": classification_id,
-                    "type": "Type",
-                    "_label": recto_verso_label,
-                    "classified_as": [
-                        {
-                            "id": "http://vocab.getty.edu/aat/300241583",
-                            "type": "Type",
-                            "_label": "Part Type",
-                        }
-                    ],
-                },
-                "carries": {
-                    # TODO: reference PageXML/text resource when available
-                    "type": "LinguisticObject",
-                    "_label": "Textual content of the page",
-                    "language": scan_languages_jsonld(pg.scan) or None,
-                    "digitally_carried_by": {
-                        # TODO: reference PageXML service
-                        "type": "DigitalObject",
-                        "_label": "PageXML + Plain Text",
-                    },
-                },
-                "shows": {
-                    # TODO: reference visual item when available
-                    "type": "VisualItem",
-                    "_label": "Visual depiction of the page.",
-                    "digitally_shown_by": scan_ref,
-                },
-            }
-
-            parts.append(part)
-
-    subject_of = {
-        # "id": f"https://globalise.huygens.knaw.nl/document/{document.id}", # TODO: viewer uri???
-        "type": "DigitalObject",
-        "_label": "This document shown by Globalise",
+    timespan: Dict[str, Any] = {
+        "type": "Timespan",
+        "begin_of_the_begin": (
+            str(document.date_earliest_begin) + "T00:00:00"
+            if getattr(document, "date_earliest_begin", None) is not None
+            else None
+        ),
+        "end_of_the_begin": (
+            str(document.date_latest_begin) + "T23:59:59"
+            if getattr(document, "date_latest_begin", None) is not None
+            else None
+        ),
+        "begin_of_the_end": (
+            str(document.date_earliest_end) + "T00:00:00"
+            if getattr(document, "date_earliest_end", None) is not None
+            else None
+        ),
+        "end_of_the_end": (
+            str(document.date_latest_end) + "T23:59:59"
+            if getattr(document, "date_latest_end", None) is not None
+            else None
+        ),
     }
+    if getattr(document, "date_text", None):
+        timespan["name"] = {
+            "type": "Name",
+            "content": document.date_text,
+            "_label": document.date_text,
+        }
+    return timespan
 
-    # Identifiers: the two possible external identifiers (e.g. OBP_INDEX, TANAP)
+
+def document_parts_jsonld(document) -> List[Dict[str, Any]]:
+    """
+    Generate physical page parts (recto/verso) for a document.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> from models import RectoVerso
+        >>> scan = SimpleNamespace(filename="NL-HaNA_1.04.02_1053_0001", na_identifier="na-1", width=1000, height=2000, languages=None, get_image_url=lambda size="max": "https://example.org/image.jpg")
+        >>> page = SimpleNamespace(id="page-1", page_or_folio_number="12", recto_verso=RectoVerso.RECTO, scan=scan)
+        >>> doc = SimpleNamespace(pages=[SimpleNamespace(index=0, page=page)])
+        >>> parts = document_parts_jsonld(doc)
+        >>> len(parts)
+        1
+        >>> parts[0]["_label"]
+        'Fol. 12r'
+        >>> parts[0]["classified_as"]["_label"]
+        'Recto'
+        >>> document_parts_jsonld(SimpleNamespace(pages=[]))
+        []
+    """
+    parts: List[Dict[str, Any]] = []
+    if not getattr(document, "pages", None):
+        return parts
+
+    sorted_page_links = sorted(
+        document.pages,
+        key=lambda p: (p.index if (p and getattr(p, "index", None) is not None) else 0),
+    )
+    for link in sorted_page_links:
+        pg = getattr(link, "page", None)
+        if pg is None:
+            continue
+        label: Optional[str]
+        if pg.page_or_folio_number and pg.recto_verso:
+            suffix = "r" if pg.recto_verso == RectoVerso.RECTO else "v"
+            label = f"Fol. {pg.page_or_folio_number}{suffix}"
+        elif pg.page_or_folio_number:
+            label = f"Page {pg.page_or_folio_number}"
+        else:
+            label = f"Physical Page {pg.id[:8]}"
+
+        # Determine recto/verso classification
+        if pg.recto_verso == RectoVerso.RECTO:
+            classification_id = "http://vocab.getty.edu/aat/300078817"  # Recto
+            recto_verso_label = "Recto"
+        elif pg.recto_verso == RectoVerso.VERSO:
+            classification_id = "http://vocab.getty.edu/aat/300010292"  # Verso
+            recto_verso_label = "Verso"
+        else:
+            classification_id = "http://vocab.getty.edu/aat/300241583"  # Generic part
+            recto_verso_label = "Page"
+
+        # Build scan reference if available
+        scan_ref = None
+        if getattr(pg, "scan", None):
+            scan_ref = scan_to_jsonld(pg.scan)
+
+        part: Dict[str, Any] = {
+            "type": "PhysicalHumanMadeThing",
+            "_label": label,
+            "classified_as": {
+                "id": classification_id,
+                "type": "Type",
+                "_label": recto_verso_label,
+                "classified_as": [
+                    {
+                        "id": "http://vocab.getty.edu/aat/300241583",
+                        "type": "Type",
+                        "_label": "Part Type",
+                    }
+                ],
+            },
+            "carries": {
+                "type": "LinguisticObject",
+                "_label": "Textual content of the page",
+                "language": scan_languages_jsonld(pg.scan) or None,
+                "digitally_carried_by": {
+                    "type": "DigitalObject",
+                    "_label": "PageXML + Plain Text",
+                },
+            },
+            "shows": {
+                "type": "VisualItem",
+                "_label": "Visual depiction of the page.",
+                "digitally_shown_by": scan_ref,
+            },
+        }
+        parts.append(part)
+
+    return parts
+
+
+def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
+    """
+    Generate external identifier objects (TANAP, OBP_INDEX, etc.).
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> ext_tanap = SimpleNamespace(identifier="TANAP-123", URL=None, context="TANAP database")
+        >>> ext_obp = SimpleNamespace(identifier="OBP-456", URL=None, context="OBP_INDEX")
+        >>> doc = SimpleNamespace(external_ids=[
+        ...     SimpleNamespace(external=ext_tanap),
+        ...     SimpleNamespace(external=ext_obp),
+        ... ])
+        >>> ids = document_identified_by_jsonld(doc)
+        >>> len(ids)
+        2
+        >>> ids[0]["content"]
+        'TANAP-123'
+        >>> ids[0]["classified_as"]["_label"]
+        'TANAP Identifier'
+        >>> ids[1]["content"]
+        'OBP-456'
+        >>> ids[1]["classified_as"]["_label"]
+        'OBP_INDEX Identifier'
+        >>> document_identified_by_jsonld(SimpleNamespace(external_ids=[]))
+        []
+    """
     identified_by = []
     for ext_link in getattr(document, "external_ids", None) or []:
         external = getattr(ext_link, "external", None)
@@ -658,22 +678,42 @@ def document_physical_to_jsonld(
                 "_label": identifier_type_label,
             }
         identified_by.append(ident_obj)
+    return identified_by
 
-    place = settlement_to_place_jsonld(document.location) if document.location else None
 
-    # Languages detected across the document's scans (attached to its textual content)
-    languages = document_languages_jsonld(document)
+def document_dimensions_jsonld(document) -> List[Dict[str, Any]]:
+    """
+    Generate page count and scan count dimensions for a document.
 
-    # Extent: number of pages (recto/verso) and number of distinct scans
-    number_of_pages = len(document.pages) if document.pages else 0
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> page1 = SimpleNamespace(scan_id="scan-1")
+        >>> page2 = SimpleNamespace(scan_id="scan-1")
+        >>> doc = SimpleNamespace(pages=[
+        ...     SimpleNamespace(page=page1),
+        ...     SimpleNamespace(page=page2),
+        ... ])
+        >>> dims = document_dimensions_jsonld(doc)
+        >>> len(dims)
+        2
+        >>> dims[0]["value"]
+        2
+        >>> dims[0]["unit"]["_label"]
+        'Pages'
+        >>> dims[1]["value"]
+        1
+        >>> dims[1]["unit"]["_label"]
+        'Digitized images'
+    """
+    number_of_pages = len(document.pages) if getattr(document, "pages", None) else 0
     scan_ids = {
         link.page.scan_id
-        for link in (document.pages or [])
-        if link.page and link.page.scan_id
+        for link in (getattr(document, "pages", None) or [])
+        if link and getattr(link, "page", None) and link.page.scan_id
     }
     number_of_scans = len(scan_ids)
 
-    dimension = [
+    return [
         {
             "type": "Dimension",
             "classified_as": {
@@ -703,6 +743,48 @@ def document_physical_to_jsonld(
             },
         },
     ]
+
+
+def document_entities_to_jsonld(
+    document,
+    links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Collect all linked entities and their grouped annotations across the document's scans.
+
+    Args:
+        document: SQLAlchemy Document instance.
+        links_parquet: Optional pre-loaded scan_entities dict, parquet file path,
+            or None to load from DEFAULT_LINKS_PARQUET.
+
+    Returns:
+        List of entity dicts with subject_of annotations AnnotationPage.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> dummy_scan = SimpleNamespace(filename="NL-HaNA_1.04.02_1053_0001")
+        >>> dummy_page = SimpleNamespace(scan=dummy_scan)
+        >>> dummy_doc = SimpleNamespace(id="doc-123", pages=[SimpleNamespace(page=dummy_page)])
+        >>> scan_ents = {
+        ...     "NL-HaNA_1.04.02_1053_0001": [
+        ...         {
+        ...             "entity_uri": "https://example.org/place:1",
+        ...             "entity_type": "Place",
+        ...             "entity_label": "Batavia",
+        ...             "annotation_id": "https://example.org/annotations:entities:NL-HaNA_1.04.02_1053_0001#annotation:1",
+        ...         }
+        ...     ]
+        ... }
+        >>> res = document_entities_to_jsonld(dummy_doc, links_parquet=scan_ents)
+        >>> len(res)
+        1
+        >>> res[0]["_label"]
+        'Batavia'
+        >>> res[0]["subject_of"][0]["type"]
+        ['DigitalObject', 'AnnotationPage']
+        >>> res[0]["subject_of"][0]["items"][0]["partOf"]["partOf"]["id"]
+        'https://example.org/inventory:1053.manifest'
+    """
 
     if isinstance(links_parquet, dict):
         scan_entities = links_parquet
@@ -756,6 +838,7 @@ def document_physical_to_jsonld(
             }
             for ann_id in entity_info["annotation_ids"]
         ]
+        entity_id_part = entity_uri.rstrip("/").rsplit("/", 1)[-1]
         entities_in_document.append(
             {
                 "id": entity_uri,
@@ -763,51 +846,154 @@ def document_physical_to_jsonld(
                 "_label": entity_label,
                 "subject_of": [
                     {
-                        "type": "Set",
+                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}#annotations-{entity_id_part}",
+                        "type": ["DigitalObject", "AnnotationPage"],
                         "_label": f"All annotations of entity {entity_label} in document {document.id}",
-                        "member": annotations,
+                        "items": annotations,
                     }
                 ],
             }
         )
+
+    return entities_in_document
+
+
+def document_refers_to_jsonld(
+    document,
+    links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
+) -> Optional[List[Dict[str, Any]]]:
+    """
+    Build the 'refers_to' Linked Art section containing the Set of entities in this document.
+    Returns None if there are no linked entities.
+
+    Args:
+        document: SQLAlchemy Document instance.
+        links_parquet: Optional pre-loaded scan_entities dict, parquet file path,
+            or None to load from DEFAULT_LINKS_PARQUET.
+
+    Returns:
+        List containing a single Set object with members if entities exist,
+        otherwise None.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> dummy_doc = SimpleNamespace(id="doc-123", pages=[])
+        >>> document_refers_to_jsonld(dummy_doc, links_parquet={}) is None
+        True
+        >>> dummy_page = SimpleNamespace(scan=SimpleNamespace(filename="scan1.jpg"))
+        >>> dummy_doc_with_page = SimpleNamespace(id="doc-123", pages=[SimpleNamespace(page=dummy_page)])
+        >>> fake_links = {
+        ...     "scan1.jpg": [
+        ...         {
+        ...             "entity_uri": "http://example.org/person/1",
+        ...             "entity_label": "Jan",
+        ...             "entity_type": "Person",
+        ...             "annotation_id": "https://example.org/annotations:entities:NL-HaNA_1.04.02_1053_0001#ann:1",
+        ...         }
+        ...     ]
+        ... }
+        >>> res = document_refers_to_jsonld(dummy_doc_with_page, links_parquet=fake_links)
+        >>> res[0]["type"]
+        'Set'
+        >>> res[0]["_label"]
+        'Entities in Document doc-123'
+        >>> res[0]["member"][0]["_label"]
+        'Jan'
+    """
+    entities_in_document = document_entities_to_jsonld(document, links_parquet)
+    if not entities_in_document:
+        return None
+
+    return [
+        {
+            "type": "Set",
+            "_label": f"Entities in Document {document.id}",
+            "member": entities_in_document,
+        }
+    ]
+
+
+def document_physical_to_jsonld(
+    document,
+    links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
+) -> Dict[str, Any]:
+    """
+    Serialize a physical Document record to Linked Art JSON-LD.
+
+    Args:
+        document: SQLAlchemy Document instance.
+        links_parquet: Optional pre-loaded scan_entities dict, parquet file path,
+            or None to load from DEFAULT_LINKS_PARQUET.
+
+    Returns:
+        Linked Art JSON-LD dictionary representing the physical document.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> doc = SimpleNamespace(
+        ...     id="doc-test-1",
+        ...     title="Test Document",
+        ...     document_types_linked=[],
+        ...     external_ids=[],
+        ...     pages=[],
+        ...     location=None,
+        ...     date_earliest_begin=None,
+        ...     date_latest_begin=None,
+        ...     date_earliest_end=None,
+        ...     date_latest_end=None,
+        ...     date_text=None,
+        ... )
+        >>> res = document_physical_to_jsonld(doc, links_parquet={})
+        >>> res["type"]
+        'PhysicalHumanMadeThing'
+        >>> res["_label"]
+        'Test Document (Document)'
+        >>> "refers_to" in res["carries"]
+        False
+    """
+    base_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}"
+    place = settlement_to_place_jsonld(document.location) if document.location else None
+    languages = document_languages_jsonld(document)
+
+    carries: Dict[str, Any] = {
+        "type": "LinguisticObject",
+        "_label": "Textual content of the document",
+        "language": languages if languages else None,
+        # "digitally_carried_by": None,
+        "referred_to_by": [  # All annotations in the document
+            {
+                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}.annotations",
+                "type": "Set",
+                "_label": f"Entity and event annotations for Document {document.id}",
+            }
+        ],
+    }
+    refers_to = document_refers_to_jsonld(document, links_parquet)
+    if refers_to:
+        carries["refers_to"] = refers_to
 
     return {
         "@context": "https://linked.art/ns/v1/linked-art.json",
         "id": base_id,
         "type": "PhysicalHumanMadeThing",
         "_label": f"{document.title or document.id} (Document)",
-        "classified_as": classified,
-        "title": title_obj,
-        "identified_by": identified_by,
-        "dimension": dimension,
+        "classified_as": document_classifications_jsonld(document),
+        "title": document_title_jsonld(document),
+        "identified_by": document_identified_by_jsonld(document),
+        "dimension": document_dimensions_jsonld(document),
         "produced_by": {
             "type": "Production",
             "took_place_at": place,
-            "timespan": timespan,
+            "timespan": document_timespan_jsonld(document),
             # "carried_out_by": None,  # unknown actor
         },
-        "part": parts,
-        "carries": {
-            "type": "LinguisticObject",
-            "_label": "Textual content of the document",
-            "language": languages if languages else None,
-            "digitally_carried_by": None,
-            "referred_to_by": [  # All annotations in the document
-                {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}.annotations",
-                    "type": "Set",
-                    "_label": f"Entity and event annotations for Document {document.id}",
-                }
-            ],
-            "refers_to": [  # All linked entities in the document
-                {
-                    "type": "Set",
-                    "_label": f"Entities in Document {document.id}",
-                    "member": entities_in_document,
-                }
-            ],
+        "part": document_parts_jsonld(document),
+        "carries": carries,
+        "subject_of": {
+            # "id": f"https://globalise.huygens.knaw.nl/document/{document.id}", # TODO: viewer uri???
+            "type": "DigitalObject",
+            "_label": "This document shown by Globalise",
         },
-        "subject_of": subject_of,
     }
 
 
@@ -868,7 +1054,39 @@ def series_to_jsonld(series) -> Dict[str, Any]:
     if member_of:
         result["member_of"] = member_of
 
-    return result
+
+def series_chain(series) -> Dict[str, Any]:
+    """
+    Build nested member_of structure from leaf series up to root series.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> root = SimpleNamespace(title="Root Series", part_of=None)
+        >>> child = SimpleNamespace(title="Child Series", part_of=root)
+        >>> chain = series_chain(child)
+        >>> chain["_label"]
+        'Child Series'
+        >>> chain["member_of"]["_label"]
+        'Root Series'
+    """
+    chain = []
+    current = series
+    while current is not None:
+        chain.append(current)
+        current = current.part_of
+
+    node: Optional[Dict[str, Any]] = None
+    for series_obj in reversed(chain):
+        current_node: Dict[str, Any] = {
+            "type": "Set",
+            "_label": series_obj.title,
+        }
+        if node is not None:
+            current_node["member_of"] = node
+        node = current_node
+
+    assert node is not None
+    return node
 
 
 # Inventory (CuratedHolding) JSON-LD
@@ -941,21 +1159,17 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
         # "classified_as": None,
         "took_place_at": took_place_at,
         "timespan": timespan,
-        "carried_out_by": {
-            # "id": None,
-            "type": "Actor",
-            "_label": "Polity or Person",
-        },
+        # "carried_out_by": {
+        #     # "id": None,
+        #     "type": "Actor",
+        #     "_label": "Polity or Person",
+        # },
     }
 
     # Parts: physical documents within inventory with full structure (pages as parts)
     parts: List[Dict[str, Any]] = []
     if getattr(inventory, "documents", None):
         for doc in inventory.documents:  # limit to avoid huge payloads
-            # # Get the full document structure with pages as parts
-            # doc_jsonld = document_physical_to_jsonld(doc)
-            # parts.append(doc_jsonld)
-
             title = doc.title or f"Document {doc.id}"
 
             # Get the shallow document reference (without pages) to avoid huge payloads
@@ -969,28 +1183,6 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     handle = inventory.handle if getattr(inventory, "handle", None) else None
 
     # Build member_of from real series relationships with nested parent chain per series
-    def series_chain(s) -> Dict[str, Any]:
-        # Build list from leaf to root
-        chain = []
-        current = s
-        while current is not None:
-            chain.append(current)
-            current = current.part_of
-
-        # Build nested structure from root to leaf (so root is last/outermost)
-        node: Optional[Dict[str, Any]] = None
-        for series_obj in reversed(chain):
-            current_node: Dict[str, Any] = {
-                "type": "Set",
-                "_label": series_obj.title,
-            }
-            if node is not None:
-                current_node["member_of"] = node
-            node = current_node
-
-        assert node is not None
-        return node
-
     member_of_list: List[Dict[str, Any]] = []
     if getattr(inventory, "member_of_series", None):
         for s in inventory.member_of_series:
@@ -1003,6 +1195,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
             {
                 # Handle for Website NA
                 "type": "LinguisticObject",
+                "_label": f"Web page content for Inventory {inventory.inventory_number} at the National Archives",
                 "digitally_carried_by": [
                     {
                         "type": "DigitalObject",
@@ -1026,6 +1219,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     subject_of.append(
         {
             "type": "LinguisticObject",
+            "_label": f"IIIF Manifest content for Inventory {inventory.inventory_number}",
             "digitally_carried_by": [
                 {
                     "type": "DigitalObject",
@@ -1033,7 +1227,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
                         # Shallow reference
                         {
                             "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest",
-                            "type": "DigitalObject",  # Also Manifest?
+                            "type": ["DigitalObject", "Manifest"],
                             "_label": f"IIIF Manifest for Inventory {inventory.inventory_number}",
                         }
                         # inventory_to_manifest_jsonld(
@@ -1123,6 +1317,238 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     }
 
     return result
+
+
+def get_first_page_index(doc) -> float | int:
+    """
+    Get the index of the first page in a document for sorting.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> doc = SimpleNamespace(pages=[SimpleNamespace(index=5), SimpleNamespace(index=2)])
+        >>> get_first_page_index(doc)
+        2
+        >>> get_first_page_index(SimpleNamespace(pages=[]))
+        inf
+    """
+    if getattr(doc, "pages", None):
+        indices = [
+            p.index for p in doc.pages if p and getattr(p, "index", None) is not None
+        ]
+        if indices:
+            return min(indices)
+    return float("inf")
+
+
+def create_document_range(
+    doc: Document,
+    inventory_number: str,
+) -> Dict[str, Any]:
+    """
+    Create a IIIF Presentation 3.0 Range for a document and its subdocuments recursively.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> doc = SimpleNamespace(
+        ...     id="NL-HaNA_1.04.02_3598_0795-0943",
+        ...     title="Resoluties",
+        ...     date_text=None,
+        ...     date_earliest_begin=None,
+        ...     date_latest_begin=None,
+        ...     date_earliest_end=None,
+        ...     date_latest_end=None,
+        ...     document_types_linked=[],
+        ...     external_ids=[],
+        ...     pages=[],
+        ...     sub_documents=[],
+        ... )
+        >>> r = create_document_range(doc, inventory_number="3598")
+        >>> r["id"]
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:3598.manifest/range/NL-HaNA_1.04.02_3598_0795-0943'
+        >>> r["label"]["en"]
+        ['Resoluties']
+    """
+    # Determine label from title or ID
+    if getattr(doc, "title", None):
+        label_text = doc.title
+    else:
+        label_text = f"Document {doc.id}"
+
+    doc_range: Dict[str, Any] = {
+        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{doc.id}",
+        "type": "Range",
+        "label": {"en": [label_text]},
+        "metadata": [],
+        "items": [],
+    }
+
+    # Add metadata to the range
+    # Title
+    if getattr(doc, "title", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Title"]},
+                "value": {"en": [doc.title]},
+            }
+        )
+
+    # Date
+    if getattr(doc, "date_text", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Date"]},
+                "value": {"none": [doc.date_text]},
+            }
+        )
+    elif getattr(doc, "date_earliest_begin", None) or getattr(
+        doc, "date_latest_end", None
+    ):
+        date_str = ""
+        if doc.date_earliest_begin and doc.date_latest_end:
+            date_str = f"{doc.date_earliest_begin} / {doc.date_latest_end}"
+        elif doc.date_earliest_begin:
+            date_str = str(doc.date_earliest_begin)
+        elif doc.date_latest_end:
+            date_str = str(doc.date_latest_end)
+        if date_str:
+            doc_range["metadata"].append(
+                {
+                    "label": {"en": ["Date"]},
+                    "value": {"none": [date_str]},
+                }
+            )
+
+    if getattr(doc, "date_earliest_begin", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Date earliest begin"]},
+                "value": {"none": [str(doc.date_earliest_begin)]},
+            }
+        )
+    if getattr(doc, "date_latest_begin", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Date latest begin"]},
+                "value": {"none": [str(doc.date_latest_begin)]},
+            }
+        )
+    if getattr(doc, "date_earliest_end", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Date earliest end"]},
+                "value": {"none": [str(doc.date_earliest_end)]},
+            }
+        )
+    if getattr(doc, "date_latest_end", None):
+        doc_range["metadata"].append(
+            {
+                "label": {"en": ["Date latest end"]},
+                "value": {"none": [str(doc.date_latest_end)]},
+            }
+        )
+
+    # Type (from linked document types)
+    if getattr(doc, "document_types_linked", None):
+        for dt_link in doc.document_types_linked:
+            dt = getattr(dt_link, "document_type", None)
+            if dt is None:
+                continue
+            label = dt.pref_label_en or dt.pref_label_nl or dt.id
+            doc_range["metadata"].append(
+                {
+                    "label": {"en": ["Type"]},
+                    "value": {"none": [label]},
+                }
+            )
+
+    # Inventory number
+    doc_range["metadata"].append(
+        {
+            "label": {"en": ["Inventory number"]},
+            "value": {"none": [inventory_number]},
+        }
+    )
+
+    # External IDs (TANAP-id, etc.)
+    if getattr(doc, "external_ids", None):
+        for ext_id_link in doc.external_ids:
+            ext = getattr(ext_id_link, "external", None)
+            if not ext:
+                continue
+            external_context = getattr(ext, "context", None)
+            external_identifier = getattr(ext, "identifier", None)
+            if external_context and external_identifier:
+                # Add with context label (e.g., "TANAP-id")
+                label_text = (
+                    "TANAP-id"
+                    if external_context.upper() == "TANAP"
+                    else f"{external_context} ID"
+                )
+                doc_range["metadata"].append(
+                    {
+                        "label": {"en": [label_text]},
+                        "value": {"none": [external_identifier]},
+                    }
+                )
+
+    # Document UUID identifier
+    doc_range["metadata"].append(
+        {
+            "label": {"en": ["Identifier"]},
+            "value": {"none": [doc.id]},
+        }
+    )
+
+    # Link to the document physical metadata (via seeAlso)
+    doc_range["seeAlso"] = [
+        {
+            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc.id}",
+            "type": "PhysicalHumanMadeThing",
+            "label": {"en": ["Document metadata"]},
+        }
+    ]
+
+    # Check if this document has subdocuments
+    has_subdocuments = bool(
+        getattr(doc, "sub_documents", None) and len(doc.sub_documents) > 0
+    )
+
+    # Add canvas references for this document's pages
+    if getattr(doc, "pages", None):
+        # Sort pages by index
+        sorted_page_links = sorted(
+            doc.pages,
+            key=lambda p: (
+                p.index if (p and getattr(p, "index", None) is not None) else 0
+            ),
+        )
+        # Track seen canvas IDs to avoid duplicates (2 pages can share 1 scan)
+        seen_canvas_ids = set()
+        for link in sorted_page_links:
+            page = getattr(link, "page", None)
+            if (
+                page
+                and getattr(page, "scan", None)
+                and getattr(page.scan, "filename", None)
+            ):
+                # Reference the canvas by scan identifier
+                canvas_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:{page.scan.filename}"
+                # Only add if not already in the list
+                if canvas_id not in seen_canvas_ids:
+                    seen_canvas_ids.add(canvas_id)
+                    doc_range["items"].append({"id": canvas_id, "type": "Canvas"})
+
+    # If it has subdocuments, add them as nested ranges
+    if has_subdocuments:
+        sorted_subdocs = sorted(doc.sub_documents, key=get_first_page_index)
+        for subdoc in sorted_subdocs:
+            subdoc_range = create_document_range(
+                subdoc,
+                inventory_number=inventory_number,
+            )
+            doc_range["items"].append(subdoc_range)
+
+    return doc_range
 
 
 def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]:
@@ -1506,217 +1932,16 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "items": [],
         }
 
-        # Sort documents by their first page index to maintain order
-        def get_first_page_index(doc):
-            """Get the index of the first page in a document for sorting."""
-            if getattr(doc, "pages", None):
-                indices = [
-                    p.index
-                    for p in doc.pages
-                    if p and getattr(p, "index", None) is not None
-                ]
-                if indices:
-                    return min(indices)
-            return float("inf")
-
         # Only process top-level documents (those without a parent)
         top_level_docs = [doc for doc in inventory.documents if doc.part_of_id is None]
         sorted_docs = sorted(top_level_docs, key=get_first_page_index)
 
-        def create_document_range(doc: Document, doc_index: str | int | None = None):
-            """
-            Create a Range for a document and its subdocuments recursively.
-            """
-
-            # Create range ID with optional index for uniqueness
-            range_id_suffix = f"doc-{doc.id}"
-            if doc_index is not None:
-                range_id_suffix = f"doc-{doc_index}-{doc.id[:8]}"
-
-            # Determine label from title or ID
-            if doc.title:
-                label_text = doc.title
-            else:
-                label_text = f"Document {doc.id[:8]}"
-
-            doc_range: Dict[str, Any] = {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest/range/{range_id_suffix}",
-                "type": "Range",
-                "label": {"en": [label_text]},
-                "metadata": [],
-                "items": [],
-            }
-
-            # Add metadata to the range
-            # Title
-            if doc.title:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Title"]},
-                        "value": {"en": [doc.title]},
-                    }
-                )
-
-            # Date
-            if doc.date_text:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Date"]},
-                        "value": {"none": [doc.date_text]},
-                    }
-                )
-            elif doc.date_earliest_begin or doc.date_latest_end:
-                date_str = ""
-                if doc.date_earliest_begin and doc.date_latest_end:
-                    date_str = f"{doc.date_earliest_begin} / {doc.date_latest_end}"
-                elif doc.date_earliest_begin:
-                    date_str = str(doc.date_earliest_begin)
-                elif doc.date_latest_end:
-                    date_str = str(doc.date_latest_end)
-                if date_str:
-                    doc_range["metadata"].append(
-                        {
-                            "label": {"en": ["Date"]},
-                            "value": {"none": [date_str]},
-                        }
-                    )
-
-            if doc.date_earliest_begin:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Date earliest begin"]},
-                        "value": {"none": [str(doc.date_earliest_begin)]},
-                    }
-                )
-            if doc.date_latest_begin:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Date latest begin"]},
-                        "value": {"none": [str(doc.date_latest_begin)]},
-                    }
-                )
-            if doc.date_earliest_end:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Date earliest end"]},
-                        "value": {"none": [str(doc.date_earliest_end)]},
-                    }
-                )
-            if doc.date_latest_end:
-                doc_range["metadata"].append(
-                    {
-                        "label": {"en": ["Date latest end"]},
-                        "value": {"none": [str(doc.date_latest_end)]},
-                    }
-                )
-
-            # Type (from linked document types)
-            if doc.document_types_linked:
-                for dt_link in doc.document_types_linked:
-                    dt = dt_link.document_type
-                    if dt is None:
-                        continue
-                    label = dt.pref_label_en or dt.pref_label_nl or dt.id
-                    doc_range["metadata"].append(
-                        {
-                            "label": {"en": ["Type"]},
-                            "value": {"none": [label]},
-                        }
-                    )
-
-            # Inventory number
-            doc_range["metadata"].append(
-                {
-                    "label": {"en": ["Inventory number"]},
-                    "value": {"none": [inventory.inventory_number]},
-                }
-            )
-
-            # External IDs (TANAP-id, etc.)
-            if getattr(doc, "external_ids", None):
-                for ext_id_link in doc.external_ids:
-                    ext = getattr(ext_id_link, "external", None)
-                    if not ext:
-                        continue
-                    external_context = getattr(ext, "context", None)
-                    external_identifier = getattr(ext, "identifier", None)
-                    if external_context and external_identifier:
-                        # Add with context label (e.g., "TANAP-id")
-                        label_text = (
-                            "TANAP-id"
-                            if external_context.upper() == "TANAP"
-                            else f"{external_context} ID"
-                        )
-                        doc_range["metadata"].append(
-                            {
-                                "label": {"en": [label_text]},
-                                "value": {"none": [external_identifier]},
-                            }
-                        )
-
-            # Document UUID identifier
-            doc_range["metadata"].append(
-                {
-                    "label": {"en": ["Identifier"]},
-                    "value": {"none": [doc.id]},
-                }
-            )
-
-            # Link to the document physical metadata (via seeAlso)
-            doc_range["seeAlso"] = [
-                {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc.id}",
-                    "type": "PhysicalHumanMadeThing",
-                    "label": {"en": ["Document metadata"]},
-                }
-            ]
-
-            # Check if this document has subdocuments
-            has_subdocuments = bool(
-                getattr(doc, "sub_documents", None) and len(doc.sub_documents) > 0
-            )
-
-            # Add canvas references for this document's pages
-            if getattr(doc, "pages", None):
-                # Sort pages by index
-                sorted_page_links = sorted(
-                    doc.pages,
-                    key=lambda p: (
-                        p.index if (p and getattr(p, "index", None) is not None) else 0
-                    ),
-                )
-                # Track seen canvas IDs to avoid duplicates (2 pages can share 1 scan)
-                seen_canvas_ids = set()
-                for link in sorted_page_links:
-                    page = getattr(link, "page", None)
-                    if (
-                        page
-                        and getattr(page, "scan", None)
-                        and getattr(page.scan, "filename", None)
-                    ):
-                        # Reference the canvas by scan identifier
-                        canvas_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:{page.scan.filename}"
-                        # Only add if not already in the list
-                        if canvas_id not in seen_canvas_ids:
-                            seen_canvas_ids.add(canvas_id)
-                            doc_range["items"].append(
-                                {"id": canvas_id, "type": "Canvas"}
-                            )
-
-            # If it has subdocuments, add them as nested ranges
-            if has_subdocuments:
-                sorted_subdocs = sorted(doc.sub_documents, key=get_first_page_index)
-                for subdoc_idx, subdoc in enumerate(sorted_subdocs):
-                    subdoc_range = create_document_range(
-                        subdoc, doc_index=f"{range_id_suffix}-sub{subdoc_idx}"
-                    )
-                    doc_range["items"].append(subdoc_range)
-
-            return doc_range
-
         # Create ranges for all top-level documents
-        for idx, doc in enumerate(sorted_docs):
-            doc_range = create_document_range(doc, doc_index=idx)
+        for doc in sorted_docs:
+            doc_range = create_document_range(
+                doc,
+                inventory_number=inventory.inventory_number,
+            )
             top_range["items"].append(doc_range)
 
         # Add structures to manifest

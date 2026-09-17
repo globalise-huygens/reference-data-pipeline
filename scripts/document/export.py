@@ -1668,6 +1668,14 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "https://linked.art/ns/v1/linked-art.json",
             "http://iiif.io/api/extension/navplace/context.json",
             "http://iiif.io/api/presentation/3/context.json",
+            {
+                "transcription-diplomatic": {
+                    "@id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:transcription-diplomatic"
+                },
+                "transcription-normalized": {
+                    "@id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:transcription-normalized"
+                },
+            },
         ],
         "id": manifest_uri,
         "type": "Manifest",
@@ -1756,8 +1764,13 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             if image_info:
                 service_id = image_info.replace("/info.json", "")
 
+            # Normalized
             text_start = getattr(scan, "inventory_text_start_offset", None)
             text_end = getattr(scan, "inventory_text_end_offset", None)
+
+            # Diplomatic
+            text_htr_start = getattr(scan, "htr_text_start_offset", None)
+            text_htr_end = getattr(scan, "htr_text_end_offset", None)
 
             # Metadata entries similar to the example (Filename, Web)
             # Use scan.filename directly; only include Web if `na_identifier` is a URL
@@ -1814,38 +1827,80 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
 
             # Add annotation pages for transcriptions, entities, and events (only if available)
             annotations: List[Dict[str, Any]] = []
-            if text_start is not None and text_end is not None:
-                annotations.append(
-                    {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}",
-                        "type": "AnnotationPage",
-                        "items": [
-                            {
-                                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}#annotation",
-                                "type": "Annotation",
-                                "motivation": "describing",
-                                "body": {
-                                    "type": "TextualBody",
-                                    "value": f"Scan text range for {scan.filename}",
-                                    "format": "text/plain",
+
+            # Normalized offsets
+            if (
+                text_start is not None
+                and text_end is not None
+                and text_htr_start is not None
+                and text_htr_end is not None
+            ):
+                ap_text: Dict[str, Any] = {
+                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}",
+                    "type": "AnnotationPage",
+                    "items": [],
+                }
+
+                # Normalized text annotation
+                if text_start is not None and text_end is not None:
+                    ap_text["items"].append(
+                        {
+                            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}#annotation",
+                            "type": "Annotation",
+                            "motivation": "describing",
+                            "body": {
+                                "type": "TextualBody",
+                                "value": f"Scan text range for {scan.filename}",
+                                "format": "text/plain",
+                                "purpose": "transcription-normalized",
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": {
+                                    "id": inventory_text_uri,
+                                    "type": "DigitalObject",
+                                    "_label": f"Plain text of Inventory {inventory.inventory_number}",
                                 },
-                                "target": {
-                                    "type": "SpecificResource",
-                                    "source": {
-                                        "id": inventory_text_uri,
-                                        "type": "DigitalObject",
-                                        "_label": f"Plain text of Inventory {inventory.inventory_number}",
-                                    },
-                                    "selector": {
-                                        "type": "TextPositionSelector",
-                                        "start": text_start,
-                                        "end": text_end,
-                                    },
+                                "selector": {
+                                    "type": "TextPositionSelector",
+                                    "start": text_start,
+                                    "end": text_end,
                                 },
-                            }
-                        ],
-                    }
-                )
+                            },
+                        }
+                    )
+
+                # Diplomatic text annotation
+                if text_htr_start is not None and text_htr_end is not None:
+                    ap_text["items"].append(
+                        {
+                            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:htr:{scan.filename}#annotation",
+                            "type": "Annotation",
+                            "motivation": "describing",
+                            "body": {
+                                "type": "TextualBody",
+                                "value": f"Diplomatic scan text range for {scan.filename}",
+                                "format": "text/plain",
+                                "purpose": "transcription-diplomatic",
+                            },
+                            "target": {
+                                "type": "SpecificResource",
+                                "source": {
+                                    # "id": inventory_text_uri,  # TODO?
+                                    "type": "DigitalObject",
+                                    "_label": f"Plain diplomatic text of Inventory {inventory.inventory_number}",
+                                },
+                                "selector": {
+                                    "type": "TextPositionSelector",
+                                    "start": text_htr_start,
+                                    "end": text_htr_end,
+                                },
+                            },
+                        }
+                    )
+
+                annotations.append(ap_text)
+
             if getattr(scan, "has_transcriptions", False):
                 annotations.append(
                     {

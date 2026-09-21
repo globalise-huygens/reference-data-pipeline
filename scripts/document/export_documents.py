@@ -8,7 +8,7 @@ to an S3-compatible object store, following the same conventions as the
 rest of the pipeline's `convert_to_json.py`.
 
 Output paths (relative to --output-dir):
-  document/<uuid>.json
+  document/<document_id>.json
   inventory/<inventory_number>.json
 """
 
@@ -49,6 +49,7 @@ from export import (
     inventory_to_annotations_jsonld,
     get_annotationcollections_for_inventory,
     series_to_jsonld,
+    get_document_id,
 )
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
@@ -69,8 +70,27 @@ def natural_inv_sort_key(inv):
 def build_nested_series_member(s) -> Dict[str, Any]:
     """
     Recursively build the full embedded structure for a Series and its sub-series/inventories.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> inv = SimpleNamespace(inventory_number="1234")
+        >>> sub_series = SimpleNamespace(id="sub1", title="Sub Series", sub_series=[], inventories=[inv], part_of_id="p1", part_of=None)
+        >>> series = SimpleNamespace(id="root1", title="Root Series", sub_series=[sub_series], inventories=[], part_of_id=None, part_of=None)
+        >>> res = build_nested_series_member(series)
+        >>> res["_label"]
+        'Root Series'
+        >>> "member_of" in res
+        False
+        >>> len(res["member"])
+        1
+        >>> res["member"][0]["_label"]
+        'Sub Series'
+        >>> res["member"][0]["member"][0]["_label"]
+        'Inventory 1234'
     """
     s_data = series_to_jsonld(s)
+    if not s_data:
+        return {}
 
     # Remove 'member_of' if it exists since we're nesting top-down
     if "member_of" in s_data:
@@ -78,11 +98,11 @@ def build_nested_series_member(s) -> Dict[str, Any]:
 
     members = []
     for sub_s in sorted(
-        s.sub_series or [], key=lambda x: getattr(x, "title", "") or ""
+        getattr(s, "sub_series", None) or [], key=lambda x: getattr(x, "title", "") or ""
     ):
         members.append(build_nested_series_member(sub_s))
 
-    for inv in sorted(s.inventories or [], key=natural_inv_sort_key):
+    for inv in sorted(getattr(s, "inventories", None) or [], key=natural_inv_sort_key):
         members.append(
             {
                 "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
@@ -271,8 +291,9 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
 
     t1 = time.time()
     for doc in tqdm(documents, desc="Exporting documents", unit="document"):
+        doc_id = get_document_id(doc)
         doc_data = document_physical_to_jsonld(doc)
-        emit(doc_data, os.path.join("document", f"{doc.id}.json"))
+        emit(doc_data, os.path.join("document", f"{doc_id}.json"))
 
     elapsed_doc = time.time() - t1
     print(f"Exported {total_docs} documents in {elapsed_doc:.1f}s.")
@@ -280,11 +301,12 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     # Generate Hydra index pages for documents
     doc_members = []
     for doc in documents:
+        doc_id = get_document_id(doc)
         doc_members.append(
             {
-                "@id": f"{BASE_URI}/document:{doc.id}",
+                "@id": f"{BASE_URI}/document:{doc_id}",
                 "@type": "PhysicalHumanMadeThing",
-                "title": getattr(doc, "title", None) or f"Document {doc.id}",
+                "title": getattr(doc, "title", None) or f"Document {doc_id}",
             }
         )
     print(f"Generating Hydra index pages for {len(doc_members)} documents...")

@@ -116,7 +116,7 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
         "id": f"{BASE_URI}/inventory:collection",
         "type": "Collection",
         "label": {
-            "en": ["GLOBALISE — Dutch East India Company archives (1.04.02)"],
+            "en": ["Globalise — Dutch East India Company archives (1.04.02)"],
         },
         "summary": {
             "en": [
@@ -129,7 +129,7 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
             "label": {"en": ["Attribution"]},
             "value": {
                 "en": [
-                    "<span>GLOBALISE Project. "
+                    "<span>Globalise Project. "
                     '<a href="https://creativecommons.org/publicdomain/zero/1.0/">'
                     '<img src="https://licensebuttons.net/l/zero/1.0/88x31.png" '
                     'alt="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"/> '
@@ -142,7 +142,7 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
             {
                 "id": "https://globalise.huygens.knaw.nl",
                 "type": "Text",
-                "label": {"en": ["GLOBALISE Project"]},
+                "label": {"en": ["Globalise Project"]},
                 "format": "text/html",
             }
         ],
@@ -150,12 +150,12 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
             {
                 "id": "https://globalise.huygens.knaw.nl",
                 "type": "Agent",
-                "label": {"en": ["GLOBALISE Project"]},
+                "label": {"en": ["Globalise Project"]},
                 "homepage": [
                     {
                         "id": "https://globalise.huygens.knaw.nl",
                         "type": "Text",
-                        "label": {"en": ["GLOBALISE Project"]},
+                        "label": {"en": ["Globalise Project"]},
                         "format": "text/html",
                     }
                 ],

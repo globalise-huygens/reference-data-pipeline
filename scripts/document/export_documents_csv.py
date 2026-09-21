@@ -1,22 +1,13 @@
 """
 Export documents to CSV with identifier, inventory number, scan filenames,
-title, date, settlement, method, and start/end scan types.
+title, date, settlement, method, start/end scan types, and languages.
 
-Export documents to a CSV file.
-
-options:
-  -h, --help            show this help message and exit
-  --filename, -f FILENAME
-                        Output filename (default: data/s3/document/documents.csv)
-  --gzip                Gzip-compress the output file (default)
-  --no-gzip             Write plain CSV without gzip compression
-
+Output paths:
+  Local disk: <output_dir>/document/documents.csv (default: data/output/s3/document/documents.csv)
+  S3: <s3-prefix>document/documents.csv (e.g. objects/document/documents.csv)
 """
 
 import argparse
-import csv
-import gzip
-import io
 import logging
 import os
 import shutil
@@ -27,9 +18,6 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 import duckdb
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from tqdm import tqdm
 
 from utils import (
     add_s3_arguments,
@@ -37,7 +25,6 @@ from utils import (
     create_s3_client,
     output_bytes,
 )
-from models import Base, Document
 
 # Configure logging
 logging.basicConfig(
@@ -46,10 +33,10 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 TYPE_URI_PREFIX = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:"
+PLACE_URI_PREFIX = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:"
 
 # Database setup
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
-engine = create_engine(DATABASE_URL, echo=False)
 
 
 def get_sqlite_path(database_url: str) -> str:
@@ -80,15 +67,25 @@ def get_sqlite_path(database_url: str) -> str:
 
 
 def get_settlement(document):
-    """Get the settlement UUID and label for a document.
+    """Get the settlement identifier URI and label for a document.
 
     Examples:
         >>> get_settlement(None)
         ('', '')
+        >>> from types import SimpleNamespace
+        >>> loc = SimpleNamespace(id="uuid-1", glob_id="GLOB2_1848", labels=[SimpleNamespace(label="Batavia")])
+        >>> doc = SimpleNamespace(location=loc)
+        >>> get_settlement(doc)
+        ('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB2_1848', 'Batavia')
     """
     loc = getattr(document, "location", None)
     if loc:
-        settlement_id = getattr(loc, "id", "") or ""
+        glob_id = getattr(loc, "glob_id", None)
+        settlement_id = (
+            f"{PLACE_URI_PREFIX}{glob_id.strip()}"
+            if glob_id and glob_id.strip()
+            else ""
+        )
         labels = getattr(loc, "labels", None)
         if labels and labels[0] and getattr(labels[0], "label", None):
             settlement_label = labels[0].label
@@ -325,6 +322,43 @@ def get_document_type_uuids(document):
     return ",".join(type_ids)
 
 
+def get_languages(document):
+    """Get a comma-separated list of distinct language codes for a document sorted alphabetically.
+
+    Examples:
+        >>> get_languages(None)
+        ''
+        >>> from types import SimpleNamespace
+        >>> scan1 = SimpleNamespace(languages="nld,fra")
+        >>> scan2 = SimpleNamespace(languages="unknown,nld,deu")
+        >>> p1 = SimpleNamespace(page=SimpleNamespace(scan=scan1))
+        >>> p2 = SimpleNamespace(page=SimpleNamespace(scan=scan2))
+        >>> doc = SimpleNamespace(pages=[p1, p2])
+        >>> get_languages(doc)
+        'deu,fra,nld'
+    """
+    if not document:
+        return ""
+
+    codes = set()
+
+    def collect(doc):
+        for link in getattr(doc, "pages", None) or []:
+            pg = getattr(link, "page", None) if link else None
+            scan = getattr(pg, "scan", None) if pg else getattr(link, "scan", None)
+            raw = getattr(scan, "languages", None) if scan else None
+            if raw:
+                for code in raw.split(","):
+                    code = code.strip().lower()
+                    if code and code != "unknown":
+                        codes.add(code)
+        for subdoc in getattr(doc, "sub_documents", None) or []:
+            collect(subdoc)
+
+    collect(document)
+    return ",".join(sorted(codes))
+
+
 def export_documents_csv(
     output_dir: str,
     gzipped: bool = True,
@@ -355,11 +389,18 @@ def export_documents_csv(
         ...     _ = conn.execute("CREATE TABLE document_type (id TEXT PRIMARY KEY)")
         ...     _ = conn.execute("CREATE TABLE page2document (document_id TEXT, page_id TEXT)")
         ...     _ = conn.execute("CREATE TABLE page (id TEXT PRIMARY KEY, scan_id TEXT)")
-        ...     _ = conn.execute("CREATE TABLE scan (id TEXT PRIMARY KEY, filename TEXT, scan_type TEXT)")
+        ...     _ = conn.execute("CREATE TABLE scan (id TEXT PRIMARY KEY, filename TEXT, scan_type TEXT, languages TEXT)")
         ...     _ = conn.execute("CREATE TABLE settlement (id TEXT PRIMARY KEY, glob_id TEXT)")
         ...     _ = conn.execute("CREATE TABLE settlement_label (id TEXT, settlement_id TEXT, label TEXT)")
         ...     _ = conn.execute("CREATE TABLE document_identification_method (id TEXT PRIMARY KEY, name TEXT)")
         ...     _ = conn.execute("INSERT INTO document VALUES ('doc-1', 'inv-1', 'Test Title', '1650-01-01', '1650-01-01', '1650-01-02', '1650-01-02', 'loc-1', 'meth-1')")
+        ...     _ = conn.execute("INSERT INTO document VALUES ('doc-2', 'inv-1', 'Doc with Scans', '1650-01-01', '1650-01-01', '1650-01-02', '1650-01-02', 'loc-1', 'meth-1')")
+        ...     _ = conn.execute("INSERT INTO scan VALUES ('scan-1', 'NL-HaNA_1.04.02_4088_0329', 'Text', 'nld')")
+        ...     _ = conn.execute("INSERT INTO scan VALUES ('scan-2', 'NL-HaNA_1.04.02_4088_0330', 'Text', 'fra,nld')")
+        ...     _ = conn.execute("INSERT INTO page VALUES ('page-1', 'scan-1')")
+        ...     _ = conn.execute("INSERT INTO page VALUES ('page-2', 'scan-2')")
+        ...     _ = conn.execute("INSERT INTO page2document VALUES ('doc-2', 'page-1')")
+        ...     _ = conn.execute("INSERT INTO page2document VALUES ('doc-2', 'page-2')")
         ...     _ = conn.execute("INSERT INTO inventory VALUES ('inv-1', '1234')")
         ...     _ = conn.execute("INSERT INTO settlement VALUES ('loc-1', 'GLOB_1')")
         ...     _ = conn.execute("INSERT INTO settlement_label VALUES ('lbl-1', 'loc-1', 'Batavia')")
@@ -368,12 +409,25 @@ def export_documents_csv(
         ...     conn.close()
         ...     out_dir = os.path.join(tmp_dir, "out")
         ...     export_documents_csv(out_dir, gzipped=False, database_url=db_file)
-        ...     with open(os.path.join(out_dir, "documents.csv"), "r") as f:
+        ...     with open(os.path.join(out_dir, "document", "documents.csv"), "r") as f:
         ...         lines = [line.strip() for line in f.readlines()]
-        ...     lines[0]
-        ...     lines[1]
-        'identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method'
-        'doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,loc-1,Manual'
+        ...     print(lines[0])
+        ...     print(lines[1])
+        ...     print(lines[2])
+        ...     out_doc_dir = os.path.join(tmp_dir, "out_doc", "document")
+        ...     export_documents_csv(out_doc_dir, gzipped=False, database_url=db_file)
+        ...     print(os.path.exists(os.path.join(out_doc_dir, "documents.csv")))
+        ...     from types import SimpleNamespace
+        ...     uploaded = {}
+        ...     mock_s3 = SimpleNamespace(put_object=lambda **kwargs: uploaded.update(kwargs))
+        ...     mock_cfg = SimpleNamespace(bucket="test-bucket", prefix="objects/", acl=None)
+        ...     export_documents_csv(out_dir, gzipped=False, s3_client=mock_s3, s3_config=mock_cfg, database_url=db_file)
+        ...     print(uploaded["Key"])
+        identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method,languages
+        doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,Manual,""
+        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,Manual,"fra,nld"
+        True
+        objects/document/documents.csv
     """
     db_path = get_sqlite_path(database_url)
     if not os.path.exists(db_path):
@@ -409,6 +463,17 @@ def export_documents_csv(
                     JOIN scan s ON s.id = p.scan_id
                     GROUP BY p2d.document_id
                 ),
+                doc_languages AS (
+                    SELECT
+                        p2d.document_id,
+                        string_agg(DISTINCT lower(trim(lang)), ',' ORDER BY lower(trim(lang))) AS languages
+                    FROM page2document p2d
+                    JOIN page p ON p.id = p2d.page_id
+                    JOIN scan s ON s.id = p.scan_id
+                    CROSS JOIN unnest(string_split(COALESCE(s.languages, ''), ',')) AS t(lang)
+                    WHERE trim(lang) != '' AND lower(trim(lang)) != 'unknown'
+                    GROUP BY p2d.document_id
+                ),
                 doc_types AS (
                     SELECT
                         dtl.document_id,
@@ -423,7 +488,11 @@ def export_documents_csv(
                 settlement_info AS (
                     SELECT
                         l.id AS location_id,
-                        l.id AS settlement_id,
+                        CASE
+                            WHEN l.glob_id IS NOT NULL AND trim(l.glob_id) != ''
+                            THEN '{PLACE_URI_PREFIX}' || trim(l.glob_id)
+                            ELSE ''
+                        END AS settlement_id,
                         COALESCE(
                             FIRST_VALUE(lbl.label) OVER (PARTITION BY l.id ORDER BY lbl.rowid),
                             l.glob_id,
@@ -434,7 +503,13 @@ def export_documents_csv(
                     QUALIFY ROW_NUMBER() OVER (PARTITION BY l.id ORDER BY lbl.rowid) = 1
                 )
                 SELECT
-                    d.id AS identifier,
+                    CASE
+                        WHEN ds.start_scan_filename IS NOT NULL AND ds.end_scan_filename IS NOT NULL
+                             AND regexp_matches(ds.start_scan_filename, '_[0-9A-Za-z]+$')
+                             AND regexp_matches(ds.end_scan_filename, '_[0-9A-Za-z]+$')
+                        THEN regexp_replace(ds.start_scan_filename, '_[0-9A-Za-z]+$', '') || '_' || regexp_extract(ds.start_scan_filename, '([0-9A-Za-z]+)$', 1) || '-' || regexp_extract(ds.end_scan_filename, '([0-9A-Za-z]+)$', 1)
+                        ELSE d.id
+                    END AS identifier,
                     COALESCE(i.inventory_number, '') AS inventory_number,
                     COALESCE(dt.type_uuids, '') AS type_uuids,
                     COALESCE(ds.start_scan_filename, '') AS start_scan_filename,
@@ -448,11 +523,13 @@ def export_documents_csv(
                     COALESCE(CAST(d.date_latest_end AS VARCHAR), '') AS date_latest_end,
                     COALESCE(s.settlement_label, '') AS settlement,
                     COALESCE(s.settlement_id, '') AS settlement_id,
-                    COALESCE(m.name, '') AS method
+                    COALESCE(m.name, '') AS method,
+                    COALESCE(dl.languages, '') AS languages
                 FROM document d
                 LEFT JOIN inventory i ON i.id = d.inventory_id
                 LEFT JOIN doc_types dt ON dt.document_id = d.id
                 LEFT JOIN doc_scans ds ON ds.document_id = d.id
+                LEFT JOIN doc_languages dl ON dl.document_id = d.id
                 LEFT JOIN settlement_info s ON s.location_id = d.location_id
                 LEFT JOIN document_identification_method m ON m.id = d.method_id
                 ORDER BY d.id
@@ -463,23 +540,34 @@ def export_documents_csv(
             if s3_client and s3_config:
                 with open(temp_output, "rb") as f:
                     payload = f.read()
+                prefix = getattr(s3_config, "prefix", "") or ""
+                if prefix.rstrip("/").endswith("document"):
+                    s3_relative_path = "documents.csv"
+                else:
+                    s3_relative_path = "document/documents.csv"
+
                 output_bytes(
                     payload,
-                    "documents.csv",
+                    s3_relative_path,
                     output_dir,
                     gzipped,
                     s3_client,
                     s3_config,
                     content_type="text/csv; charset=utf-8",
                 )
+                dest = f"{prefix}{s3_relative_path}"
             else:
-                target_path = os.path.join(output_dir, "documents.csv")
+                if os.path.basename(os.path.normpath(output_dir)) == "document":
+                    target_path = os.path.join(output_dir, "documents.csv")
+                else:
+                    target_path = os.path.join(output_dir, "document", "documents.csv")
                 dirpath = os.path.dirname(target_path)
                 if dirpath:
                     os.makedirs(dirpath, exist_ok=True)
                 shutil.move(temp_output, target_path)
+                dest = target_path
 
-        logger.info(f"Successfully exported documents to {output_dir}/documents.csv")
+        logger.info(f"Successfully exported documents to {dest}")
     finally:
         con.close()
 
@@ -490,8 +578,11 @@ def parse_args():
     parser.add_argument(
         "output_dir",
         nargs="?",
-        default=os.environ.get("DOCUMENTS_CSV_OUTPUT_DIR", "data/output/s3/document"),
-        help="Base local output directory (default: data/output/s3/document, or DOCUMENTS_CSV_OUTPUT_DIR env var)",
+        default=os.environ.get(
+            "DOCUMENTS_CSV_OUTPUT_DIR",
+            os.environ.get("DOCUMENTS_OUTPUT_DIR", "data/output/s3"),
+        ),
+        help="Base local output directory (default: data/output/s3, or DOCUMENTS_CSV_OUTPUT_DIR env var)",
     )
     parser.add_argument(
         "--gzipped", action="store_true", help="Gzip-compress the output file"

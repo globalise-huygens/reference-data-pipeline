@@ -355,7 +355,7 @@ $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 # the S3 output directory, so there is no CSV/XML/X3ML/RDF conversion step.
 $(S3_DIR)/.document.stamp:
 	@mkdir -p $(S3_DIR)/document $(S3_DIR)/inventory
-	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents_csv.py $(S3_DIR)/document $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents_csv.py $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents.py $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_manifests.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
 	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_collection.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
@@ -379,6 +379,7 @@ test:
 	$(PYTHON) -m doctest scripts/csv_to_xml.py
 	$(PYTHON) -m doctest scripts/xlsx_to_csv.py
 	$(PYTHON) -m doctest scripts/convert_to_json.py
+	$(PYTHON) -m doctest scripts/document/models.py
 	$(PYTHON) -m doctest scripts/document/export.py
 	$(PYTHON) -m doctest scripts/document/export_documents.py
 	$(PYTHON) -m doctest scripts/document/export_documents_csv.py

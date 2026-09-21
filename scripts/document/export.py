@@ -14,7 +14,7 @@ _parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _parent_dir not in sys.path:
     sys.path.insert(0, _parent_dir)
 
-from models import Document, Inventory, RectoVerso
+from models import Document, Inventory, RectoVerso, get_document_id
 from utils import (
     get_canvas_uri_from_annotation_id,
     get_manifest_uri_from_annotation_id,
@@ -145,9 +145,9 @@ def get_annotationcollections_for_inventory(
         "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.transcriptions",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Transcriptions of the inventory",
-        "total": len(
-            transcription_pages
-        ),  # TODO: count of all annotations instead of AnnotationPages
+        # "total": len(
+        #     transcription_pages
+        # ),  # TODO: count of all annotations instead of AnnotationPages
         "first": transcription_pages[0] if transcription_pages else None,
         "last": transcription_pages[-1] if transcription_pages else None,
     }
@@ -162,9 +162,9 @@ def get_annotationcollections_for_inventory(
         "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.entities",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Entities in the inventory",
-        "total": len(
-            entity_pages
-        ),  # TODO: count of all annotations instead of AnnotationPages
+        # "total": len(
+        #     entity_pages
+        # ),  # TODO: count of all annotations instead of AnnotationPages
         "first": entity_pages[0] if entity_pages else None,
         "last": entity_pages[-1] if entity_pages else None,
     }
@@ -179,9 +179,9 @@ def get_annotationcollections_for_inventory(
         "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.events",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Events in the inventory",
-        "total": len(
-            event_pages
-        ),  # TODO: count of all annotations instead of AnnotationPages
+        # "total": len(
+        #     event_pages
+        # ),  # TODO: count of all annotations instead of AnnotationPages
         "first": event_pages[0] if event_pages else None,
         "last": event_pages[-1] if event_pages else None,
     }
@@ -232,7 +232,7 @@ def scan_to_jsonld(scan) -> Dict[str, Any]:
                     "type": "Type",
                     "_label": "National Archives image identifier",
                 },
-                "content": scan.na_identifier or "",
+                "content": getattr(scan, "na_identifier", "") or "",
             },
             # {
             #     "type": "Identifier",
@@ -395,19 +395,39 @@ def scan_languages_jsonld(scan) -> List[Dict[str, Any]]:
 def document_languages_jsonld(document) -> List[Dict[str, Any]]:
     """
     Collect the distinct known languages across all scans linked to a document's pages.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> scan1 = SimpleNamespace(languages="nld,fra")
+        >>> scan2 = SimpleNamespace(languages="nld,eng")
+        >>> p1 = SimpleNamespace(scan=scan1)
+        >>> p2 = SimpleNamespace(scan=scan2)
+        >>> doc = SimpleNamespace(pages=[SimpleNamespace(page=p1), SimpleNamespace(page=p2)])
+        >>> langs = document_languages_jsonld(doc)
+        >>> [l["_label"] for l in langs]
+        ['Dutch', 'French', 'English']
     """
 
     languages: List[Dict[str, Any]] = []
     seen = set()
     for link in getattr(document, "pages", None) or []:
         pg = getattr(link, "page", None) if link else None
-        scan = getattr(pg, "scan", None) if pg else None
+        scan = getattr(pg, "scan", None) if pg else getattr(link, "scan", None)
         for lang in scan_languages_jsonld(scan):
             key = lang.get("id") or lang.get("_label")
             if key in seen:
                 continue
             seen.add(key)
             languages.append(lang)
+
+    for subdoc in getattr(document, "sub_documents", None) or []:
+        for lang in document_languages_jsonld(subdoc):
+            key = lang.get("id") or lang.get("_label")
+            if key in seen:
+                continue
+            seen.add(key)
+            languages.append(lang)
+
     return languages
 
 
@@ -565,19 +585,22 @@ def document_parts_jsonld(document) -> List[Dict[str, Any]]:
         if pg is None:
             continue
         label: Optional[str]
-        if pg.page_or_folio_number and pg.recto_verso:
-            suffix = "r" if pg.recto_verso == RectoVerso.RECTO else "v"
-            label = f"Fol. {pg.page_or_folio_number}{suffix}"
-        elif pg.page_or_folio_number:
-            label = f"Page {pg.page_or_folio_number}"
+        page_no = getattr(pg, "page_or_folio_number", None)
+        rv = getattr(pg, "recto_verso", None)
+        pg_id = getattr(pg, "id", "") or ""
+        if page_no and rv:
+            suffix = "r" if rv == RectoVerso.RECTO else "v"
+            label = f"Fol. {page_no}{suffix}"
+        elif page_no:
+            label = f"Page {page_no}"
         else:
-            label = f"Physical Page {pg.id[:8]}"
+            label = f"Physical Page {pg_id[:8]}"
 
         # Determine recto/verso classification
-        if pg.recto_verso == RectoVerso.RECTO:
+        if rv == RectoVerso.RECTO:
             classification_id = "http://vocab.getty.edu/aat/300078817"  # Recto
             recto_verso_label = "Recto"
-        elif pg.recto_verso == RectoVerso.VERSO:
+        elif rv == RectoVerso.VERSO:
             classification_id = "http://vocab.getty.edu/aat/300010292"  # Verso
             recto_verso_label = "Verso"
         else:
@@ -709,7 +732,7 @@ def document_dimensions_jsonld(document) -> List[Dict[str, Any]]:
     scan_ids = {
         link.page.scan_id
         for link in (getattr(document, "pages", None) or [])
-        if link and getattr(link, "page", None) and link.page.scan_id
+        if link and getattr(link, "page", None) and getattr(link.page, "scan_id", None)
     }
     number_of_scans = len(scan_ids)
 
@@ -839,6 +862,7 @@ def document_entities_to_jsonld(
             for ann_id in entity_info["annotation_ids"]
         ]
         entity_id_part = entity_uri.rstrip("/").rsplit("/", 1)[-1]
+        doc_id = get_document_id(document)
         entities_in_document.append(
             {
                 "id": entity_uri,
@@ -846,9 +870,9 @@ def document_entities_to_jsonld(
                 "_label": entity_label,
                 "subject_of": [
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}#annotations-{entity_id_part}",
+                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}#annotations-{entity_id_part}",
                         "type": ["DigitalObject", "AnnotationPage"],
-                        "_label": f"All annotations of entity {entity_label} in document {document.id}",
+                        "_label": f"All annotations of entity {entity_label} in document {doc_id}",
                         "items": annotations,
                     }
                 ],
@@ -904,10 +928,11 @@ def document_refers_to_jsonld(
     if not entities_in_document:
         return None
 
+    doc_id = get_document_id(document)
     return [
         {
             "type": "Set",
-            "_label": f"Entities in Document {document.id}",
+            "_label": f"Entities in Document {doc_id}",
             "member": entities_in_document,
         }
     ]
@@ -950,8 +975,33 @@ def document_physical_to_jsonld(
         'Test Document (Document)'
         >>> "refers_to" in res["carries"]
         False
+        >>> scan1 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0329", na_identifier="na-1", width=1000, height=2000, languages=None, scan_type=None, get_image_url=lambda size="max": "https://example.org/img1.jpg")
+        >>> scan2 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0330", na_identifier="na-2", width=1000, height=2000, languages=None, scan_type=None, get_image_url=lambda size="max": "https://example.org/img2.jpg")
+        >>> page1 = SimpleNamespace(id="p1", scan=scan1, scan_id="s1", page_or_folio_number="1", recto_verso=None)
+        >>> page2 = SimpleNamespace(id="p2", scan=scan2, scan_id="s2", page_or_folio_number="2", recto_verso=None)
+        >>> doc_with_scans = SimpleNamespace(
+        ...     id="uuid-4088",
+        ...     title="Test Document with Scans",
+        ...     document_types_linked=[],
+        ...     external_ids=[],
+        ...     pages=[SimpleNamespace(page=page1), SimpleNamespace(page=page2)],
+        ...     location=None,
+        ...     date_earliest_begin=None,
+        ...     date_latest_begin=None,
+        ...     date_earliest_end=None,
+        ...     date_latest_end=None,
+        ...     date_text=None,
+        ... )
+        >>> res_scans = document_physical_to_jsonld(doc_with_scans, links_parquet={})
+        >>> res_scans["id"]
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330'
+        >>> res_scans["carries"]["referred_to_by"][0]["id"]
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330.annotations'
     """
-    base_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}"
+    doc_id = get_document_id(document)
+    base_id = (
+        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}"
+    )
     place = settlement_to_place_jsonld(document.location) if document.location else None
     languages = document_languages_jsonld(document)
 
@@ -962,9 +1012,9 @@ def document_physical_to_jsonld(
         # "digitally_carried_by": None,
         "referred_to_by": [  # All annotations in the document
             {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{document.id}.annotations",
+                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}.annotations",
                 "type": "Set",
-                "_label": f"Entity and event annotations for Document {document.id}",
+                "_label": f"Entity and event annotations for Document {doc_id}",
             }
         ],
     }
@@ -976,7 +1026,7 @@ def document_physical_to_jsonld(
         "@context": "https://linked.art/ns/v1/linked-art.json",
         "id": base_id,
         "type": "PhysicalHumanMadeThing",
-        "_label": f"{document.title or document.id} (Document)",
+        "_label": f"{document.title or doc_id} (Document)",
         "classified_as": document_classifications_jsonld(document),
         "title": document_title_jsonld(document),
         "identified_by": document_identified_by_jsonld(document),
@@ -990,7 +1040,7 @@ def document_physical_to_jsonld(
         "part": document_parts_jsonld(document),
         "carries": carries,
         "subject_of": {
-            # "id": f"https://globalise.huygens.knaw.nl/document/{document.id}", # TODO: viewer uri???
+            # "id": f"https://globalise.huygens.knaw.nl/document/{doc_id}", # TODO: viewer uri???
             "type": "DigitalObject",
             "_label": "This document shown by Globalise",
         },
@@ -1001,6 +1051,30 @@ def document_physical_to_jsonld(
 
 
 def series_to_jsonld(series) -> Dict[str, Any]:
+    """
+    Generate Linked Art JSON-LD representation for a Series (Set).
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> s = SimpleNamespace(id="s1", title="Series 1", part_of_id=None, part_of=None)
+        >>> res = series_to_jsonld(s)
+        >>> res["_label"]
+        'Series 1'
+        >>> res["classified_as"][0]["_label"]
+        'Archival Grouping'
+        >>> parent = SimpleNamespace(id="p1", title="Parent Series")
+        >>> sub = SimpleNamespace(id="s2", title="Subseries 1", part_of_id="p1", part_of=parent)
+        >>> res_sub = series_to_jsonld(sub)
+        >>> res_sub["classified_as"][0]["_label"]
+        'Archival Subseries (subgroups)'
+        >>> res_sub["member_of"][0]["_label"]
+        'Parent Series'
+        >>> series_to_jsonld(None)
+        {}
+    """
+    if series is None:
+        return {}
+
     # Determine classification based on hierarchy level
     # If it has a parent, it's likely a sub-grouping; otherwise a top-level grouping
     if getattr(series, "part_of_id", None) is not None:
@@ -1017,6 +1091,7 @@ def series_to_jsonld(series) -> Dict[str, Any]:
         }
 
     # Identified by Name
+    title = getattr(series, "title", None) or ""
     identified_by = [
         {
             "type": "Name",
@@ -1027,7 +1102,7 @@ def series_to_jsonld(series) -> Dict[str, Any]:
                     "_label": "Primary Name",
                 }
             ],
-            "content": series.title,
+            "content": title,
         }
     ]
 
@@ -1039,20 +1114,22 @@ def series_to_jsonld(series) -> Dict[str, Any]:
             {
                 "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/series:{parent.id}",
                 "type": "Set",
-                "_label": parent.title,
+                "_label": getattr(parent, "title", None) or "",
             }
         ]
 
     result: Dict[str, Any] = {
         "@context": "https://linked.art/ns/v1/linked-art.json",
         "type": "Set",
-        "_label": series.title,
+        "_label": title,
         "classified_as": [classified_as],
         "identified_by": identified_by,
     }
 
     if member_of:
         result["member_of"] = member_of
+
+    return result
 
 
 def series_chain(series) -> Dict[str, Any]:
@@ -1111,12 +1188,12 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
         timespan = {
             "type": "Timespan",
             "begin_of_the_begin": (
-                str(inventory.date_start)
+                str(inventory.date_start) + "T00:00:00"
                 if getattr(inventory, "date_start", None) is not None
                 else None
             ),
             "end_of_the_end": (
-                str(inventory.date_end)
+                str(inventory.date_end) + "T23:59:59"
                 if getattr(inventory, "date_end", None) is not None
                 else None
             ),
@@ -1170,11 +1247,12 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     parts: List[Dict[str, Any]] = []
     if getattr(inventory, "documents", None):
         for doc in inventory.documents:  # limit to avoid huge payloads
-            title = doc.title or f"Document {doc.id}"
+            doc_id = get_document_id(doc)
+            title = doc.title or f"Document {doc_id}"
 
             # Get the shallow document reference (without pages) to avoid huge payloads
             doc_ref = {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc.id}",
+                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}",
                 "type": "PhysicalHumanMadeThing",
                 "_label": title,
             }
@@ -1349,6 +1427,10 @@ def create_document_range(
 
     Examples:
         >>> from types import SimpleNamespace
+        >>> scan1 = SimpleNamespace(filename="NL-HaNA_1.04.02_3598_0795", languages="nld,fra")
+        >>> scan2 = SimpleNamespace(filename="NL-HaNA_1.04.02_3598_0943", languages="nld")
+        >>> page1 = SimpleNamespace(scan=scan1)
+        >>> page2 = SimpleNamespace(scan=scan2)
         >>> doc = SimpleNamespace(
         ...     id="NL-HaNA_1.04.02_3598_0795-0943",
         ...     title="Resoluties",
@@ -1359,7 +1441,7 @@ def create_document_range(
         ...     date_latest_end=None,
         ...     document_types_linked=[],
         ...     external_ids=[],
-        ...     pages=[],
+        ...     pages=[SimpleNamespace(page=page1), SimpleNamespace(page=page2)],
         ...     sub_documents=[],
         ... )
         >>> r = create_document_range(doc, inventory_number="3598")
@@ -1367,15 +1449,18 @@ def create_document_range(
         'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:3598.manifest/range/NL-HaNA_1.04.02_3598_0795-0943'
         >>> r["label"]["en"]
         ['Resoluties']
+        >>> [m for m in r["metadata"] if m["label"]["en"] == ["Language"]]
+        [{'label': {'en': ['Language']}, 'value': {'en': ['Dutch', 'French']}}]
     """
+    doc_id = get_document_id(doc)
     # Determine label from title or ID
     if getattr(doc, "title", None):
         label_text = doc.title
     else:
-        label_text = f"Document {doc.id}"
+        label_text = f"Document {doc_id}"
 
     doc_range: Dict[str, Any] = {
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{doc.id}",
+        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{doc_id}",
         "type": "Range",
         "label": {"en": [label_text]},
         "metadata": [],
@@ -1461,6 +1546,18 @@ def create_document_range(
                 }
             )
 
+    # Languages
+    doc_langs = document_languages_jsonld(doc)
+    if doc_langs:
+        lang_labels = [l["_label"] for l in doc_langs if l.get("_label")]
+        if lang_labels:
+            doc_range["metadata"].append(
+                {
+                    "label": {"en": ["Language"]},
+                    "value": {"en": lang_labels},
+                }
+            )
+
     # Inventory number
     doc_range["metadata"].append(
         {
@@ -1491,18 +1588,18 @@ def create_document_range(
                     }
                 )
 
-    # Document UUID identifier
+    # Document identifier
     doc_range["metadata"].append(
         {
             "label": {"en": ["Identifier"]},
-            "value": {"none": [doc.id]},
+            "value": {"none": [doc_id]},
         }
     )
 
     # Link to the document physical metadata (via seeAlso)
     doc_range["seeAlso"] = [
         {
-            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc.id}",
+            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}",
             "type": "PhysicalHumanMadeThing",
             "label": {"en": ["Document metadata"]},
         }
@@ -1554,6 +1651,61 @@ def create_document_range(
 def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]:
     """
     Generate a IIIF Presentation 3.0 Manifest for the Inventory
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> scan = SimpleNamespace(
+        ...     filename="NL-HaNA_1.04.02_1053_0001",
+        ...     na_identifier=None,
+        ...     width=1000,
+        ...     height=2000,
+        ...     languages="nld",
+        ...     pages=[],
+        ...     get_image_url=lambda size="max": "https://example.org/image.jpg",
+        ...     iiif_image_info=None,
+        ...     inventory_text_start_offset=None,
+        ...     inventory_text_end_offset=None,
+        ...     htr_text_start_offset=None,
+        ...     htr_text_end_offset=None,
+        ...     has_transcriptions=False,
+        ...     has_entities=False,
+        ...     has_events=False,
+        ... )
+        >>> page = SimpleNamespace(id="p1", scan=scan, scan_id="s1")
+        >>> doc = SimpleNamespace(
+        ...     id="doc-1",
+        ...     title="Test Doc",
+        ...     part_of_id=None,
+        ...     location=None,
+        ...     date_text=None,
+        ...     date_earliest_begin=None,
+        ...     date_latest_begin=None,
+        ...     date_earliest_end=None,
+        ...     date_latest_end=None,
+        ...     document_types_linked=[],
+        ...     external_ids=[],
+        ...     pages=[SimpleNamespace(page=page, index=0)],
+        ...     sub_documents=[],
+        ... )
+        >>> inv = SimpleNamespace(
+        ...     inventory_number="1053",
+        ...     titles=[],
+        ...     member_of_series=[],
+        ...     documents=[doc],
+        ...     scans=[scan],
+        ...     date_start=None,
+        ...     date_end=None,
+        ...     handle=None,
+        ... )
+        >>> m = inventory_to_manifest_jsonld(inv, "https://example.org/manifest")
+        >>> canvas = m["items"][0]
+        >>> canvas["language"]
+        ['nld']
+        >>> [item for item in canvas["metadata"] if item["label"]["en"] == ["Language"]]
+        [{'label': {'en': ['Language']}, 'value': {'en': ['Dutch']}}]
+        >>> range_meta = m["structures"][0]["items"][0]["metadata"]
+        >>> [item for item in range_meta if item["label"]["en"] == ["Language"]]
+        [{'label': {'en': ['Language']}, 'value': {'en': ['Dutch']}}]
     """
 
     # Metadata values for top-level IIIF Presentation 3.0 manifest metadata.
@@ -1684,7 +1836,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "label": {"en": ["Attribution"]},
             "value": {
                 "en": [
-                    '<span>GLOBALISE Project. <a href="https://creativecommons.org/publicdomain/zero/1.0/"> <img src="https://licensebuttons.net/l/zero/1.0/88x31.png" alt="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"/> </a> </span>'
+                    '<span>Globalise Project. <a href="https://creativecommons.org/publicdomain/zero/1.0/"> <img src="https://licensebuttons.net/l/zero/1.0/88x31.png" alt="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"/> </a> </span>'
                 ]
             },
         },
@@ -1693,12 +1845,12 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             {
                 "id": "https://globalise.huygens.knaw.nl",
                 "type": "Agent",
-                "label": {"en": ["GLOBALISE Project"]},
+                "label": {"en": ["Globalise Project"]},
                 "homepage": [
                     {
                         "id": "https://globalise.huygens.knaw.nl",
                         "type": "Text",
-                        "label": {"en": ["GLOBALISE Project"]},
+                        "label": {"en": ["Globalise Project"]},
                         "format": "text/html",
                     }
                 ],
@@ -1945,6 +2097,30 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                         "value": {"none": [rv_label]},
                     }
                 )
+
+            # Language on Canvas level
+            raw_langs = getattr(scan, "languages", None)
+            if raw_langs:
+                scan_lang_codes = [
+                    c.strip().lower()
+                    for c in raw_langs.split(",")
+                    if c.strip().lower() and c.strip().lower() != "unknown"
+                ]
+                if scan_lang_codes:
+                    canvas_obj["language"] = scan_lang_codes
+
+            scan_langs = scan_languages_jsonld(scan)
+            if scan_langs:
+                canvas_lang_labels = [
+                    l["_label"] for l in scan_langs if l.get("_label")
+                ]
+                if canvas_lang_labels:
+                    canvas_obj["metadata"].append(
+                        {
+                            "label": {"en": ["Language"]},
+                            "value": {"en": canvas_lang_labels},
+                        }
+                    )
 
             manifest["items"].append(canvas_obj)
 

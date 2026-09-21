@@ -5,6 +5,8 @@ Entities: Series, Inventory, Document, Scan, Page, DocumentType, Settlement
 and the junction / helper tables that connect them.
 """
 
+import os
+import re
 import uuid
 import enum
 from typing import Optional, List
@@ -217,6 +219,84 @@ class SettlementLabel(Base):
         return self.label
 
 
+def get_document_id(document) -> str:
+    """
+    Get the document identifier based on scan filenames:
+    NL-HaNA_1.04.02_4088_0329-0330 where the last two numbers represent
+    the first and last scan of the document.
+
+    If scans are unavailable or filenames cannot be parsed into a common prefix
+    and scan numbers, falls back to document.id.
+
+    Args:
+        document: Document instance or namespace with 'pages' and 'id'.
+
+    Returns:
+        Formatted document identifier string.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> scan1 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0329")
+        >>> scan2 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0330")
+        >>> page1 = SimpleNamespace(scan=scan1)
+        >>> page2 = SimpleNamespace(scan=scan2)
+        >>> doc = SimpleNamespace(id="uuid-1", pages=[SimpleNamespace(page=page1), SimpleNamespace(page=page2)])
+        >>> get_document_id(doc)
+        'NL-HaNA_1.04.02_4088_0329-0330'
+        >>> doc_single = SimpleNamespace(id="uuid-2", pages=[SimpleNamespace(page=page1)])
+        >>> get_document_id(doc_single)
+        'NL-HaNA_1.04.02_4088_0329-0329'
+        >>> doc_fallback = SimpleNamespace(id="NL-HaNA_1.04.02_3598_0795-0943", pages=[])
+        >>> get_document_id(doc_fallback)
+        'NL-HaNA_1.04.02_3598_0795-0943'
+        >>> doc_dummy = SimpleNamespace(id="doc-123", pages=[SimpleNamespace(page=SimpleNamespace(scan=SimpleNamespace(filename="scan1.jpg")))])
+        >>> get_document_id(doc_dummy)
+        'doc-123'
+    """
+    if document is None:
+        return ""
+
+    pages = getattr(document, "pages", None) or []
+    scan_filenames: list[str] = []
+    for p in pages:
+        if not p:
+            continue
+        page = getattr(p, "page", None)
+        scan = getattr(page, "scan", None) if page else getattr(p, "scan", None)
+        fn = getattr(scan, "filename", None) if scan else None
+        if fn and fn not in scan_filenames:
+            scan_filenames.append(fn)
+
+    if not scan_filenames and getattr(document, "sub_documents", None):
+        for subdoc in document.sub_documents:
+            for p in getattr(subdoc, "pages", None) or []:
+                if not p:
+                    continue
+                page = getattr(p, "page", None)
+                scan = getattr(page, "scan", None) if page else getattr(p, "scan", None)
+                fn = getattr(scan, "filename", None) if scan else None
+                if fn and fn not in scan_filenames:
+                    scan_filenames.append(fn)
+
+    if not scan_filenames:
+        return getattr(document, "id", "") or ""
+
+    sorted_scans = sorted(scan_filenames)
+    first_scan = sorted_scans[0]
+    last_scan = sorted_scans[-1]
+
+    first_stem = re.sub(r"\.(jpe?g|tiff?|png)$", "", first_scan, flags=re.IGNORECASE)
+    last_stem = re.sub(r"\.(jpe?g|tiff?|png)$", "", last_scan, flags=re.IGNORECASE)
+
+    if "_" in first_stem and "_" in last_stem:
+        first_prefix, first_num = first_stem.rsplit("_", 1)
+        last_prefix, last_num = last_stem.rsplit("_", 1)
+        if first_prefix == last_prefix:
+            return f"{first_prefix}_{first_num}-{last_num}"
+
+    return getattr(document, "id", "") or ""
+
+
 class Document(Base):
     __tablename__ = "document"
 
@@ -291,6 +371,15 @@ class Document(Base):
         """Get the number of pages in the document."""
         return len(self.pages)
 
+    @property
+    def document_id(self) -> str:
+        """Get the human-readable document identifier based on scan filenames:
+        NL-HaNA_1.04.02_4088_0329-0330 where the last two numbers represent
+        the first and last scan of the document.
+        Falls back to self.id if scans are unavailable or filenames cannot be parsed.
+        """
+        return get_document_id(self)
+
     def __repr__(self):
         return f"<Document(title='{self.title}', inventory='{self.inventory_id}')>"
 
@@ -298,7 +387,7 @@ class Document(Base):
         return (
             f"{self.title} ({self.inventory.inventory_number})"
             if self.title
-            else f"Document {self.id}"
+            else f"Document {self.document_id}"
         )
 
 

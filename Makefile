@@ -29,7 +29,7 @@ S3_DIR := data/output/s3
 LINKS_PARQUET := data/input/links_data.parquet
 
 # SQLite DB produced by the GLOBALISE document review app (override in .env if needed)
-DOCUMENTS_DB_URL ?= sqlite:////home/leon/Documents/GLOBALISE/review/documents/globalise_documents.db
+DOCUMENTS_DB_URL ?= sqlite:///data/input/document/globalise_documents.db
 
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
 NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:

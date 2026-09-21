@@ -98,7 +98,8 @@ def build_nested_series_member(s) -> Dict[str, Any]:
 
     members = []
     for sub_s in sorted(
-        getattr(s, "sub_series", None) or [], key=lambda x: getattr(x, "title", "") or ""
+        getattr(s, "sub_series", None) or [],
+        key=lambda x: getattr(x, "title", "") or "",
     ):
         members.append(build_nested_series_member(sub_s))
 
@@ -264,27 +265,26 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     # 2. Export Documents
 
     print("Loading documents...")
-    # documents = session.query(Document).all()
-
-    # For now, only inventory 1053 and 3598
-    documents = (
-        session.query(Document)
-        .join(Document.inventory)
-        .filter(Inventory.inventory_number.in_(["1053", "3598"]))
-        .options(
-            selectinload(Document.document_types_linked).selectinload(
-                Document2DocumentType.document_type
-            ),
-            selectinload(Document.external_ids).selectinload(
-                Document2ExternalID.external
-            ),
-            selectinload(Document.location).selectinload(Settlement.labels),
-            selectinload(Document.pages)
-            .selectinload(Page2Document.page)
-            .selectinload(Page.scan),
+    doc_query = session.query(Document)
+    use_bucket = bool(s3_client and s3_config and getattr(s3_config, "bucket", None))
+    if not use_bucket:
+        print("Writing to disk: filtering documents to inventories 1053 and 3598...")
+        doc_query = doc_query.join(Document.inventory).filter(
+            Inventory.inventory_number.in_(["1053", "3598"])
         )
-        .all()
-    )
+    else:
+        print("Bucket specified: exporting all documents...")
+
+    documents = doc_query.options(
+        selectinload(Document.document_types_linked).selectinload(
+            Document2DocumentType.document_type
+        ),
+        selectinload(Document.external_ids).selectinload(Document2ExternalID.external),
+        selectinload(Document.location).selectinload(Settlement.labels),
+        selectinload(Document.pages)
+        .selectinload(Page2Document.page)
+        .selectinload(Page.scan),
+    ).all()
 
     total_docs = len(documents)
     print(f"Loaded {total_docs} documents.")

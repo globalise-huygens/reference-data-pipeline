@@ -1549,7 +1549,7 @@ def create_document_range(
     # Languages
     doc_langs = document_languages_jsonld(doc)
     if doc_langs:
-        lang_labels = [l["_label"] for l in doc_langs if l.get("_label")]
+        lang_labels = [lang["_label"] for lang in doc_langs if lang.get("_label")]
         if lang_labels:
             doc_range["metadata"].append(
                 {
@@ -1706,6 +1706,41 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         >>> range_meta = m["structures"][0]["items"][0]["metadata"]
         >>> [item for item in range_meta if item["label"]["en"] == ["Language"]]
         [{'label': {'en': ['Language']}, 'value': {'en': ['Dutch']}}]
+        >>> scan2 = SimpleNamespace(
+        ...     filename="NL-HaNA_1.04.02_1053_0002",
+        ...     na_identifier=None,
+        ...     width=1000,
+        ...     height=2000,
+        ...     languages="nld",
+        ...     pages=[],
+        ...     get_image_url=lambda size="max": "https://example.org/image.jpg",
+        ...     iiif_image_info=None,
+        ...     inventory_text_start_offset=10,
+        ...     inventory_text_end_offset=20,
+        ...     inventory_htr_text_start_offset=30,
+        ...     inventory_htr_text_end_offset=40,
+        ...     has_transcriptions=False,
+        ...     has_entities=False,
+        ...     has_events=False,
+        ... )
+        >>> inv2 = SimpleNamespace(
+        ...     inventory_number="1053",
+        ...     titles=[],
+        ...     member_of_series=[],
+        ...     documents=[],
+        ...     scans=[scan2],
+        ...     date_start=None,
+        ...     date_end=None,
+        ...     handle=None,
+        ... )
+        >>> m2 = inventory_to_manifest_jsonld(inv2, "https://example.org/manifest")
+        >>> ann_items = m2["items"][0]["annotations"][0]["items"]
+        >>> [it["body"]["purpose"] for it in ann_items]
+        ['transcription-normalized', 'transcription-diplomatic']
+        >>> ann_items[0]["target"]["selector"]["start"], ann_items[0]["target"]["selector"]["end"]
+        (10, 20)
+        >>> ann_items[1]["target"]["selector"]["start"], ann_items[1]["target"]["selector"]["end"]
+        (30, 40)
     """
 
     # Metadata values for top-level IIIF Presentation 3.0 manifest metadata.
@@ -1886,6 +1921,10 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
         f"inventory:{inventory.inventory_number}.txt"
     )
+    # inventory_htr_text_uri = (
+    #     f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+    #     f"inventory:{inventory.inventory_number}.htr.txt"
+    # )
 
     # Add Canvas for each Inventory's Scan (avoid document linkage)
     sorted_scans: List[Any] = []
@@ -1921,8 +1960,8 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             text_end = getattr(scan, "inventory_text_end_offset", None)
 
             # Diplomatic
-            text_htr_start = getattr(scan, "htr_text_start_offset", None)
-            text_htr_end = getattr(scan, "htr_text_end_offset", None)
+            text_htr_start = getattr(scan, "inventory_htr_text_start_offset", None)
+            text_htr_end = getattr(scan, "inventory_htr_text_end_offset", None)
 
             # Metadata entries similar to the example (Filename, Web)
             # Use scan.filename directly; only include Web if `na_identifier` is a URL
@@ -1980,13 +2019,11 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             # Add annotation pages for transcriptions, entities, and events (only if available)
             annotations: List[Dict[str, Any]] = []
 
-            # Normalized offsets
-            if (
-                text_start is not None
-                and text_end is not None
-                and text_htr_start is not None
-                and text_htr_end is not None
-            ):
+            # Normalized offsets and Diplomatic text annotation
+            has_normalized = text_start is not None and text_end is not None
+            has_diplomatic = text_htr_start is not None and text_htr_end is not None
+
+            if has_normalized or has_diplomatic:
                 ap_text: Dict[str, Any] = {
                     "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}",
                     "type": "AnnotationPage",
@@ -1994,7 +2031,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                 }
 
                 # Normalized text annotation
-                if text_start is not None and text_end is not None:
+                if has_normalized:
                     ap_text["items"].append(
                         {
                             "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}#annotation",
@@ -2023,7 +2060,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                     )
 
                 # Diplomatic text annotation
-                if text_htr_start is not None and text_htr_end is not None:
+                if has_diplomatic:
                     ap_text["items"].append(
                         {
                             "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:htr:{scan.filename}#annotation",
@@ -2038,7 +2075,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                             "target": {
                                 "type": "SpecificResource",
                                 "source": {
-                                    # "id": inventory_text_uri,  # TODO?
+                                    # "id": inventory_htr_text_uri,
                                     "type": "DigitalObject",
                                     "_label": f"Plain diplomatic text of Inventory {inventory.inventory_number}",
                                 },
@@ -2051,7 +2088,8 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                         }
                     )
 
-                annotations.append(ap_text)
+                if ap_text["items"]:
+                    annotations.append(ap_text)
 
             if getattr(scan, "has_transcriptions", False):
                 annotations.append(
@@ -2112,7 +2150,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             scan_langs = scan_languages_jsonld(scan)
             if scan_langs:
                 canvas_lang_labels = [
-                    l["_label"] for l in scan_langs if l.get("_label")
+                    lang["_label"] for lang in scan_langs if lang.get("_label")
                 ]
                 if canvas_lang_labels:
                     canvas_obj["metadata"].append(

@@ -28,13 +28,16 @@ S3_FLAGS ?=
 S3_DIR := data/output/s3
 LINKS_PARQUET := data/input/links_data.parquet
 
+# SQLite DB produced by the GLOBALISE document review app (override in .env if needed)
+DOCUMENTS_DB_URL ?= sqlite:////home/leon/Documents/GLOBALISE/review/documents/globalise_documents.db
+
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
 NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
 
 #------------------------------------------------------------
 
 .PHONY: build-all
-build-all: organization place person polity ship measurement thesaurus catalog
+build-all: organization place person polity ship measurement thesaurus document catalog
 
 .PHONY: links
 links:
@@ -60,6 +63,9 @@ measurement: $(S3_DIR)/.measurement.stamp
 
 .PHONY: thesaurus
 thesaurus: $(S3_DIR)/.thesaurus.stamp
+
+.PHONY: document
+document: $(S3_DIR)/.document.stamp
 
 .PHONY: catalog
 catalog: $(S3_DIR)/.catalog.stamp
@@ -341,7 +347,24 @@ $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	$(PYTHON) scripts/convert_to_json.py thesaurus data/output/concept/thesaurus.trig $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 
-$(S3_DIR)/.catalog.stamp:
+#------------------------------------------------------------
+# 8. Document Pipeline
+#------------------------------------------------------------
+# These scripts read directly from a SQLite DB (produced by the separate
+# GLOBALISE document review app) and write final JSON-LD/CSV straight to
+# the S3 output directory, so there is no CSV/XML/X3ML/RDF conversion step.
+$(S3_DIR)/.document.stamp:
+	@mkdir -p $(S3_DIR)/document $(S3_DIR)/inventory
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents_csv.py $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_documents.py $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_manifests.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	DATABASE_URL=$(DOCUMENTS_DB_URL) $(PYTHON) scripts/document/export_collection.py $(S3_DIR)/inventory $(GZIP_FLAG) $(S3_FLAGS)
+	@touch $@
+
+#------------------------------------------------------------
+# 9. Catalog Pipeline
+#------------------------------------------------------------
+$(S3_DIR)/.catalog.stamp: $(S3_DIR)/.organization.stamp $(S3_DIR)/.place.stamp $(S3_DIR)/.person.stamp $(S3_DIR)/.polity.stamp $(S3_DIR)/.ship.stamp $(S3_DIR)/.measurement.stamp $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/.document.stamp
 	@mkdir -p $(S3_DIR)
 	$(PYTHON) scripts/convert_to_json.py catalog $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
@@ -356,9 +379,13 @@ test:
 	$(PYTHON) -m doctest scripts/csv_to_xml.py
 	$(PYTHON) -m doctest scripts/xlsx_to_csv.py
 	$(PYTHON) -m doctest scripts/convert_to_json.py
+	$(PYTHON) -m doctest scripts/document/models.py
+	$(PYTHON) -m doctest scripts/document/export.py
+	$(PYTHON) -m doctest scripts/document/export_documents.py
+	$(PYTHON) -m doctest scripts/document/export_documents_csv.py
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
-        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus
+        clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document
 
 clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
 	rm -f .cache.sqlite
@@ -368,14 +395,14 @@ clean-organization:
 	rm -rf data/input/organization/xml data/input/organization/xml/.stamp
 	rm -rf data/output/organization/rdf data/output/organization/rdf/.stamp data/output/organization/rdf/.*.stamp
 	rm -rf data/output/organization/organization.ttl
-	rm -rf $(S3_DIR)/.organization.stamp $(S3_DIR)/organization*.jsonld.gz $(S3_DIR)/organization*.jsonld
+	rm -rf $(S3_DIR)/.organization.stamp $(S3_DIR)/group
 
 clean-place:
 	rm -rf data/input/place/csv data/input/place/csv/.stamp
 	rm -rf data/input/place/xml data/input/place/xml/.stamp
 	rm -rf data/output/place/rdf data/output/place/rdf/.stamp data/output/place/rdf/.*.stamp
 	rm -rf data/output/place/place.ttl
-	rm -rf $(S3_DIR)/.place.stamp $(S3_DIR)/place*.jsonld.gz $(S3_DIR)/place*.jsonld
+	rm -rf $(S3_DIR)/.place.stamp $(S3_DIR)/place
 
 clean-person:
 	rm -rf data/input/person/csv data/input/person/csv/.stamp
@@ -383,31 +410,34 @@ clean-person:
 	rm -rf data/output/person/rdf data/output/person/rdf/.stamp data/output/person/rdf/.*.stamp
 	rm -rf data/output/person/ttl data/output/person/ttl/.stamp data/output/person/ttl/.*.stamp
 	rm -rf data/output/person/person.ttl
-	rm -rf $(S3_DIR)/.person.stamp $(S3_DIR)/person*.jsonld.gz $(S3_DIR)/person*.jsonld
+	rm -rf $(S3_DIR)/.person.stamp $(S3_DIR)/person
 
 clean-polity:
 	rm -rf data/input/polity/csv data/input/polity/csv/.stamp
 	rm -rf data/input/polity/xml data/input/polity/xml/.stamp
 	rm -rf data/output/polity/rdf data/output/polity/rdf/.stamp data/output/polity/rdf/.*.stamp
 	rm -rf data/output/polity/polity.ttl
-	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity*.jsonld.gz $(S3_DIR)/polity*.jsonld $(S3_DIR)/rulership*.jsonld.gz $(S3_DIR)/rulership*.jsonld
+	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity $(S3_DIR)/rulership
 
 clean-ship:
 	rm -rf data/input/ship/csv data/input/ship/csv/.stamp
 	rm -rf data/input/ship/xml data/input/ship/xml/.stamp
 	rm -rf data/output/ship/rdf data/output/ship/rdf/.stamp data/output/ship/rdf/.*.stamp
 	rm -rf data/output/ship/ship.ttl
-	rm -rf $(S3_DIR)/.ship.stamp $(S3_DIR)/ship*.jsonld.gz $(S3_DIR)/ship*.jsonld $(S3_DIR)/voyage*.jsonld.gz $(S3_DIR)/voyage*.jsonld
+	rm -rf $(S3_DIR)/.ship.stamp $(S3_DIR)/ship $(S3_DIR)/voyage
 
 clean-measurement:
 	rm -rf data/input/measurement/csv data/input/measurement/csv/.stamp
 	rm -rf data/input/measurement/xml data/input/measurement/xml/.stamp
 	rm -rf data/output/measurement/rdf data/output/measurement/rdf/.stamp data/output/measurement/rdf/.*.stamp
 	rm -rf data/output/measurement/measurement.ttl
-	rm -rf $(S3_DIR)/.measurement.stamp $(S3_DIR)/conversion*.jsonld.gz $(S3_DIR)/conversion*.jsonld $(S3_DIR)/occurrence*.jsonld.gz $(S3_DIR)/occurrence*.jsonld
+	rm -rf $(S3_DIR)/.measurement.stamp $(S3_DIR)/conversion $(S3_DIR)/occurrence
 
 clean-thesaurus:
-	rm -rf data/output/concept $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/concept*.jsonld.gz $(S3_DIR)/concept*.jsonld
+	rm -rf data/output/concept $(S3_DIR)/.thesaurus.stamp $(S3_DIR)/thesaurus
+
+clean-document:
+	rm -rf $(S3_DIR)/.document.stamp $(S3_DIR)/document $(S3_DIR)/inventory $(S3_DIR)/objects
 
 clean-json:
 	rm -rf $(S3_DIR)/* $(S3_DIR)/.*.stamp data/output/concept
@@ -438,6 +468,7 @@ help:
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
 	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate corpus annotation links parquet"
+	@echo -e "  $(BLUE)document$(RESET)                   - to export documents/manifests/collection JSON-LD & CSV from the review DB"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
 	@echo
 	@echo -e "  $(BLUE)clean-organization$(RESET)          - to remove intermediate files & output for organization"
@@ -447,6 +478,7 @@ help:
 	@echo -e "  $(BLUE)clean-ship$(RESET)                  - to remove intermediate files & output for ship"
 	@echo -e "  $(BLUE)clean-measurement$(RESET)           - to remove intermediate files & output for measurement"
 	@echo -e "  $(BLUE)clean-thesaurus$(RESET)             - to remove intermediate files & output for thesaurus"
+	@echo -e "  $(BLUE)clean-document$(RESET)              - to remove intermediate files & output for document"
 	@echo
 	@echo -e "  $(BLUE)test$(RESET)                       - to run doctests across all python scripts"
 	@echo -e "  $(BLUE)clean$(RESET)                      - to remove all generated intermediate files and outputs"
@@ -461,3 +493,4 @@ help:
 	@echo -e "  $(YELLOW)JAVA_OPTS=opts$(RESET)             - Memory flags for X3ML Java JVM (default: $(JAVA_OPTS))"
 	@echo -e "  $(YELLOW)GZIP_FLAG=flag$(RESET)             - Gzip flag (default: --gzipped, use GZIP_FLAG=\"\" for raw JSON)"
 	@echo -e "  $(YELLOW)S3_BUCKET=name$(RESET)             - Direct upload to S3 bucket (or set in .env file)"
+	@echo -e "  $(YELLOW)DOCUMENTS_DB_URL=url$(RESET)       - SQLite DB URL for the document pipeline (default: $(DOCUMENTS_DB_URL))"

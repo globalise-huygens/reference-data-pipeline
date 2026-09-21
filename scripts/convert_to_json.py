@@ -32,6 +32,8 @@ from utils import (
     output_framed_json,
     replace_concept_uris,
     safe_segment,
+    get_canvas_uri_from_annotation_id,
+    get_manifest_uri_from_annotation_id,
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -128,6 +130,20 @@ CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
         "class_uri": "http://www.w3.org/2004/02/skos/core#Collection",
         "uri_prefix": "thesaurus:",
         "page_prefix": "collection-",
+    },
+    "inventory": {
+        "title": "Inventory Collection",
+        "type": "CuratedHolding",
+        "class_uri": "http://www.cidoc-crm.org/cidoc-crm/E78_Curated_Holding",
+        "uri_prefix": "inventory:",
+        "page_prefix": "",
+    },
+    "document": {
+        "title": "Document Collection",
+        "type": "PhysicalHumanMadeThing",
+        "class_uri": "http://www.cidoc-crm.org/cidoc-crm/E24_Physical_Human-Made_Thing",
+        "uri_prefix": "document:",
+        "page_prefix": "",
     },
 }
 
@@ -516,6 +532,14 @@ def output_annotation_collection(
                 {
                     "id": annotation_id,
                     "type": "Annotation",
+                    "partOf": {
+                        "id": get_canvas_uri_from_annotation_id(annotation_id),
+                        "type": "Canvas",
+                        "partOf": {
+                            "id": get_manifest_uri_from_annotation_id(annotation_id),
+                            "type": "Manifest",
+                        },
+                    },
                 }
                 for annotation_id in annotation_ids[start_index:end_index]
             ],
@@ -1362,6 +1386,22 @@ def generate_hydra_catalog(
                 "title": meta["title"],
             }
         )
+
+    # IIIF Collection for Inventories
+    members.append(
+        {
+            "@id": f"{URI_BASE}inventory:collection",
+            "title": "Inventory IIIF Collection",
+        }
+    )
+
+    # Big Set for Globalise Corpus
+    members.append(
+        {
+            "@id": f"{URI_BASE}inventory:set",
+            "title": "Inventory Set",
+        }
+    )
 
     catalog_doc = {
         "@context": "http://www.w3.org/ns/hydra/context.jsonld",

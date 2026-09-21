@@ -889,6 +889,161 @@ def replace_concept_uris(
         return len(triples_to_remove)
 
 
+def get_canvas_uri_from_annotation_id(annotation_id: str) -> str:
+    """
+    Extract the IIIF canvas URI from an annotation URI.
+
+    Args:
+        annotation_id (str): Entity annotation URI.
+
+    Returns:
+        str: Corresponding canvas URI.
+
+    Examples:
+        >>> get_canvas_uri_from_annotation_id(
+        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
+        ... )
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:NL-HaNA_1.04.02_1053_0003'
+    """
+    canvas_id = annotation_id.split("#")[0].replace(
+        "/annotations:entities:", "/canvas:"
+    )
+
+    return canvas_id
+
+
+def get_manifest_uri_from_annotation_id(annotation_id: str) -> str:
+    """
+    Extract the IIIF manifest URI from an annotation URI.
+
+    Args:
+        annotation_id (str): Entity annotation URI.
+
+    Returns:
+        str: Corresponding manifest URI.
+
+    Examples:
+        >>> get_manifest_uri_from_annotation_id(
+        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
+        ... )
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:1053.manifest'
+        >>> get_manifest_uri_from_annotation_id(
+        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_10098A_0001#annotation:10"
+        ... )
+        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:10098A.manifest'
+    """
+    base = annotation_id.split("#")[0]
+
+    if "/annotations:entities:" in base:
+        base_url, scan_id = base.split("/annotations:entities:", 1)
+        parts = scan_id.split("_")
+        inv_num = parts[-2] if len(parts) >= 2 else parts[0]
+        return f"{base_url}/inventory:{inv_num}.manifest"
+
+    return base.rsplit("_", 1)[0] + ".manifest"
+
+
+def generate_hydra_index_pages(
+    members: list[dict[str, Any]],
+    cat_title: str,
+    m_type: str,
+    c_uri: str,
+    uri_prefix: str,
+    emit_fn: Any,
+    page_size: int = 1000,
+    base_uri: str = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722",
+) -> int:
+    """
+    Generate Hydra Collection paginated index pages for a category of resources.
+
+    Args:
+        members (list[dict[str, Any]]): List of member dicts containing @id, @type, and title.
+        cat_title (str): Title of the collection (e.g., 'Inventory Collection').
+        m_type (str): Member @type string (e.g., 'CuratedHolding').
+        c_uri (str): Class URI mapped in the JSON-LD context.
+        uri_prefix (str): URI prefix (e.g., 'inventory:').
+        emit_fn (Any): Callable receiving (dict, relative_path) to write or emit each page.
+        page_size (int, optional): Number of items per page. Defaults to 1000.
+        base_uri (str, optional): Base URI prefix. Defaults to standard GLOBALISE URI.
+
+    Returns:
+        int: Number of pages generated.
+
+    Examples:
+        >>> emitted = []
+        >>> def mock_emit(doc, path):
+        ...     emitted.append((path, doc["totalItems"], doc["view"]["@id"]))
+        >>> n = generate_hydra_index_pages(
+        ...     [{"@id": "https://example.org/item1", "@type": "Thing", "title": "Item 1"}],
+        ...     "Thing Collection",
+        ...     "Thing",
+        ...     "http://example.org/Thing",
+        ...     "thing:",
+        ...     mock_emit,
+        ...     page_size=10,
+        ...     base_uri="https://example.org",
+        ... )
+        >>> n
+        1
+        >>> emitted[0][0]
+        'thing/index/page-1.json'
+        >>> emitted[0][1]
+        1
+    """
+    page_context: list[Any] = [
+        "http://www.w3.org/ns/hydra/context.jsonld",
+        {
+            m_type: c_uri,
+        },
+    ]
+
+    total_items = len(members)
+    page_size = max(1, page_size)
+    total_pages = max(1, (total_items + page_size - 1) // page_size)
+
+    clean_prefix = uri_prefix.rstrip(":")
+    base_collection_uri = f"{base_uri.rstrip('/')}/{clean_prefix}:index"
+    rel_folder = os.path.join(
+        *[safe_segment(p) for p in clean_prefix.split(":") if p], "index"
+    )
+
+    for page_num in range(1, total_pages + 1):
+        page_file = f"page-{page_num}.json"
+        page_uri = f"{base_collection_uri}/{page_file}"
+        relative_path = os.path.join(rel_folder, page_file)
+
+        start_index = (page_num - 1) * page_size
+        end_index = page_num * page_size
+        page_members = members[start_index:end_index]
+
+        view: dict[str, Any] = {
+            "@id": page_uri,
+            "@type": "PartialCollectionView",
+            "first": f"{base_collection_uri}/page-1.json",
+            "last": f"{base_collection_uri}/page-{total_pages}.json",
+        }
+
+        if page_num > 1:
+            view["previous"] = f"{base_collection_uri}/page-{page_num - 1}.json"
+
+        if page_num < total_pages:
+            view["next"] = f"{base_collection_uri}/page-{page_num + 1}.json"
+
+        collection_doc = {
+            "@context": page_context,
+            "@id": page_uri,
+            "@type": "Collection",
+            "title": cat_title,
+            "totalItems": total_items,
+            "member": page_members,
+            "view": view,
+        }
+
+        emit_fn(collection_doc, relative_path)
+
+    return total_pages
+
+
 if __name__ == "__main__":
     import doctest
 

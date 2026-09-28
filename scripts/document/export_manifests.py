@@ -40,14 +40,21 @@ def export_all_manifests(output_dir, gzipped, s3_client, s3_config):
     inventories = session.query(Inventory).all()
 
     t0 = time.time()
+    prefix = getattr(s3_config, "prefix", "") or "" if s3_config else ""
     for inventory in tqdm(inventories, desc="Exporting manifests", unit="manifest"):
         inv_num = inventory.inventory_number
         manifest_uri = f"{BASE_URI}/inventory:{inv_num}.manifest"
         manifest = inventory_to_manifest_jsonld(inventory, manifest_uri)
 
+        rel_path = (
+            f"inventory/{inv_num}.manifest.json"
+            if s3_client and s3_config and not prefix.rstrip("/").endswith("inventory")
+            else f"{inv_num}.manifest.json"
+        )
+
         output_framed_json(
             manifest,
-            f"{inv_num}.manifest.json",
+            rel_path,
             output_dir,
             gzipped,
             s3_client,
@@ -55,7 +62,12 @@ def export_all_manifests(output_dir, gzipped, s3_client, s3_config):
         )
 
     elapsed = time.time() - t0
-    print(f"\nDone. {total} manifests written to {output_dir}/ in {elapsed:.1f}s")
+    target_desc = (
+        f"s3://{s3_config.bucket}/{prefix}{'inventory/' if not prefix.rstrip('/').endswith('inventory') else ''}"
+        if s3_client and s3_config
+        else f"{output_dir}/"
+    )
+    print(f"\nDone. {total} manifests written to {target_desc} in {elapsed:.1f}s")
 
     session.close()
 

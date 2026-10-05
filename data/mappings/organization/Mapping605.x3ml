@@ -208,7 +208,7 @@
                                 <arg name="term_simple" type="constant">classification_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../poolparty_uri_classification/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../poolparty_uri_classification/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan for the Classification of Organization</arg>
@@ -281,7 +281,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../zotero_link/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ORG_ID/text(),'|',../poolparty_uri_classification/text(),'|',../startDate/text(),'|',../endDate/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">../sources/text()</arg>
@@ -307,7 +307,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../pages/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(../pages/text(),'|',concat(../ORG_ID/text(),'|',../poolparty_uri_classification/text(),'|',../startDate/text(),'|',../endDate/text())), 1, string-length(../pages/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -348,7 +348,7 @@
                             <arg name="term_simple" type="constant">classification_status</arg>
                             <arg name="term_simple_HASHED_CONTENTS" type="xpath">../poolparty_uri_classification/text()</arg>
                             <arg name="term_simple1" type="constant">timespan</arg>
-                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../poolparty_uri_classification/text()</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -493,7 +493,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -525,7 +525,7 @@
                             <arg name="hierarchy" type="constant">textualwork</arg>
                             <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../zotero_link/text()</arg>
                             <arg name="term_simple" type="constant">part</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ORG_ID/text(),'|',../poolparty_uri_classification/text(),'|',../startDate/text(),'|',../endDate/text())), 1, string-length(text()) * 10000)</arg>
                         </instance_generator>
                         <label_generator name="Custom_TwoArgumentsLabel">
                             <arg name="premise" type="constant">Page</arg>
@@ -549,7 +549,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../zotero_link/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ORG_ID/text(),'|',../poolparty_uri_classification/text(),'|',../startDate/text(),'|',../endDate/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -569,7 +569,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page number</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -609,7 +609,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">page</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>

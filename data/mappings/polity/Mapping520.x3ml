@@ -408,11 +408,10 @@
                     <target_node>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">dynasty</arg>
                                 <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
-                                <arg name="term_simple" type="constant">timespan</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">Timespan for the Rulership of</arg>
@@ -546,7 +545,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -567,7 +566,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -587,7 +586,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -624,7 +623,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -640,7 +639,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -674,7 +673,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -687,11 +686,10 @@
                 <target_node>
                     <entity variable="timespan">
                         <type>crm:E52_Time-Span</type>
-                        <instance_generator name="Custom_GenericOneArgHashedURI">
+                        <instance_generator name="Custom_GenericUniqueEventURI">
                             <arg name="hierarchy" type="constant">dynasty</arg>
                             <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
-                            <arg name="term_simple" type="constant">timespan</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="type" type="constant">timespan</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -879,7 +877,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">period source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -903,7 +901,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -923,7 +921,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -960,7 +958,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -976,7 +974,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1010,7 +1008,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1078,7 +1076,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1114,7 +1112,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1129,7 +1127,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1197,7 +1195,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1233,7 +1231,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1248,7 +1246,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>

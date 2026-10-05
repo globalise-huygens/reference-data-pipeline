@@ -133,7 +133,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifiers</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -166,7 +166,7 @@
                             <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_statsus</arg>
+                                <arg name="term_simple" type="constant">appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
@@ -346,13 +346,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">Timespan of the Existence Period of Polity</arg>
@@ -392,13 +389,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -434,13 +428,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -476,13 +467,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -518,13 +506,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -534,7 +519,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -554,7 +539,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -586,7 +571,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">period source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -612,27 +597,20 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
                         <entity variable="period_comments">
                             <type>crm:E33_Linguistic_Object</type>
-                            <instance_generator name="Custom_GenericThreeArgHashedURI">
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple2" type="constant">comments</arg>
-                                <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">population/timespan/comments</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Comments About the Period related to the</arg>
@@ -705,13 +683,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -741,7 +716,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">period source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -848,7 +823,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -869,7 +844,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -889,7 +864,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -926,7 +901,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -942,7 +917,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Overall_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -976,7 +951,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1000,13 +975,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">polity</arg>
                                 <arg name="hierarchy_id" type="xpath">../Polity_ID/text()</arg>
-                                <arg name="term_simple" type="constant">population</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
-                                <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../Begin_Year_Earliest/text()</arg>
+                                <arg name="type" type="constant">population/timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -1016,7 +988,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1032,7 +1004,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Period_Source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Polity_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1051,7 +1023,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page number</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1066,7 +1038,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1134,7 +1106,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1170,7 +1142,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1185,7 +1157,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1253,7 +1225,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -1289,7 +1261,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1304,7 +1276,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>

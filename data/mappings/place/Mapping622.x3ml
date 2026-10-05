@@ -222,7 +222,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -376,41 +376,71 @@
                             <arg name="term_simple" type="constant">declarative_place</arg>
                             <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                         </instance_generator>
-                        <additional>
-                            <relationship>crm:P2_has_type</relationship>
-                            <entity>
-                                <type>crm:E55_Type</type>
-                                <instance_info>
-                                    <constant>coord certainty</constant>
-                                </instance_info>
-                                <instance_generator name="Custom_TypeShortURI">
-                                    <arg name="type_id" type="xpath">../coord_certainty/text()</arg>
-                                </instance_generator>
-                                <label_generator name="Literal">
-                                    <arg name="text" type="xpath">../coord_certainty/text()</arg>
-                                    <arg name="language" type="constant">en</arg>
-                                </label_generator>
-                                <additional>
-                                    <relationship>crm:P2_has_type</relationship>
-                                    <entity>
-                                        <type>crm:E55_Type</type>
-                                        <instance_info>
-                                            <constant>degree of certainty</constant>
-                                        </instance_info>
-                                        <instance_generator name="Custom_URIorUUID">
-                                            <arg name="text" type="constant">https://digitaalerfgoed.poolparty.biz/globalise/efc9b805-9947-48c3-905b-98a40596937a</arg>
-                                        </instance_generator>
-                                        <label_generator name="Literal">
-                                            <arg name="text" type="constant">Degree of Certainty</arg>
-                                            <arg name="language" type="constant">en</arg>
-                                        </label_generator>
-                                    </entity>
-                                </additional>
-                            </entity>
-                        </additional>
                     </entity>
                 </target_node>
             </domain>
+            <link template="GLBF.2_place_coordinate_certainty">
+                <path>
+                    <source_relation>
+                        <relation>../coord_certainty</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="certain">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../coord_certainty</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_info>
+                                <constant>certain</constant>
+                            </instance_info>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:2679d175-6a27-42ed-a5f5-441fcf671152</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">certain</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="GLBF.2_place_coordinate_certainty">
+                <path>
+                    <source_relation>
+                        <relation>../coord_certainty</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="uncertain">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../coord_certainty</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_info>
+                                <constant>uncertain</constant>
+                            </instance_info>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:f58589a3-fe6a-4afc-96b8-862526e7d27d</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">uncertain</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
             <link template="GLBF.1_place_coordinate">
                 <path>
                     <source_relation>
@@ -549,7 +579,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">Well-Known Text</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -617,7 +647,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -638,7 +668,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -670,7 +700,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -721,9 +751,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -784,7 +814,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -831,7 +861,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -919,7 +949,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1005,7 +1035,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1026,7 +1056,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1058,7 +1088,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1109,9 +1139,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../coord_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1165,7 +1195,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -1253,7 +1283,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1339,7 +1369,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1360,7 +1390,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../overall_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1392,7 +1422,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../overall_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1443,9 +1473,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../overall_remarks_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../glob_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1499,7 +1529,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -1587,7 +1617,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

@@ -245,7 +245,7 @@
                         <entity>
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://vocab.getty.edu/aat/300404670</arg>
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">preferred term</arg>
@@ -273,7 +273,7 @@
                         <entity>
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://vocab.getty.edu/aat/300264273</arg>
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">nonpreferred term</arg>

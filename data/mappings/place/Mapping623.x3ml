@@ -195,7 +195,7 @@
                                         <constant>pref</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300404670</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">preferred term</arg>
@@ -307,7 +307,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>

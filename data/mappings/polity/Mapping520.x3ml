@@ -108,7 +108,7 @@
                                     <constant>dynasty</constant>
                                 </instance_info>
                                 <instance_generator name="Custom_URIorUUID">
-                                    <arg name="text" type="constant">https://vocab.getty.edu/aat/300386176</arg>
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300386176</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">dynasty</arg>
@@ -473,7 +473,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -582,7 +582,7 @@
                                         <constant>page</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300194222</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300194222</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
@@ -805,7 +805,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -917,7 +917,7 @@
                                         <constant>page</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300194222</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300194222</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>

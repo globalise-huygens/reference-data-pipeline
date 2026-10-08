@@ -535,7 +535,7 @@
                                         <constant>page</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300194222</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300194222</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
@@ -860,7 +860,7 @@
                                         <constant>page</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300194222</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300194222</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>
@@ -1019,7 +1019,7 @@
                                         <constant>page number</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300445022</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300445022</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page number</arg>

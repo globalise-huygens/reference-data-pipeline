@@ -164,7 +164,7 @@
                                         <constant>unique identifier</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">https://vocab.getty.edu/aat/300404012</arg>
+                                        <arg name="type_id" type="constant">http://vocab.getty.edu/aat/300404012</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifier</arg>
@@ -218,7 +218,7 @@
                                         <constant>overall remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -469,7 +469,7 @@
                                         <constant>latitude</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300387565</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300387565</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">latitude</arg>
@@ -522,7 +522,7 @@
                                         <constant>longitude</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300387567</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300387567</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">longitude</arg>
@@ -810,7 +810,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>

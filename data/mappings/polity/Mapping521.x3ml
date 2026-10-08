@@ -111,7 +111,7 @@
                                     <arg name="text" type="constant">http://vocab.getty.edu/aat/300393206</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
-                                    <arg name="text" type="constant">reigns</arg>
+                                    <arg name="text" type="constant">reign</arg>
                                     <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
@@ -310,7 +310,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -501,7 +501,7 @@
                                         <constant>page</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300194222</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300194222</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">page</arg>

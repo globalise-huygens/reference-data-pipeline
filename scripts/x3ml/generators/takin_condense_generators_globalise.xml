@@ -77,6 +77,9 @@ Modified: January 2026 - All generator names prefixed with "Custom_" for 3M comp
 <generator name="Custom_TypeURI" prefix="sari">
 <pattern>type/{type_id}</pattern>
 </generator>
+<generator name="Custom_TypeURI_wiki" prefix="wiki">
+<pattern>type/{type_id}</pattern>
+</generator>
 <generator name="Custom_TypeShortURI" prefix="sari" shorten="yes">
 <pattern>type/{type_id}</pattern>
 </generator>

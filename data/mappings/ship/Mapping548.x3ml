@@ -112,7 +112,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">ship</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -367,7 +367,7 @@
                                 <arg name="term_simple" type="constant">production</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Production of Ship</arg>
@@ -407,7 +407,7 @@
                                 <arg name="term_simple" type="constant">production</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -443,7 +443,7 @@
                                 <arg name="term_simple" type="constant">production</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -479,7 +479,7 @@
                                 <arg name="term_simple" type="constant">production</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -515,7 +515,7 @@
                                 <arg name="term_simple" type="constant">production</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -546,7 +546,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -599,7 +599,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -671,7 +671,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -692,7 +692,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -724,7 +724,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -775,9 +775,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -846,7 +846,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -898,7 +898,7 @@
                                 <arg name="term_simple" type="constant">destruction</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Destruction of Ship</arg>
@@ -938,7 +938,7 @@
                                 <arg name="term_simple" type="constant">destruction</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -974,7 +974,7 @@
                                 <arg name="term_simple" type="constant">destruction</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -1010,7 +1010,7 @@
                                 <arg name="term_simple" type="constant">destruction</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -1046,7 +1046,7 @@
                                 <arg name="term_simple" type="constant">destruction</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -1077,7 +1077,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1130,7 +1130,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -1202,7 +1202,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1223,7 +1223,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1255,7 +1255,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1306,9 +1306,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1377,7 +1377,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1429,7 +1429,7 @@
                                 <arg name="term_simple" type="constant">sinking</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of Sinking of Ship</arg>
@@ -1469,7 +1469,7 @@
                                 <arg name="term_simple" type="constant">sinking</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -1505,7 +1505,7 @@
                                 <arg name="term_simple" type="constant">sinking</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -1541,7 +1541,7 @@
                                 <arg name="term_simple" type="constant">sinking</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -1577,7 +1577,7 @@
                                 <arg name="term_simple" type="constant">sinking</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -1608,7 +1608,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1661,7 +1661,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -1733,7 +1733,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1754,7 +1754,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1786,7 +1786,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1837,9 +1837,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1908,7 +1908,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1961,7 +1961,7 @@
                                 <arg name="term_simple" type="constant">wrecked</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Wreck of Ship</arg>
@@ -2001,7 +2001,7 @@
                                 <arg name="term_simple" type="constant">wrecked</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of Wreck of Ship</arg>
@@ -2041,7 +2041,7 @@
                                 <arg name="term_simple" type="constant">wrecked</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -2077,7 +2077,7 @@
                                 <arg name="term_simple" type="constant">wrecked</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -2113,7 +2113,7 @@
                                 <arg name="term_simple" type="constant">wrecked</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -2144,7 +2144,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -2197,7 +2197,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -2269,7 +2269,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -2290,7 +2290,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -2322,7 +2322,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -2373,9 +2373,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -2444,7 +2444,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -2496,7 +2496,7 @@
                                 <arg name="term_simple" type="constant">end</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the End of Existence of Ship</arg>
@@ -2536,7 +2536,7 @@
                                 <arg name="term_simple" type="constant">end</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -2572,7 +2572,7 @@
                                 <arg name="term_simple" type="constant">end</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -2608,7 +2608,7 @@
                                 <arg name="term_simple" type="constant">end</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -2644,7 +2644,7 @@
                                 <arg name="term_simple" type="constant">end</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -2675,7 +2675,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -2728,7 +2728,7 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
@@ -2800,7 +2800,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -2821,7 +2821,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -2853,7 +2853,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -2904,9 +2904,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../event_type/text(),'|',../earliest_begin/text(),'|',../latest_end/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -3028,7 +3028,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -3116,7 +3116,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

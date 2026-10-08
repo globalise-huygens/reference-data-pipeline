@@ -128,11 +128,11 @@
                                         <constant>unique identifier</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300404012</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404012</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifier</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -169,7 +169,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="appellative_status" type="constant">appellative_status</arg>
-                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Appellative Status of</arg>
@@ -201,7 +201,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="appellative_status" type="constant">appellative_status</arg>
-                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">../URI/text()</arg>
+                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="appellation" type="constant">appellation</arg>
                                 <arg name="appellation_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -241,7 +241,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="appellative_status" type="constant">appellative_status</arg>
-                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="appellative_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Appellative Status of</arg>
@@ -275,11 +275,11 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

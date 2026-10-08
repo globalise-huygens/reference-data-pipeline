@@ -132,7 +132,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifier</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -182,11 +182,12 @@
                                     <instance_info>
                                         <constant>same one</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="xpath">../voyage_id/text()</arg>
+                                    <instance_generator name="Custom_EntityURI">
+                                        <arg name="hierarchy" type="constant">voyage</arg>
+                                        <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
                                     </instance_generator>
                                     <label_generator name="Custom_OneArgumentLabel">
-                                        <arg name="premise" type="constant">Voyage</arg>
+                                        <arg name="premise" type="constant">Voyage Identified by</arg>
                                         <arg name="text" type="xpath">../voyage_id/text()</arg>
                                     </label_generator>
                                 </entity>
@@ -254,11 +255,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">voyage</arg>
                                 <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
-                                <arg name="term_simple" type="constant">timespan</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
@@ -290,11 +290,10 @@
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                            <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">voyage</arg>
                                 <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
-                                <arg name="term_simple" type="constant">timespan</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -339,11 +338,11 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -438,7 +437,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -516,7 +515,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">url</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -607,7 +606,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">citation</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -672,7 +671,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">citation</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

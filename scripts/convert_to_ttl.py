@@ -13,7 +13,7 @@ from rdflib import Graph, Literal, Namespace, XSD
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
-    convert_hash_uris_to_bnodes,
+    convert_uris_to_bnodes,
     expand_date_literal,
     normalize_uris,
     replace_concept_uris,
@@ -151,7 +151,7 @@ def load_graph(rdf_dir: str) -> Graph:
 
     replace_concept_uris(graph)
     transformed_count = normalize_uris(graph)
-    bnode_count = convert_hash_uris_to_bnodes(graph)
+    bnode_count = convert_uris_to_bnodes(graph)
     if transformed_count > 0 or bnode_count > 0:
         logging.info(
             f"Transformed {transformed_count} URIs and converted {bnode_count} hash URIs to BNodes."
@@ -178,7 +178,7 @@ def combine_single_chunk(chunk_files: list[str], output_path: str) -> str:
 
     replace_concept_uris(graph)
     normalize_uris(graph)
-    convert_hash_uris_to_bnodes(graph)
+    convert_uris_to_bnodes(graph)
     normalize_dates_to_datetimes(graph)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)

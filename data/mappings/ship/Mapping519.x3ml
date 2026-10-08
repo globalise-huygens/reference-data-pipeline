@@ -112,7 +112,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">ship</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -148,7 +148,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifier</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

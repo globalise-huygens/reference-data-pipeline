@@ -130,7 +130,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">family_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -160,7 +160,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -181,7 +181,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">family_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -191,7 +191,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../reconstruction_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -223,7 +223,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../reconstruction_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -276,7 +276,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">family_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -284,9 +284,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../reconstruction_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -327,7 +327,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">Family Status of Person identified by</arg>
@@ -370,7 +370,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>aaao:ZP31_ascribes_familial_relation</relationship>
@@ -408,7 +408,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -418,9 +418,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -436,9 +436,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">family_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -457,7 +457,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">start date</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -494,7 +494,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -504,9 +504,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -522,9 +522,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">family_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -543,7 +543,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">end date</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -580,7 +580,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -590,9 +590,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -632,7 +632,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -642,9 +642,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -684,7 +684,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -694,9 +694,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -736,7 +736,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -746,9 +746,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
-                                <arg name="timespan_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Time-span of the Family Status</arg>
@@ -788,7 +788,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -798,7 +798,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="statement" type="constant">statement</arg>
                                 <arg name="statement_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -814,11 +814,11 @@
                                         <constant>comment</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -855,7 +855,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -865,7 +865,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">familly_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -880,7 +880,7 @@
                                         <constant>unique identifier</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300404012</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404012</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">unique identifier</arg>
@@ -932,7 +932,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -962,7 +962,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -983,7 +983,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -993,7 +993,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../observation_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1025,7 +1025,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../observation_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1078,7 +1078,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">../relation/text()</arg>
+                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -1086,9 +1086,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../observation_source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../URI/text(),'|',../id/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Page</arg>
@@ -1142,7 +1142,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -1233,7 +1233,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1280,7 +1280,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -1371,7 +1371,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

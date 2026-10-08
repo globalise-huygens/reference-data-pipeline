@@ -112,7 +112,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">ship</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -225,7 +225,7 @@
                                 <arg name="term_simple" type="constant">appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Appellative Status of</arg>
@@ -264,7 +264,7 @@
                                 <arg name="term_simple" type="constant">appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81a_end_of_the_begin</relationship>
@@ -297,7 +297,7 @@
                                 <arg name="term_simple" type="constant">appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P81b_begin_of_the_end</relationship>
@@ -330,7 +330,7 @@
                                 <arg name="term_simple" type="constant">appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../label_id/text()</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
@@ -379,11 +379,11 @@
                                         <constant>remarks</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://vocab.getty.edu/aat/300435415</arg>
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300435415</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">remarks</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -451,7 +451,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -472,7 +472,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../label_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -504,7 +504,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../label_id/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -555,9 +555,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../label_id/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -611,7 +611,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -699,7 +699,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -754,7 +754,7 @@
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -778,7 +778,7 @@
                         <entity variable="pref">
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://vocab.getty.edu/aat/300404670</arg>
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">preferred term</arg>
@@ -806,7 +806,7 @@
                         <entity variable="alt">
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://vocab.getty.edu/aat/300264273</arg>
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">nonpreferred term</arg>

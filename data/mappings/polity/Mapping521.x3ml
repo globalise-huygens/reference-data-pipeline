@@ -208,7 +208,7 @@
                     <source_node>Ruler_ID</source_node>
                     <target_node>
                         <entity>
-                            <type>crm:E39_Actor</type>
+                            <type>crm:E21_Person</type>
                             <instance_generator name="Custom_EntityURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">text()</arg>

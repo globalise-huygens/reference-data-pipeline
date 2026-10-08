@@ -1042,7 +1042,7 @@ def generate_hydra_index_pages(
         page_members = members[start_index:end_index]
 
         view: dict[str, Any] = {
-            "@id": page_uri,
+            "@id": page_uri + "#view",
             "@type": "PartialCollectionView",
             "first": f"{base_collection_uri}/page-1.json",
             "last": f"{base_collection_uri}/page-{total_pages}.json",

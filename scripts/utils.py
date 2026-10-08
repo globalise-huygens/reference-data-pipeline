@@ -689,38 +689,63 @@ def normalize_uris(graph: Graph) -> int:
     return len(replacements)
 
 
-def convert_hash_uris_to_bnodes(
-    graph: Graph, uri_token: str = PROJECT_URI_TOKEN
-) -> int:
+def convert_uris_to_bnodes(graph: Graph, uri_token: str = PROJECT_URI_TOKEN) -> int:
     """
-    Convert SARI component URIRefs containing '#' and the specified URI token into blank nodes (BNode).
+    Replace matching project URIRefs in subject and object positions with blank nodes.
+
+    A URIRef matches when it contains ``uri_token`` and either ``#`` or
+    ``textualwork:``. Each distinct matching URIRef is replaced by the same
+    BNode everywhere it occurs as a subject or object. Predicates are unchanged.
 
     Args:
-        graph (Graph): The RDF graph to process and normalize in place.
-        uri_token (str, optional): Token to identify project URIs. Defaults to PROJECT_URI_TOKEN.
+        graph (Graph): The RDF graph to update in place.
+        uri_token (str, optional): Token identifying project URIs. Defaults to
+            PROJECT_URI_TOKEN.
 
     Returns:
-        int: Number of unique URIs converted to blank nodes.
+        int: Number of distinct matching URIRefs converted to blank nodes.
 
     Examples:
         >>> from rdflib import Graph, Literal, URIRef, BNode, RDFS
         >>> g = Graph()
-        >>> uri1 = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1#declarative_place:123")
-        >>> _ = g.add((URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1"), RDFS.label, uri1))
-        >>> _ = g.add((uri1, RDFS.label, Literal("Declarative Place")))
-        >>> num_converted = convert_hash_uris_to_bnodes(g)
-        >>> num_converted
-        1
-        >>> any(isinstance(o, BNode) for o in g.objects())
+        >>> project_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1#declarative_place:123")
+        >>> work_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54")
+        >>> external_uri = URIRef("https://example.org/place#1")
+        >>> root_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1")
+        >>> _ = g.add((root_uri, RDFS.seeAlso, project_uri))
+        >>> _ = g.add((project_uri, RDFS.seeAlso, work_uri))
+        >>> _ = g.add((project_uri, RDFS.label, Literal("Declarative Place")))
+        >>> _ = g.add((work_uri, RDFS.label, Literal("Textual Work")))
+        >>> _ = g.add((root_uri, project_uri, Literal("predicate")))
+        >>> _ = g.add((external_uri, RDFS.label, Literal("External")))
+        >>> convert_uris_to_bnodes(g)
+        2
+        >>> converted_place = next(g.subjects(RDFS.label, Literal("Declarative Place")))
+        >>> converted_work = next(g.subjects(RDFS.label, Literal("Textual Work")))
+        >>> isinstance(converted_place, BNode) and isinstance(converted_work, BNode)
+        True
+        >>> next(g.objects(converted_place, RDFS.seeAlso)) == converted_work
+        True
+        >>> project_uri in set(g.predicates()) and external_uri in set(g.subjects())
         True
     """
     uri_to_bnode: dict[URIRef, BNode] = {}
 
     for s, p, o in graph.triples((None, None, None)):
+        # Hashed URIs
         if isinstance(s, URIRef) and "#" in str(s) and uri_token in str(s):
             if s not in uri_to_bnode:
                 uri_to_bnode[s] = BNode()
         if isinstance(o, URIRef) and "#" in str(o) and uri_token in str(o):
+            if o not in uri_to_bnode:
+                uri_to_bnode[o] = BNode()
+
+        # Textualworks
+        # e.g. <https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54>
+        if isinstance(s, URIRef) and "textualwork:" in str(s) and uri_token in str(s):
+            if s not in uri_to_bnode:
+                uri_to_bnode[s] = BNode()
+        if isinstance(o, URIRef) and "textualwork:" in str(o) and uri_token in str(o):
             if o not in uri_to_bnode:
                 uri_to_bnode[o] = BNode()
 

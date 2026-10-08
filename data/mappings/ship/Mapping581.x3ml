@@ -112,7 +112,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">ship</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -140,7 +140,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">transfer</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">Declarative Transfer of Custody of Ship</arg>
@@ -185,7 +185,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">Declarative Acquisition of Ship</arg>
@@ -220,7 +220,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">Acquisition of Ship</arg>
@@ -248,7 +248,7 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">transfer</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -296,9 +296,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">transfer</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Declarative Transfer of Custody of Ship</arg>
@@ -545,7 +545,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -564,7 +564,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">transfer</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">comments</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -656,7 +656,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -677,7 +677,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -709,7 +709,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -760,9 +760,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -814,7 +814,7 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -862,9 +862,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Declarative Acquisition of Ship</arg>
@@ -891,7 +891,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">ownership_status</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -950,7 +950,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">ownership_status</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1015,7 +1015,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1034,7 +1034,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">comments</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1126,7 +1126,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1147,7 +1147,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1179,7 +1179,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1230,9 +1230,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1274,7 +1274,7 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">acquisition</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -1322,9 +1322,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Acquisition of Ship</arg>
@@ -1407,7 +1407,7 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant">en</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1426,7 +1426,7 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">comments</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1518,7 +1518,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">overall source</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1539,7 +1539,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1571,7 +1571,7 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1622,9 +1622,9 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">part</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Entry</arg>
@@ -1663,9 +1663,9 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">transfer</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             <arg name="term_simple1" type="constant">timespan</arg>
-                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -1767,9 +1767,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">transfer</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple2" type="constant">name</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1788,7 +1788,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1820,9 +1820,9 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             <arg name="term_simple1" type="constant">timespan</arg>
-                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -1924,9 +1924,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">declarative_acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple2" type="constant">name</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1945,7 +1945,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -1977,9 +1977,9 @@
                             <arg name="hierarchy" type="constant">ship</arg>
                             <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                             <arg name="term_simple" type="constant">acquisition</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                             <arg name="term_simple1" type="constant">timespan</arg>
-                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -2081,9 +2081,9 @@
                                 <arg name="hierarchy" type="constant">ship</arg>
                                 <arg name="hierarchy_id" type="xpath">../ship_id/text()</arg>
                                 <arg name="term_simple" type="constant">acquisition</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ship_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../ship_id/text(),'|',../owner_uri_former/text(),'|',../owner_uri_new/text(),'|',../date_original/text())</arg>
                                 <arg name="term_simple2" type="constant">name</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -2102,7 +2102,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>
@@ -2149,7 +2149,7 @@
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">overall source</arg>
-                                    <arg name="language" type="constant">en</arg>
+                                    <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
                         </additional>
@@ -2237,7 +2237,7 @@
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">title</arg>
-                                        <arg name="language" type="constant">en</arg>
+                                        <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
                             </additional>

@@ -372,7 +372,7 @@
                                         <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">nonpreferred terms</arg>
+                                        <arg name="text" type="constant">nonpreferred term</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>

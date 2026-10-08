@@ -125,13 +125,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>unique identifiers</constant>
+                                        <constant>unique identifier</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
                                         <arg name="text" type="constant">http://vocab.getty.edu/aat/300404012</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">unique identifiers</arg>
+                                        <arg name="text" type="constant">unique identifier</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>

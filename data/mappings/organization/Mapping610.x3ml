@@ -134,7 +134,7 @@
                                         <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">preferred terms</arg>
+                                        <arg name="text" type="constant">preferred term</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>

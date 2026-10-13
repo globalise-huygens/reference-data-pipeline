@@ -249,11 +249,22 @@ $(S3_DIR)/.polity.stamp: data/output/polity/polity.ttl
 #------------------------------------------------------------
 # 5. Ship Pipeline
 #------------------------------------------------------------
-SHIP_XLSX := $(wildcard data/input/ship/*.xlsx)
+# SHIP_XLSX := $(wildcard data/input/ship/*.xlsx)
+SHIP_ZIP := $(wildcard data/input/ship/*.zip)
 
-data/input/ship/csv/.stamp: $(SHIP_XLSX)
+# data/input/ship/csv/.stamp: $(SHIP_XLSX)
+# 	@mkdir -p data/input/ship/csv
+# 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/ship/csv
+# 	@for f in data/input/ship/csv/*.csv; do \
+# 		if [ -f "$$f" ]; then \
+# 			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+# 		fi; \
+# 	done
+# 	@touch $@
+
+data/input/ship/csv/.stamp: $(SHIP_ZIP)
 	@mkdir -p data/input/ship/csv
-	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/ship/csv
+	unzip -o -q "$<" "*.csv" -d data/input/ship/csv
 	@for f in data/input/ship/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
@@ -274,13 +285,12 @@ data/input/ship/xml/.stamp: data/input/ship/csv/.stamp
 data/output/ship/rdf/.stamp: data/input/ship/xml/.stamp
 	@mkdir -p data/output/ship/rdf
 	$(RUN_X3ML) data/input/ship/xml ships.xml data/mappings/ship/Mapping519.x3ml data/output/ship/rdf 519_ships
-	$(RUN_X3ML) data/input/ship/xml ship_links.xml data/mappings/ship/Mapping544.x3ml data/output/ship/rdf 544_links
 	$(RUN_X3ML) data/input/ship/xml ship_labels.xml data/mappings/ship/Mapping545.x3ml data/output/ship/rdf 545_labels
-	$(RUN_X3ML) data/input/ship/xml translocations.xml data/mappings/ship/Mapping546.x3ml data/output/ship/rdf 546_translocations
-	$(RUN_X3ML) data/input/ship/xml ship_existence.xml data/mappings/ship/Mapping548.x3ml data/output/ship/rdf 548_existence
+	$(RUN_X3ML) data/input/ship/xml ship_voyages.xml data/mappings/ship/Mapping546.x3ml data/output/ship/rdf 546_translocations
+	$(RUN_X3ML) data/input/ship/xml ship_creation_events.xml data/mappings/ship/Mapping548.x3ml data/output/ship/rdf 548_existence
 	$(RUN_X3ML) data/input/ship/xml ship_ownership.xml data/mappings/ship/Mapping550.x3ml data/output/ship/rdf 550_ownership
-	$(RUN_X3ML) data/input/ship/xml ship_transaction.xml data/mappings/ship/Mapping581.x3ml data/output/ship/rdf 581_transactions
-	$(RUN_X3ML) data/input/ship/xml translocation_links.xml data/mappings/ship/Mapping585.x3ml data/output/ship/rdf 585_translocation_links
+	$(RUN_X3ML) data/input/ship/xml ship_transaction_events.xml data/mappings/ship/Mapping581.x3ml data/output/ship/rdf 581_transactions
+	$(RUN_X3ML) data/input/ship/xml ship_voyage_links.xml data/mappings/ship/Mapping585.x3ml data/output/ship/rdf 585_translocation_links
 	@touch $@
 
 data/output/ship/ship.ttl: data/output/ship/rdf/.stamp

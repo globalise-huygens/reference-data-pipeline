@@ -1,0 +1,64 @@
+# JSONPath specification for Occurrence and Conversion
+# Base JSON-LD Types:
+# - Occurrence: Event (CIDOC-CRM E5_Event)
+# - Conversion: FinancialExchange (GLOBALISE G1_Financial_Exchange)
+#
+# Random samples - Occurrence (10):
+# - occurrences/CO_0053.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0053.json) [Page 1]
+# - occurrences/CO_0045.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0045.json) [Page 1]
+# - occurrences/CO_0046.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0046.json) [Page 1]
+# - occurrences/CO_0008.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0008.json) [Page 1]
+# - occurrences/CO_0040.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0040.json) [Page 1]
+# - occurrences/CO_0016.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0016.json) [Page 1]
+# - occurrences/CO_0077.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0077.json) [Page 1]
+# - occurrences/CO_0089.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0089.json) [Page 1]
+# - occurrences/CO_0023.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0023.json) [Page 1]
+# - occurrences/CO_0024.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrences/CO_0024.json) [Page 1]
+#
+# Random samples - Conversion (10):
+# - conversion/UC_0073.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0073.json) [Page 1]
+# - conversion/UC_0053.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0053.json) [Page 1]
+# - conversion/UC_0044.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0044.json) [Page 1]
+# - conversion/UC_0014.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0014.json) [Page 1]
+# - conversion/UC_0006.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0006.json) [Page 1]
+# - conversion/UC_0045.1.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0045.1.json) [Page 1]
+# - conversion/UC_0074.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0074.json) [Page 1]
+# - conversion/UC_0056.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0056.json) [Page 1]
+# - conversion/UC_0067.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0067.json) [Page 1]
+# - conversion/UC_0043.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0043.json) [Page 1]
+
+occurrence:
+  file: occurrences/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  start: $.timespan.begin_of_the_begin
+  end: $.timespan.end_of_the_end
+  start_earliest: $.timespan.begin_of_the_begin
+  start_latest: $.timespan.end_of_the_begin
+  end_earliest: $.timespan.begin_of_the_end
+  end_latest: $.timespan.end_of_the_end
+  location: $.is_event_location_subject_of[*].ascribes_place[*].id
+  location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
+  involved: $.involved[*].id
+  classification: $.classified_as[*].id
+
+conversion:
+  file: conversion/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  start: $.timespan.end_of_the_begin
+  end: $.timespan.begin_of_the_end
+  start_earliest: $.timespan.end_of_the_begin
+  start_latest: $.timespan.end_of_the_begin
+  end_earliest: $.timespan.begin_of_the_end
+  end_latest: $.timespan.begin_of_the_end
+  location: $.is_event_location_subject_of[*].ascribes_place[*].id
+  location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
+  from_unit: $.intentionally_initiated[*].has_exchange_value_subject[*].unit.id
+  from_value: $.intentionally_initiated[*].has_exchange_value_subject[*].value
+  to_unit: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id
+  to_value: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].value
+  commodity_type: $.is_dimension_of_commodity_type[*].id
+  classification: $.classified_as[*].id

@@ -1,0 +1,49 @@
+# JSONPath specification for Thesaurus Concept entity
+# Base JSON-LD Type: Concept (SKOS Concept)
+# Random samples across all 9 pages (10):
+# - thesaurus/1ae80718-7cdb-4a23-942d-7a0b72033f2c.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/1ae80718-7cdb-4a23-942d-7a0b72033f2c.json) [Page 1]
+# - thesaurus/2e988fa3-45bb-47b6-9b2f-67f0996fca4e.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/2e988fa3-45bb-47b6-9b2f-67f0996fca4e.json) [Page 2]
+# - thesaurus/4db08b21-83a1-4a6c-8c56-2388f421d1ae.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/4db08b21-83a1-4a6c-8c56-2388f421d1ae.json) [Page 3]
+# - thesaurus/64b0187f-56fe-4344-9909-a1108142b27b.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/64b0187f-56fe-4344-9909-a1108142b27b.json) [Page 4]
+# - thesaurus/8e98c143-981f-44cb-aa8c-76de0f801cc6.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/8e98c143-981f-44cb-aa8c-76de0f801cc6.json) [Page 5]
+# - thesaurus/9849e4d2-86f6-48fc-a51b-5e364bbc2656.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/9849e4d2-86f6-48fc-a51b-5e364bbc2656.json) [Page 6]
+# - thesaurus/cba4b1a8-d4ce-424c-8a8f-91cfa1891b97.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/cba4b1a8-d4ce-424c-8a8f-91cfa1891b97.json) [Page 7]
+# - thesaurus/d92361bd-6a77-412d-9068-5de09547f878.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/d92361bd-6a77-412d-9068-5de09547f878.json) [Page 8]
+# - thesaurus/fc185757-6e8d-42aa-8323-31b6574a61ad.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/fc185757-6e8d-42aa-8323-31b6574a61ad.json) [Page 9]
+# - thesaurus/laypa.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/thesaurus/laypa.json) [Page 9]
+
+file: thesaurus/*.json
+
+# Core Identification
+id: $.id
+identifier: $.notation
+object_type: $.type
+
+# Labels & Terms
+title: $.prefLabel[*].'@value'
+pref_label: $.prefLabel[*].'@value'
+pref_label_lang: $.prefLabel[*].'@language'
+alt_label: $.altLabel[*].'@value'
+hidden_label: $.hiddenLabel[*].'@value'
+
+# Semantic Definition & Documentation
+definition: $.definition[*].'@value'
+example: $.example[*].'@value'
+scope_note: $.scopeNote[*].'@value'
+
+# Hierarchy & Relations
+broader: $.broader[*].id
+narrower: $.narrower[*].id
+related: $.related[*].id
+
+# Scheme & Collection Membership
+in_scheme: $.inScheme[*].id
+member_of: $.memberOf[*].id
+top_concept_of: $.topConceptOf[*].id
+
+# Mappings & Alignments
+exact_match: $.exactMatch[*].id
+close_match: $.closeMatch[*].id
+broad_match: $.broadMatch[*].id
+narrow_match: $.narrowMatch[*].id
+related_match: $.relatedMatch[*].id

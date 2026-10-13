@@ -1,0 +1,50 @@
+# JSONPath specification for Document entity
+# Base JSON-LD Type: PhysicalHumanMadeThing (CIDOC-CRM E24_Physical_Human-Made_Thing)
+# Random samples across all 553 pages (10):
+# - document/NL-HaNA_1.04.02_2212_0710-0721.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_2212_0710-0721.json) [Page 15]
+# - document/NL-HaNA_1.04.02_3990_0035-0039.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_3990_0035-0039.json) [Page 65]
+# - document/NL-HaNA_1.04.02_3310_0893-0893.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_3310_0893-0893.json) [Page 120]
+# - document/NL-HaNA_1.04.02_2116_0253-0264.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_2116_0253-0264.json) [Page 185]
+# - document/NL-HaNA_1.04.02_9351_0817-0827.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_9351_0817-0827.json) [Page 245]
+# - document/NL-HaNA_1.04.02_3887_0014-0015.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_3887_0014-0015.json) [Page 305]
+# - document/NL-HaNA_1.04.02_1554_0033-1485.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_1554_0033-1485.json) [Page 365]
+# - document/NL-HaNA_1.04.02_3785_0115-0116.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_3785_0115-0116.json) [Page 425]
+# - document/e51f7d64-5861-40dc-9ec2-0522d8899c6c.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/e51f7d64-5861-40dc-9ec2-0522d8899c6c.json) [Page 485]
+# - document/NL-HaNA_1.04.02_2143_0941-0951.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/document/NL-HaNA_1.04.02_2143_0941-0951.json) [Page 540]
+
+file: document/*.json
+
+# Core Identification
+id: $.id
+identifier: $.identified_by[?(@.type=='Identifier')].content
+object_type: $.type
+
+# Titles & Labels
+title: $.title.content
+
+# Temporal Boundaries
+start: $.produced_by.timespan.begin_of_the_begin
+end: $.produced_by.timespan.end_of_the_end
+
+# All four timespan properties for creation interval boundaries:
+start_earliest: $.produced_by.timespan.begin_of_the_begin
+start_latest: $.produced_by.timespan.end_of_the_begin
+end_earliest: $.produced_by.timespan.begin_of_the_end
+end_latest: $.produced_by.timespan.end_of_the_end
+
+# Creation Location
+location: $.produced_by.took_place_at[*].id
+
+# Physical Dimensions & Structure
+pages_count: $.dimension[?(@.unit.id=='http://vocab.getty.edu/aat/300194222')].value
+dimension_value: $.dimension[*].value
+dimension_unit: $.dimension[*].unit.id
+parts: $.part[*].id
+
+# Content & Digital Representations
+language: $.carries.language[*].id
+text_resource: $.carries.referred_to_by[*].id
+digital_view: $.subject_of.id
+
+# Classification
+classification: $.classified_as[*].id

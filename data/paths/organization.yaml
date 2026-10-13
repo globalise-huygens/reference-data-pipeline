@@ -1,0 +1,47 @@
+# JSONPath specification for Organization entity
+# Base JSON-LD Type: Group (CIDOC-CRM E74_Group)
+# Random samples from catalog (10):
+# - group/ORG_98.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_98.json) [Page 1]
+# - group/ORG_27.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_27.json) [Page 1]
+# - group/ORG_112.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_112.json) [Page 1]
+# - group/ORG_166.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_166.json) [Page 1]
+# - group/ORG_196.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_196.json) [Page 1]
+# - group/ORG_162.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_162.json) [Page 1]
+# - group/ORG_89.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_89.json) [Page 1]
+# - group/ORG_67.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_67.json) [Page 1]
+# - group/ORG_121.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_121.json) [Page 1]
+# - group/ORG_99.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/group/ORG_99.json) [Page 1]
+
+file: group/*.json
+
+# Core Identification
+id: $.id
+identifier: $.identified_by[?(@.type=='Identifier')].content
+object_type: $.type
+
+# Names and Appellations
+title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+# Temporal Boundaries
+# Standard start and end timestamps (foundation and dissolution):
+start: $.created_by.timespan.begin_of_the_begin
+end: $.dissolved_by.timespan.end_of_the_end
+
+# All four timespan properties for creation/dissolution interval boundaries:
+start_earliest: $.created_by.timespan.begin_of_the_begin
+start_latest: $.created_by.timespan.end_of_the_begin
+end_earliest: $.dissolved_by.timespan.begin_of_the_end
+end_latest: $.dissolved_by.timespan.end_of_the_end
+
+# Location & Headquarters
+location: $.is_residence_subject_of[*].ascribes_residence_place[*].id
+
+# Hierarchy & Relations
+member_of: $.is_membership_subject_of[*].ascribes_group[*].id
+membership_relation: $.is_membership_subject_of[*].ascribes_membership_relation[*].id
+relation: $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id
+social_relation_type: $.is_social_relation_subject_of[*].ascribes_social_relation[*].id
+
+# Classification & Concordances
+classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

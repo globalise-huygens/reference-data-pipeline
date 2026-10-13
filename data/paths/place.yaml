@@ -1,0 +1,35 @@
+# JSONPath specification for Place entity
+# Base JSON-LD Type: Place (CIDOC-CRM E53_Place)
+# Random samples from across all catalog pages (skipping ESTA) (10):
+# - place/GLOB2_1162.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB2_1162.json) [Page 1]
+# - place/GLOB2_1322.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB2_1322.json) [Page 1]
+# - place/GLOB2_E_246.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB2_E_246.json) [Page 1]
+# - place/GLOB_452.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB_452.json) [Page 2]
+# - place/GLOB2_E_85.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB2_E_85.json) [Page 2]
+# - place/GLOB_733.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB_733.json) [Page 2]
+# - place/NEW_ADMIN_1039.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/NEW_ADMIN_1039.json) [Page 3]
+# - place/GLOB_NB_170.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/GLOB_NB_170.json) [Page 3]
+# - place/NR_250_HUM_1.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/NR_250_HUM_1.json) [Page 4]
+# - place/NR_186.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/place/NR_186.json) [Page 4]
+
+file: place/*.json
+
+# Core Identification
+id: $.id
+identifier: $.identified_by[?(@.type=='Identifier')].content
+object_type: $.type
+
+# Names and Appellations
+title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+# Geographic Coordinates & Expression
+latitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387565')].content
+longitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387567')].content
+
+# Topographical & Hierarchy Relations
+part_of: $.is_topographical_subject_of[*].ascribes_place[*].id
+topographical_relation: $.is_topographical_subject_of[*].ascribes_topographical_relation[*].id
+
+# Classification & External Concordances
+classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

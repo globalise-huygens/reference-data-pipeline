@@ -1,0 +1,66 @@
+# JSONPath specification for Ship and Voyage
+# Base JSON-LD Types:
+# - Ship: HumanMadeObject (CIDOC-CRM E22_Human-Made_Object)
+# - Voyage: Voyage (PWRO WE7_Voyage)
+#
+# Random samples - Ship across all 10 pages (10):
+# - ship/DAS_ship0351.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/DAS_ship0351.json) [Page 1]
+# - ship/DAS_ship1107.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/DAS_ship1107.json) [Page 2]
+# - ship/gzm_ship1309.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/gzm_ship1309.json) [Page 3]
+# - ship/gzm_ship2712.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/gzm_ship2712.json) [Page 4]
+# - ship/monsoon_traders_ship1070.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship1070.json) [Page 5]
+# - ship/monsoon_traders_ship1581.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship1581.json) [Page 6]
+# - ship/monsoon_traders_ship2525.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship2525.json) [Page 7]
+# - ship/monsoon_traders_ship4469.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship4469.json) [Page 8]
+# - ship/monsoon_traders_ship5331.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship5331.json) [Page 9]
+# - ship/monsoon_traders_ship5574.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/ship/monsoon_traders_ship5574.json) [Page 10]
+#
+# Random samples - Voyage across all 36 pages (10):
+# - voyage/10054.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/10054.json) [Page 1]
+# - voyage/13203.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/13203.json) [Page 4]
+# - voyage/17106.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/17106.json) [Page 8]
+# - voyage/21222.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/21222.json) [Page 12]
+# - voyage/24005.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/24005.json) [Page 16]
+# - voyage/770915IA.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/770915IA.json) [Page 20]
+# - voyage/92314.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/92314.json) [Page 24]
+# - voyage/96286.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/96286.json) [Page 28]
+# - voyage/gzm_voyage0708.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/gzm_voyage0708.json) [Page 32]
+# - voyage/gzm_voyage4992.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/voyage/gzm_voyage4992.json) [Page 36]
+
+ship:
+  file: ship/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  start: $.produced_by.timespan.begin_of_the_begin
+  end: $.taken_out_of_existence_by.timespan.end_of_the_end
+  ship_built: $.produced_by.timespan.begin_of_the_begin
+  ship_lost: $.taken_out_of_existence_by.timespan.end_of_the_end
+  start_earliest: $.produced_by.timespan.begin_of_the_begin
+  start_latest: $.produced_by.timespan.end_of_the_begin
+  end_earliest: $.taken_out_of_existence_by.timespan.begin_of_the_end
+  end_latest: $.taken_out_of_existence_by.timespan.end_of_the_end
+  ship_type: $.classified_as[*].id
+  owner: $.is_ownership_subject_of[*].ascribes_owner[*].id
+  custodian: $.is_custodial_subject_of[*].ascribes_custodian[*].id
+  voyages: $.moved_by[*].id
+  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+
+voyage:
+  file: voyage/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  start: $.timespan.begin_of_the_begin
+  end: $.timespan.end_of_the_end
+  start_earliest: $.timespan.begin_of_the_begin
+  start_latest: $.timespan.end_of_the_begin
+  end_earliest: $.timespan.begin_of_the_end
+  end_latest: $.timespan.end_of_the_end
+  ship: $.moved[*].id
+  departure: $.moved_from.id
+  arrival: $.moved_to.id
+  parent_voyage: $.part_of[*].id
+  route_note: $.referred_to_by[*].content
+  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

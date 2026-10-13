@@ -1,0 +1,51 @@
+# JSONPath specification for Inventory entity
+# Base JSON-LD Type: CuratedHolding (CIDOC-CRM E78_Curated_Holding)
+# Random samples across all 7 pages (10):
+# - inventory/1465.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/1465.json) [Page 1]
+# - inventory/2272.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/2272.json) [Page 2]
+# - inventory/3877.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/3877.json) [Page 3]
+# - inventory/4397.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/4397.json) [Page 4]
+# - inventory/8643.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/8643.json) [Page 5]
+# - inventory/9141.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/9141.json) [Page 6]
+# - inventory/10775.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/10775.json) [Page 7]
+# - inventory/3508.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/3508.json) [Page 3]
+# - inventory/8855.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/8855.json) [Page 5]
+# - inventory/10421.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/inventory/10421.json) [Page 7]
+
+file: inventory/*.json
+
+# Core Identification
+id: $.id
+identifier: $.identified_by[?(@.type=='Identifier')].content
+accession_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300312355')].content
+entry_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300445023')].content
+object_type: $.type
+
+# Titles & Labels
+title: $.title[*].content
+
+# Temporal Boundaries
+start: $.produced_by.timespan.begin_of_the_begin
+end: $.produced_by.timespan.end_of_the_end
+
+# All four timespan properties for compilation interval boundaries:
+start_earliest: $.produced_by.timespan.begin_of_the_begin
+start_latest: $.produced_by.timespan.end_of_the_begin
+end_earliest: $.produced_by.timespan.begin_of_the_end
+end_latest: $.produced_by.timespan.end_of_the_end
+
+# Production Location
+location: $.produced_by.took_place_at[*].id
+
+# Archival Series & Hierarchy
+series: $.member_of[*].id
+
+# Contained Documents
+documents: $.part[*].id
+
+# Content & Text Resource
+plain_text_url: $.carries.digitally_carried_by.id
+web_page_url: $.subject_of[*].digitally_carried_by[*].id
+
+# Classification
+classification: $.classified_as[*].id

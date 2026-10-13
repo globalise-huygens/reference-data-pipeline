@@ -1,0 +1,57 @@
+# JSONPath specification for Person entity
+# Base JSON-LD Type: Person (CIDOC-CRM E21_Person)
+# Random samples from across all catalog pages (10):
+# - person/Person_12189.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_12189.json) [Page 25]
+# - person/Person_18492.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_18492.json) [Page 95]
+# - person/Person_256826.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_256826.json) [Page 175]
+# - person/Person_32387.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_32387.json) [Page 250]
+# - person/Person_391479.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_391479.json) [Page 325]
+# - person/Person_467674.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_467674.json) [Page 410]
+# - person/Person_540151.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_540151.json) [Page 490]
+# - person/Person_607304.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_607304.json) [Page 565]
+# - person/Person_674680.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_674680.json) [Page 640]
+# - person/Person_8512.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/person/Person_8512.json) [Page 715]
+
+file: person/*.json
+
+# Core Identification
+id: $.id
+identifier: $.identified_by[?(@.type=='Identifier')].content
+object_type: $.type
+
+# Names and Appellations
+title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+# Temporal Boundaries
+# Standard start and end timestamps (earliest birth and latest death):
+start: $.born.timespan.begin_of_the_begin
+end: $.died.timespan.end_of_the_end
+
+# All four timespan properties for birth and death interval boundaries:
+start_earliest: $.born.timespan.begin_of_the_begin
+start_latest: $.born.timespan.end_of_the_begin
+end_earliest: $.died.timespan.begin_of_the_end
+end_latest: $.died.timespan.end_of_the_end
+
+# Locations & Events
+birth_place: $.born.took_place_at[*].id
+death_place: $.died.took_place_at[*].id
+residence: $.is_residence_subject_of[*].ascribes_residence_place[*].id
+
+# Relations
+relation: $.is_familial_subject_of[*].ascribes_relative[*].id
+familial_relation_type: $.is_familial_subject_of[*].ascribes_familial_relation[*].id
+same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+
+# Classifications & Identity
+identity: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+
+# Occupations & Social Statuses
+# Note: In the GLOBALISE/SARI ontology, both occupations (from activeAs) and
+# social statuses (from statuses) are instances of ZE6_Social_Status linked
+# through is_social_status_subject_of. Hence both map to the same predicate.
+occupation: $.is_social_status_subject_of[*].ascribes_social_status[*].id
+status: $.is_social_status_subject_of[*].ascribes_social_status[*].id
+social_status_place: $.is_social_status_subject_of[*].has_geographic_scope[*].id
+social_status_start: $.is_social_status_subject_of[*].timespan.begin_of_the_begin
+social_status_end: $.is_social_status_subject_of[*].timespan.end_of_the_end

@@ -1,0 +1,99 @@
+# JSONPath specification for Polity and Rulership
+# Base JSON-LD Types:
+# - Polity: Polity (AAAO ZE39_Polity)
+# - Dynasty / Reign: Sovereignty (PWRO WE2_Sovereignty)
+#
+# Random samples - Polity (10):
+# - polity/Polity_263.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_263.json) [Page 1]
+# - polity/Polity_152.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_152.json) [Page 1]
+# - polity/Polity_55.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_55.json) [Page 1]
+# - polity/Polity_99.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_99.json) [Page 1]
+# - polity/Polity_193.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_193.json) [Page 1]
+# - polity/Polity_196.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_196.json) [Page 1]
+# - polity/Polity_190.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_190.json) [Page 1]
+# - polity/Polity_142.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_142.json) [Page 1]
+# - polity/Polity_255.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_255.json) [Page 1]
+# - polity/Polity_47.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_47.json) [Page 1]
+#
+# Random samples - Dynasty (10):
+# - dynasty/Dynasty_165.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_165.json) [Page 1]
+# - dynasty/Dynasty_244.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_244.json) [Page 1]
+# - dynasty/Dynasty_107.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_107.json) [Page 1]
+# - dynasty/Dynasty_129.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_129.json) [Page 1]
+# - dynasty/Dynasty_457.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_457.json) [Page 1]
+# - dynasty/Dynasty_23.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_23.json) [Page 1]
+# - dynasty/Dynasty_445.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_445.json) [Page 1]
+# - dynasty/Dynasty_40.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_40.json) [Page 1]
+# - dynasty/Dynasty_197.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_197.json) [Page 1]
+# - dynasty/Dynasty_71.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_71.json) [Page 1]
+#
+# Random samples - Reign across catalog pages (10):
+# - reign/Reign_0182.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0182.json) [Page 1]
+# - reign/Reign_0403.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0403.json) [Page 1]
+# - reign/Reign_0644.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0644.json) [Page 2]
+# - reign/Reign_1559.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_1559.json) [Page 2]
+# - reign/Reign_1119.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_1119.json) [Page 2]
+# - reign/Reign_2026.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2026.json) [Page 3]
+# - reign/Reign_2414.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2414.json) [Page 3]
+# - reign/Reign_2288.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2288.json) [Page 3]
+# - reign/Reign_2677.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2677.json) [Page 4]
+# - reign/Reign_2888.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2888.json) [Page 4]
+
+polity:
+  file: polity/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  start: $.was_population_of[*].timespan.begin_of_the_begin
+  end: $.was_population_of[*].timespan.end_of_the_end
+  start_earliest: $.was_population_of[*].timespan.begin_of_the_begin
+  start_latest: $.was_population_of[*].timespan.end_of_the_begin
+  end_earliest: $.was_population_of[*].timespan.begin_of_the_end
+  end_latest: $.was_population_of[*].timespan.end_of_the_end
+  sovereign: $.had_sovereign[*].id
+  subject_population: $.had_subject_population[*].id
+  location: $.is_physical_locative_subject_of[*].ascribes_place[*].id
+  successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
+  part_of: $.part_of[*].id
+  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+
+dynasty:
+  file: dynasty/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  start: $.timespan.begin_of_the_begin
+  end: $.timespan.end_of_the_end
+  start_earliest: $.timespan.begin_of_the_begin
+  start_latest: $.timespan.end_of_the_begin
+  end_earliest: $.timespan.begin_of_the_end
+  end_latest: $.timespan.end_of_the_end
+  polity: $.had_subject_population[*].id
+  reigns: $.part[*].id
+  ruler_role: $.was_context_for_exercise_of[*].id
+  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+  sovereignty_type: $.classified_as[*].id
+  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+
+reign:
+  file: reign/*.json
+  id: $.id
+  identifier: $.identified_by[?(@.type=='Identifier')].content
+  object_type: $.type
+  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  start: $.timespan.begin_of_the_begin
+  end: $.timespan.end_of_the_end
+  start_earliest: $.timespan.begin_of_the_begin
+  start_latest: $.timespan.end_of_the_begin
+  end_earliest: $.timespan.begin_of_the_end
+  end_latest: $.timespan.end_of_the_end
+  ruler: $.had_sovereign[*].id
+  dynasty: $.part_of[*].id
+  polity: $.had_subject_population[*].id
+  successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
+  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+  sovereignty_type: $.classified_as[*].id
+  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

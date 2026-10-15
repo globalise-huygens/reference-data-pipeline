@@ -14,44 +14,43 @@
 
 file: person/*.json
 
-# Core Identification
-id: $.id
-identifier: $.identified_by[?(@.type=='Identifier')].content
-object_type: $.type
+person:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
 
-# Names and Appellations
-title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
 
-# Temporal Boundaries
-# Standard start and end timestamps (earliest birth and latest death):
-start: $.born.timespan.begin_of_the_begin
-end: $.died.timespan.end_of_the_end
+    # Temporal Boundaries
+    start: $.born.timespan.begin_of_the_begin
+    end: $.died.timespan.end_of_the_end
+    start_earliest: $.born.timespan.begin_of_the_begin
+    start_latest: $.born.timespan.end_of_the_begin
+    end_earliest: $.died.timespan.begin_of_the_end
+    end_latest: $.died.timespan.end_of_the_end
 
-# All four timespan properties for birth and death interval boundaries:
-start_earliest: $.born.timespan.begin_of_the_begin
-start_latest: $.born.timespan.end_of_the_begin
-end_earliest: $.died.timespan.begin_of_the_end
-end_latest: $.died.timespan.end_of_the_end
+    # Classifications & Statuses
+    identity: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+    occupation: $.is_social_status_subject_of[*].ascribes_social_status[*].id
+    status: $.is_social_status_subject_of[*].ascribes_social_status[*].id
 
-# Locations & Events
-birth_place: $.born.took_place_at[*].id
-death_place: $.died.took_place_at[*].id
-residence: $.is_residence_subject_of[*].ascribes_residence_place[*].id
+    # Locations
+    birth_place: $.born.took_place_at[*].id
+    death_place: $.died.took_place_at[*].id
+    residence: $.is_residence_subject_of[*].ascribes_residence_place[*].id
+    social_status_place: $.is_social_status_subject_of[*].has_geographic_scope[*].id
 
-# Relations
-relation: $.is_familial_subject_of[*].ascribes_relative[*].id
-familial_relation_type: $.is_familial_subject_of[*].ascribes_familial_relation[*].id
-same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+    # Relations
+    relation: $.is_familial_subject_of[*].ascribes_relative[*].id
+    familial_relation_type: $.is_familial_subject_of[*].ascribes_familial_relation[*].id
 
-# Classifications & Identity
-identity: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+  other:
+    # Status
+    social_status_start: $.is_social_status_subject_of[*].timespan.begin_of_the_begin
+    social_status_end: $.is_social_status_subject_of[*].timespan.end_of_the_end
 
-# Occupations & Social Statuses
-# Note: In the GLOBALISE/SARI ontology, both occupations (from activeAs) and
-# social statuses (from statuses) are instances of ZE6_Social_Status linked
-# through is_social_status_subject_of. Hence both map to the same predicate.
-occupation: $.is_social_status_subject_of[*].ascribes_social_status[*].id
-status: $.is_social_status_subject_of[*].ascribes_social_status[*].id
-social_status_place: $.is_social_status_subject_of[*].has_geographic_scope[*].id
-social_status_start: $.is_social_status_subject_of[*].timespan.begin_of_the_begin
-social_status_end: $.is_social_status_subject_of[*].timespan.end_of_the_end
+    # Relations & Concordances
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

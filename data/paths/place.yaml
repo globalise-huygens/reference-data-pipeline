@@ -14,22 +14,27 @@
 
 file: place/*.json
 
-# Core Identification
-id: $.id
-identifier: $.identified_by[?(@.type=='Identifier')].content
-object_type: $.type
+place:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
 
-# Names and Appellations
-title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
 
-# Geographic Coordinates & Expression
-latitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387565')].content
-longitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387567')].content
+    # Geographic Coordinates & Expression
+    latitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387565')].content
+    longitude: $.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387567')].content
 
-# Topographical & Hierarchy Relations
-part_of: $.is_topographical_subject_of[*].ascribes_place[*].id
-topographical_relation: $.is_topographical_subject_of[*].ascribes_topographical_relation[*].id
+    # Classification
+    classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
 
-# Classification & External Concordances
-classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  other:
+    # Topographical & Hierarchy Relations
+    part_of: $.is_topographical_subject_of[*].ascribes_place[*].id
+    topographical_relation: $.is_topographical_subject_of[*].ascribes_topographical_relation[*].id
+
+    # Concordances
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

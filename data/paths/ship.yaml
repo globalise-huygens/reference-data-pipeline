@@ -29,38 +29,62 @@
 
 ship:
   file: ship/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
-  start: $.produced_by.timespan.begin_of_the_begin
-  end: $.taken_out_of_existence_by.timespan.end_of_the_end
-  ship_built: $.produced_by.timespan.begin_of_the_begin
-  ship_lost: $.taken_out_of_existence_by.timespan.end_of_the_end
-  start_earliest: $.produced_by.timespan.begin_of_the_begin
-  start_latest: $.produced_by.timespan.end_of_the_begin
-  end_earliest: $.taken_out_of_existence_by.timespan.begin_of_the_end
-  end_latest: $.taken_out_of_existence_by.timespan.end_of_the_end
-  ship_type: $.classified_as[*].id
-  owner: $.is_ownership_subject_of[*].ascribes_owner[*].id
-  custodian: $.is_custodial_subject_of[*].ascribes_custodian[*].id
-  voyages: $.moved_by[*].id
-  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+    # Temporal Boundaries
+    start: $.produced_by.timespan.begin_of_the_begin
+    end: $.taken_out_of_existence_by.timespan.end_of_the_end
+    ship_built: $.produced_by.timespan.begin_of_the_begin
+    ship_lost: $.taken_out_of_existence_by.timespan.end_of_the_end
+    start_earliest: $.produced_by.timespan.begin_of_the_begin
+    start_latest: $.produced_by.timespan.end_of_the_begin
+    end_earliest: $.taken_out_of_existence_by.timespan.begin_of_the_end
+    end_latest: $.taken_out_of_existence_by.timespan.end_of_the_end
+
+    # Classification
+    ship_type: $.classified_as[*].id
+
+    # Ownership & Voyages
+    owner: $.is_ownership_subject_of[*].ascribes_owner[*].id
+    custodian: $.is_custodial_subject_of[*].ascribes_custodian[*].id
+    voyages: $.moved_by[*].id
+
+  other:
+    # Concordances
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
 
 voyage:
   file: voyage/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  start: $.timespan.begin_of_the_begin
-  end: $.timespan.end_of_the_end
-  start_earliest: $.timespan.begin_of_the_begin
-  start_latest: $.timespan.end_of_the_begin
-  end_earliest: $.timespan.begin_of_the_end
-  end_latest: $.timespan.end_of_the_end
-  ship: $.moved[*].id
-  departure: $.moved_from.id
-  arrival: $.moved_to.id
-  parent_voyage: $.part_of[*].id
-  route_note: $.referred_to_by[*].content
-  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Temporal Boundaries
+    start: $.timespan.begin_of_the_begin
+    end: $.timespan.end_of_the_end
+    start_earliest: $.timespan.begin_of_the_begin
+    start_latest: $.timespan.end_of_the_begin
+    end_earliest: $.timespan.begin_of_the_end
+    end_latest: $.timespan.end_of_the_end
+
+    # Route & Descriptions
+    remark: $.referred_to_by[*].content
+
+    # Vessel & Ports
+    ship: $.moved[*].id
+    departure: $.moved_from.id
+    arrival: $.moved_to.id
+    parent_voyage: $.part_of[*].id
+
+  other:
+    # Concordances
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

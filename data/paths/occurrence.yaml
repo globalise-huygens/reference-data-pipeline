@@ -29,36 +29,58 @@
 
 occurrence:
   file: occurrences/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  start: $.timespan.begin_of_the_begin
-  end: $.timespan.end_of_the_end
-  start_earliest: $.timespan.begin_of_the_begin
-  start_latest: $.timespan.end_of_the_begin
-  end_earliest: $.timespan.begin_of_the_end
-  end_latest: $.timespan.end_of_the_end
-  location: $.is_event_location_subject_of[*].ascribes_place[*].id
-  location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
-  involved: $.involved[*].id
-  classification: $.classified_as[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Temporal Boundaries
+    start: $.timespan.begin_of_the_begin
+    end: $.timespan.end_of_the_end
+    start_earliest: $.timespan.begin_of_the_begin
+    start_latest: $.timespan.end_of_the_begin
+    end_earliest: $.timespan.begin_of_the_end
+    end_latest: $.timespan.end_of_the_end
+
+    # Currency
+    involved: $.involved[*].id
+
+    # Location
+    location: $.is_event_location_subject_of[*].ascribes_place[*].id
+
+  other:
+    # Location & Entities
+    location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
 
 conversion:
   file: conversion/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  start: $.timespan.end_of_the_begin
-  end: $.timespan.begin_of_the_end
-  start_earliest: $.timespan.end_of_the_begin
-  start_latest: $.timespan.end_of_the_begin
-  end_earliest: $.timespan.begin_of_the_end
-  end_latest: $.timespan.begin_of_the_end
-  location: $.is_event_location_subject_of[*].ascribes_place[*].id
-  location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
-  from_unit: $.intentionally_initiated[*].has_exchange_value_subject[*].unit.id
-  from_value: $.intentionally_initiated[*].has_exchange_value_subject[*].value
-  to_unit: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id
-  to_value: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].value
-  commodity_type: $.is_dimension_of_commodity_type[*].id
-  classification: $.classified_as[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Temporal Boundaries
+    start: $.timespan.end_of_the_begin
+    end: $.timespan.begin_of_the_end
+    start_earliest: $.timespan.end_of_the_begin
+    start_latest: $.timespan.end_of_the_begin
+    end_earliest: $.timespan.begin_of_the_end
+    end_latest: $.timespan.begin_of_the_end
+
+    # Exchange Units
+    from_unit: $.intentionally_initiated[*].has_exchange_value_subject[*].unit.id
+    to_unit: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id
+
+    # Location
+    location: $.is_event_location_subject_of[*].ascribes_place[*].id
+
+  other:
+    # Values & Context
+    from_value: $.intentionally_initiated[*].has_exchange_value_subject[*].value
+    to_value: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].value
+
+    commodity_type: $.is_dimension_of_commodity_type[*].id
+
+    location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id

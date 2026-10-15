@@ -14,34 +14,36 @@
 
 file: group/*.json
 
-# Core Identification
-id: $.id
-identifier: $.identified_by[?(@.type=='Identifier')].content
-object_type: $.type
+organization:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
 
-# Names and Appellations
-title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
 
-# Temporal Boundaries
-# Standard start and end timestamps (foundation and dissolution):
-start: $.created_by.timespan.begin_of_the_begin
-end: $.dissolved_by.timespan.end_of_the_end
+    # Temporal Boundaries
+    start: $.created_by.timespan.begin_of_the_begin
+    end: $.dissolved_by.timespan.end_of_the_end
+    start_earliest: $.created_by.timespan.begin_of_the_begin
+    start_latest: $.created_by.timespan.end_of_the_begin
+    end_earliest: $.dissolved_by.timespan.begin_of_the_end
+    end_latest: $.dissolved_by.timespan.end_of_the_end
 
-# All four timespan properties for creation/dissolution interval boundaries:
-start_earliest: $.created_by.timespan.begin_of_the_begin
-start_latest: $.created_by.timespan.end_of_the_begin
-end_earliest: $.dissolved_by.timespan.begin_of_the_end
-end_latest: $.dissolved_by.timespan.end_of_the_end
+    # Classification
+    classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
 
-# Location & Headquarters
-location: $.is_residence_subject_of[*].ascribes_residence_place[*].id
+    # Location
+    location: $.is_residence_subject_of[*].ascribes_residence_place[*].id
 
-# Hierarchy & Relations
-member_of: $.is_membership_subject_of[*].ascribes_group[*].id
-membership_relation: $.is_membership_subject_of[*].ascribes_membership_relation[*].id
-relation: $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id
-social_relation_type: $.is_social_relation_subject_of[*].ascribes_social_relation[*].id
+  other:
+    # Hierarchy & Relations
+    member_of: $.is_membership_subject_of[*].ascribes_group[*].id
+    membership_relation: $.is_membership_subject_of[*].ascribes_membership_relation[*].id
+    relation: $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id
+    social_relation_type: $.is_social_relation_subject_of[*].ascribes_social_relation[*].id
 
-# Classification & Concordances
-classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+    # Concordances
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

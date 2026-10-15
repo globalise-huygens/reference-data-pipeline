@@ -14,38 +14,37 @@
 
 file: inventory/*.json
 
-# Core Identification
-id: $.id
-identifier: $.identified_by[?(@.type=='Identifier')].content
-accession_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300312355')].content
-entry_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300445023')].content
-object_type: $.type
+inventory:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    accession_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300312355')].content
+    entry_number: $.identified_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300445023')].content
+    object_type: $.type
 
-# Titles & Labels
-title: $.title[*].content
+    # Titles & Labels
+    title: $.title[*].content
 
-# Temporal Boundaries
-start: $.produced_by.timespan.begin_of_the_begin
-end: $.produced_by.timespan.end_of_the_end
+    # Temporal Boundaries
+    start: $.produced_by.timespan.begin_of_the_begin
+    end: $.produced_by.timespan.end_of_the_end
+    start_earliest: $.produced_by.timespan.begin_of_the_begin
+    start_latest: $.produced_by.timespan.end_of_the_begin
+    end_earliest: $.produced_by.timespan.begin_of_the_end
+    end_latest: $.produced_by.timespan.end_of_the_end
 
-# All four timespan properties for compilation interval boundaries:
-start_earliest: $.produced_by.timespan.begin_of_the_begin
-start_latest: $.produced_by.timespan.end_of_the_begin
-end_earliest: $.produced_by.timespan.begin_of_the_end
-end_latest: $.produced_by.timespan.end_of_the_end
+    # Location
+    location: $.produced_by.took_place_at[*].id
 
-# Production Location
-location: $.produced_by.took_place_at[*].id
+  other:
+    # Series
+    series: $.member_of[*].id
 
-# Archival Series & Hierarchy
-series: $.member_of[*].id
+    # Contained Documents
+    documents: $.part[*].id
 
-# Contained Documents
-documents: $.part[*].id
-
-# Content & Text Resource
-plain_text_url: $.carries.digitally_carried_by.id
-web_page_url: $.subject_of[*].digitally_carried_by[*].id
-
-# Classification
-classification: $.classified_as[*].id
+    # Digital Representation & Concordances
+    text_resource: $.has_representation[*].id
+    text_format: $.has_representation[*].format
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

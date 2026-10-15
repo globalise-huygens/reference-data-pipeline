@@ -14,36 +14,39 @@
 
 file: thesaurus/*.json
 
-# Core Identification
-id: $.id
-identifier: $.notation
-object_type: $.type
+concept:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.notation
+    object_type: $.type
 
-# Labels & Terms
-title: $.prefLabel[*].'@value'
-pref_label: $.prefLabel[*].'@value'
-pref_label_lang: $.prefLabel[*].'@language'
-alt_label: $.altLabel[*].'@value'
-hidden_label: $.hiddenLabel[*].'@value'
+    # Labels
+    title: $.prefLabel[*].'@value'
+    pref_label: $.prefLabel[*].'@value'
+    pref_label_lang: $.prefLabel[*].'@language'
+    alt_label: $.altLabel[*].'@value'
+    hidden_label: $.hiddenLabel[*].'@value'
 
-# Semantic Definition & Documentation
-definition: $.definition[*].'@value'
-example: $.example[*].'@value'
-scope_note: $.scopeNote[*].'@value'
+    # Semantic Definition & Documentation
+    definition: $.definition[*].'@value'
+    example: $.example[*].'@value'
 
-# Hierarchy & Relations
-broader: $.broader[*].id
-narrower: $.narrower[*].id
-related: $.related[*].id
+  other:
+    scope_note: $.scopeNote[*].'@value'
+    # Hierarchy & Relations
+    broader: $.broader[*].id
+    narrower: $.narrower[*].id
+    related: $.related[*].id
 
-# Scheme & Collection Membership
-in_scheme: $.inScheme[*].id
-member_of: $.memberOf[*].id
-top_concept_of: $.topConceptOf[*].id
+    # Scheme & Collection Membership
+    in_scheme: $.inScheme[*].id
+    member_of: $.memberOf[*].id
+    top_concept_of: $.topConceptOf[*].id
 
-# Mappings & Alignments
-exact_match: $.exactMatch[*].id
-close_match: $.closeMatch[*].id
-broad_match: $.broadMatch[*].id
-narrow_match: $.narrowMatch[*].id
-related_match: $.relatedMatch[*].id
+    # Mappings & Alignments
+    exact_match: $.exactMatch[*].id
+    close_match: $.closeMatch[*].id
+    broad_match: $.broadMatch[*].id
+    narrow_match: $.narrowMatch[*].id
+    related_match: $.relatedMatch[*].id

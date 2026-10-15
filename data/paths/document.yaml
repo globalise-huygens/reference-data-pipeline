@@ -14,37 +14,42 @@
 
 file: document/*.json
 
-# Core Identification
-id: $.id
-identifier: $.identified_by[?(@.type=='Identifier')].content
-object_type: $.type
+document:
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
 
-# Titles & Labels
-title: $.title.content
+    # Titles & Labels
+    title: $.title.content
 
-# Temporal Boundaries
-start: $.produced_by.timespan.begin_of_the_begin
-end: $.produced_by.timespan.end_of_the_end
+    # Temporal Boundaries
+    start: $.produced_by.timespan.begin_of_the_begin
+    end: $.produced_by.timespan.end_of_the_end
+    start_earliest: $.produced_by.timespan.begin_of_the_begin
+    start_latest: $.produced_by.timespan.end_of_the_begin
+    end_earliest: $.produced_by.timespan.begin_of_the_end
+    end_latest: $.produced_by.timespan.end_of_the_end
 
-# All four timespan properties for creation interval boundaries:
-start_earliest: $.produced_by.timespan.begin_of_the_begin
-start_latest: $.produced_by.timespan.end_of_the_begin
-end_earliest: $.produced_by.timespan.begin_of_the_end
-end_latest: $.produced_by.timespan.end_of_the_end
+    # Language
+    language: $.carries.language[*].id
 
-# Creation Location
-location: $.produced_by.took_place_at[*].id
+    # Location
+    location: $.produced_by.took_place_at[*].id
 
-# Physical Dimensions & Structure
-pages_count: $.dimension[?(@.unit.id=='http://vocab.getty.edu/aat/300194222')].value
-dimension_value: $.dimension[*].value
-dimension_unit: $.dimension[*].unit.id
-parts: $.part[*].id
+    # Classification
+    classification: $.classified_as[*].id
 
-# Content & Digital Representations
-language: $.carries.language[*].id
-text_resource: $.carries.referred_to_by[*].id
-digital_view: $.subject_of.id
+  other:
+    # Physical Dimensions
+    pages_count: $.dimension[?(@.unit.id=='http://vocab.getty.edu/aat/300194222')].value
+    dimension_value: $.dimension[*].value
+    dimension_unit: $.dimension[*].unit.id
+    parts: $.part[*].id
 
-# Classification
-classification: $.classified_as[*].id
+    # Digital Representation & Archival Hierarchy
+    text_resource: $.carries.has_representation[*].id
+    text_format: $.carries.has_representation[*].format
+    part_of: $.part_of[*].id
+    same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id

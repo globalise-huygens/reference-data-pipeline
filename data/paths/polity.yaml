@@ -41,59 +41,88 @@
 
 polity:
   file: polity/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
-  start: $.was_population_of[*].timespan.begin_of_the_begin
-  end: $.was_population_of[*].timespan.end_of_the_end
-  start_earliest: $.was_population_of[*].timespan.begin_of_the_begin
-  start_latest: $.was_population_of[*].timespan.end_of_the_begin
-  end_earliest: $.was_population_of[*].timespan.begin_of_the_end
-  end_latest: $.was_population_of[*].timespan.end_of_the_end
-  sovereign: $.had_sovereign[*].id
-  subject_population: $.had_subject_population[*].id
-  location: $.is_physical_locative_subject_of[*].ascribes_place[*].id
-  successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
-  part_of: $.part_of[*].id
-  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+    # Temporal Boundaries
+    start: $.was_population_of[*].timespan.begin_of_the_begin
+    end: $.was_population_of[*].timespan.end_of_the_end
+    start_earliest: $.was_population_of[*].timespan.begin_of_the_begin
+    start_latest: $.was_population_of[*].timespan.end_of_the_begin
+    end_earliest: $.was_population_of[*].timespan.begin_of_the_end
+    end_latest: $.was_population_of[*].timespan.end_of_the_end
+
+    # Location
+    location: $.is_physical_locative_subject_of[*].ascribes_place[*].id
+
+    # Sovereignty & Rulership
+    sovereign: $.had_sovereign[*].id
+
+  other:
 
 dynasty:
   file: dynasty/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
-  start: $.timespan.begin_of_the_begin
-  end: $.timespan.end_of_the_end
-  start_earliest: $.timespan.begin_of_the_begin
-  start_latest: $.timespan.end_of_the_begin
-  end_earliest: $.timespan.begin_of_the_end
-  end_latest: $.timespan.end_of_the_end
-  polity: $.had_subject_population[*].id
-  reigns: $.part[*].id
-  ruler_role: $.was_context_for_exercise_of[*].id
-  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-  sovereignty_type: $.classified_as[*].id
-  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+    # Temporal Boundaries
+    start: $.timespan.begin_of_the_begin
+    end: $.timespan.end_of_the_end
+    start_earliest: $.timespan.begin_of_the_begin
+    start_latest: $.timespan.end_of_the_begin
+    end_earliest: $.timespan.begin_of_the_end
+    end_latest: $.timespan.end_of_the_end
+
+    # Polity & Regnal Scope
+    polity: $.had_subject_population[*].id
+    reigns: $.part[*].id
+    ruler_role: $.was_context_for_exercise_of[*].id
+
+  other:
 
 reign:
   file: reign/*.json
-  id: $.id
-  identifier: $.identified_by[?(@.type=='Identifier')].content
-  object_type: $.type
-  title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
-  start: $.timespan.begin_of_the_begin
-  end: $.timespan.end_of_the_end
-  start_earliest: $.timespan.begin_of_the_begin
-  start_latest: $.timespan.end_of_the_begin
-  end_earliest: $.timespan.begin_of_the_end
-  end_latest: $.timespan.end_of_the_end
-  ruler: $.had_sovereign[*].id
-  dynasty: $.part_of[*].id
-  polity: $.had_subject_population[*].id
-  successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
-  classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-  sovereignty_type: $.classified_as[*].id
-  same_as: $.is_similarity_subject_of[*].ascribes_similarity_target[*].id
+  index:
+    # Core Identification
+    id: $.id
+    identifier: $.identified_by[?(@.type=='Identifier')].content
+    object_type: $.type
+
+    # Names & Appellations
+    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+
+    # Temporal Boundaries
+    start: $.timespan.begin_of_the_begin
+    end: $.timespan.end_of_the_end
+    start_earliest: $.timespan.begin_of_the_begin
+    start_latest: $.timespan.end_of_the_begin
+    end_earliest: $.timespan.begin_of_the_end
+    end_latest: $.timespan.end_of_the_end
+
+    # Classification
+    classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
+    sovereignty_type: $.classified_as[*].id
+
+    # Ruler & Lineage
+    ruler: $.had_sovereign[*].id
+
+    # Polity & Succession
+    polity: $.had_subject_population[*].id
+    successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
+
+    # Dynasty
+    dynasty: $.part_of[*].id
+
+  other:

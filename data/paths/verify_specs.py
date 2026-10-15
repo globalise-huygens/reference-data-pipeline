@@ -19,6 +19,7 @@ import re
 import sys
 import time
 from typing import Any, Dict, List, Optional, Tuple
+import yaml
 
 try:
     from jsonpath_ng.ext import parse as parse_jsonpath
@@ -302,44 +303,50 @@ def fetch_json(
 def parse_yaml_spec(filepath: str) -> Dict[str, Dict[str, str]]:
     """
     Parse a YAML specification file.
-    Returns a dictionary of sections: {section_name: {key: value, ...}}
-    For flat specifications, section_name is the stem of the filename.
+    Supports:
+    - Root or section-level 'file: ...'
+    - Nested 'index:' and 'other:' field blocks under entity sections
+    - Multi-section definitions (e.g. polity, dynasty, reign)
+    Returns: {section_name: {field: jsonpath, ..., 'file': pattern}}
     """
-    stem = os.path.splitext(os.path.basename(filepath))[0]
     with open(filepath, "r", encoding="utf-8") as f:
-        lines = f.readlines()
+        raw = yaml.safe_load(f)
 
-    # Determine if file uses multi-section structure
-    has_sections = any(
-        re.match(r"^[a-zA-Z0-9_-]+:\s*$", line.strip())
-        for line in lines
-        if not line.strip().startswith("#")
-    )
+    if not isinstance(raw, dict):
+        raise ValueError(f"Root of {filepath} must be a YAML mapping")
 
+    top_file = raw.get("file")
+    stem = os.path.splitext(os.path.basename(filepath))[0]
     sections: Dict[str, Dict[str, str]] = {}
-    current_sec = stem if not has_sections else None
 
-    for line_no, raw_line in enumerate(lines, start=1):
-        line = raw_line.strip()
-        if not line or line.startswith("#"):
+    for k, v in raw.items():
+        if k == "file":
             continue
+        if isinstance(v, dict):
+            sec_name = k
+            file_pat = v.get("file", top_file)
+            fields: Dict[str, str] = {}
+            if file_pat:
+                fields["file"] = file_pat
 
-        sec_match = re.match(r"^([a-zA-Z0-9_-]+):\s*$", line)
-        if sec_match:
-            current_sec = sec_match.group(1)
-            sections[current_sec] = {}
-            continue
+            if "index" in v and isinstance(v["index"], dict):
+                fields.update(v["index"])
+            if "other" in v and isinstance(v["other"], dict):
+                fields.update(v["other"])
 
-        if ":" in line:
-            k, v = line.split(":", 1)
-            k, v = k.strip(), v.strip()
-            if current_sec is None:
-                current_sec = stem
-            if current_sec not in sections:
-                sections[current_sec] = {}
-            sections[current_sec][k] = v
-        else:
-            raise ValueError(f"Line {line_no} in {filepath} is invalid: {line}")
+            for sub_k, sub_v in v.items():
+                if sub_k not in ("index", "other", "file") and isinstance(sub_v, str):
+                    fields[sub_k] = sub_v
+
+            sections[sec_name] = fields
+
+    # If flat file without nested entity blocks
+    if not sections and top_file:
+        fields = {"file": top_file}
+        for k, v in raw.items():
+            if k != "file" and isinstance(v, str):
+                fields[k] = v
+        sections[stem] = fields
 
     return sections
 

@@ -299,9 +299,33 @@
                         <relation>../event_type</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
-                            <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        <if><and><if><equals value="Built">../event_type/text()</equals></if><if><exists>../event_type_uri/text()</exists></if></and></if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../event_type</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">../event_type_uri/text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.303_production_type">
+                <path>
+                    <source_relation>
+                        <relation>../event_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><equals value="Built">../event_type/text()</equals></if><if><not><if><exists>../event_type_uri/text()</exists></if></not></if></and></if>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
@@ -830,9 +854,33 @@
                         <relation>../event_type</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
-                            <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        <if><and><if><equals value="Destroyed">../event_type/text()</equals></if><if><exists>../event_type_uri/text()</exists></if></and></if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../event_type</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">../event_type_uri/text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.237_destruction_type">
+                <path>
+                    <source_relation>
+                        <relation>../event_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><equals value="Destroyed">../event_type/text()</equals></if><if><not><if><exists>../event_type_uri/text()</exists></if></not></if></and></if>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
@@ -1361,9 +1409,33 @@
                         <relation>../event_type</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
-                            <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        <if><and><if><equals value="Sinking">../event_type/text()</equals></if><if><exists>../event_type_uri/text()</exists></if></and></if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../event_type</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">../event_type_uri/text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="GLBF.186_transformation_type">
+                <path>
+                    <source_relation>
+                        <relation>../event_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><equals value="Sinking">../event_type/text()</equals></if><if><not><if><exists>../event_type_uri/text()</exists></if></not></if></and></if>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
@@ -1892,9 +1964,33 @@
                         <relation>../event_type</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
-                            <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        <if><and><if><equals value="Wrecked">../event_type/text()</equals></if><if><exists>../event_type_uri/text()</exists></if></and></if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../event_type</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">../event_type_uri/text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="GLBF.186_transformation_type">
+                <path>
+                    <source_relation>
+                        <relation>../event_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><equals value="Wrecked">../event_type/text()</equals></if><if><not><if><exists>../event_type_uri/text()</exists></if></not></if></and></if>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
@@ -2428,9 +2524,33 @@
                         <relation>../event_type</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
-                            <equals value="End">../event_type/text()</equals>
-                        </if>
+                        <if><and><if><equals value="End">../event_type/text()</equals></if><if><exists>../event_type_uri/text()</exists></if></and></if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../event_type</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">../event_type_uri/text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="GLBF.189_end_of_existence_type">
+                <path>
+                    <source_relation>
+                        <relation>../event_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><equals value="End">../event_type/text()</equals></if><if><not><if><exists>../event_type_uri/text()</exists></if></not></if></and></if>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
@@ -2963,8 +3083,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity variable="production_source_uri">
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">../source/text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../source/text()</arg>

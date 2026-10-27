@@ -291,6 +291,7 @@ data/output/ship/rdf/.stamp: data/input/ship/xml/.stamp
 	$(RUN_X3ML) data/input/ship/xml ship_ownership.xml data/mappings/ship/Mapping550.x3ml data/output/ship/rdf 550_ownership
 	$(RUN_X3ML) data/input/ship/xml ship_transaction_events.xml data/mappings/ship/Mapping581.x3ml data/output/ship/rdf 581_transactions
 	$(RUN_X3ML) data/input/ship/xml ship_voyage_links.xml data/mappings/ship/Mapping585.x3ml data/output/ship/rdf 585_translocation_links
+	$(RUN_X3ML) data/input/ship/xml ship_types.xml data/mappings/ship/Mapping_ShipTypes.x3ml data/output/ship/rdf ship_types
 	@touch $@
 
 data/output/ship/ship.ttl: data/output/ship/rdf/.stamp

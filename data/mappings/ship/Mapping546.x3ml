@@ -215,7 +215,7 @@
                                 <arg name="hierarchy_id" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">../departure_location_original/text()</arg>
+                                <arg name="label" type="xpath">../departure_location_label/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -240,8 +240,112 @@
                                 <arg name="hierarchy_id" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">../arrival_location_original/text()</arg>
+                                <arg name="label" type="xpath">../arrival_location_label/text()</arg>
                             </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.15_statement_content">
+                <path>
+                    <source_relation>
+                        <relation>departure_location_original</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>crm:P67i_is_referred_to_by</relationship>
+                        <entity>
+                            <type>crm:E33_Linguistic_Object</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="term_simple" type="constant">departure_location_original</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Original name of place of departure of Voyage</arg>
+                                <arg name="text" type="xpath">../voyage_id/text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original name of place of departure</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:69f29243-2b19-4ac7-8f02-44e19e889b0f</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original name of place of departure</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>departure_location_original</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.15_statement_content">
+                <path>
+                    <source_relation>
+                        <relation>arrival_location_original</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>crm:P67i_is_referred_to_by</relationship>
+                        <entity>
+                            <type>crm:E33_Linguistic_Object</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="term_simple" type="constant">arrival_location_original</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Original name of place of arrival of Voyage</arg>
+                                <arg name="text" type="xpath">../voyage_id/text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original name of place of arrival</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:ace7f92c-4664-4075-a205-98adc4c88e3e</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original name of place of arrival</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>arrival_location_original</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
                         </entity>
                     </target_node>
                 </range>
@@ -249,7 +353,7 @@
             <link template="LAF.25_timespan_begin_of_the_begin">
                 <path>
                     <source_relation>
-                        <relation>departure_date</relation>
+                        <relation>departure_date_earliest</relation>
                     </source_relation>
                     <target_relation>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -269,7 +373,77 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>departure_date</source_node>
+                    <source_node>departure_date_earliest</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2001/XMLSchema#date</type>
+                            <instance_generator name="Custom_typedLiteralGen">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="type" type="constant">http://www.w3.org/2001/XMLSchema#date</arg>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.27_timespan_end_of_the_begin">
+                <path>
+                    <source_relation>
+                        <relation>departure_date_latest</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>crm:P4_has_time-span</relationship>
+                        <entity variable="timespan">
+                            <type>crm:E52_Time-Span</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
+                                <arg name="text" type="xpath">../ship_label/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P81a_end_of_the_begin</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>departure_date_latest</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2001/XMLSchema#date</type>
+                            <instance_generator name="Custom_typedLiteralGen">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="type" type="constant">http://www.w3.org/2001/XMLSchema#date</arg>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.28_timespan_begin_of_the_end">
+                <path>
+                    <source_relation>
+                        <relation>arrival_date_earliest</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>crm:P4_has_time-span</relationship>
+                        <entity variable="timespan">
+                            <type>crm:E52_Time-Span</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
+                                <arg name="text" type="xpath">../ship_label/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P81b_begin_of_the_end</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>arrival_date_earliest</source_node>
                     <target_node>
                         <entity>
                             <type>http://www.w3.org/2001/XMLSchema#date</type>
@@ -284,7 +458,7 @@
             <link template="LAF.26_timespan_end_of_the_end">
                 <path>
                     <source_relation>
-                        <relation>arrival_date</relation>
+                        <relation>arrival_date_latest</relation>
                     </source_relation>
                     <target_relation>
                         <relationship>crm:P4_has_time-span</relationship>
@@ -295,17 +469,156 @@
                                 <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
                                 <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
+                                <arg name="text" type="xpath">../ship_label/text()</arg>
+                            </label_generator>
                         </entity>
                         <relationship>crm:P82b_end_of_the_end</relationship>
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>arrival_date</source_node>
+                    <source_node>arrival_date_latest</source_node>
                     <target_node>
                         <entity>
                             <type>http://www.w3.org/2001/XMLSchema#date</type>
                             <instance_generator name="Custom_typedLiteralGen">
                                 <arg name="text" type="xpath">text()</arg>
+                                <arg name="type" type="constant">http://www.w3.org/2001/XMLSchema#date</arg>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.49_timespan_name">
+                <path>
+                    <source_relation>
+                        <relation>departure_date_original</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <exists>text()</exists>
+                        </if>
+                        <relationship>crm:P4_has_time-span</relationship>
+                        <entity variable="timespan">
+                            <type>crm:E52_Time-Span</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
+                                <arg name="text" type="xpath">../ship_label/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="term_simple" type="constant">departure_date_original</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>departure date original</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_TypeShortURI">
+                                        <arg name="type_id" type="constant">departure date original</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">departure date original</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>departure_date_original</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2001/XMLSchema#string</type>
+                            <instance_generator name="Custom_typedLiteralGen">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="type" type="constant">http://www.w3.org/2001/XMLSchema#string</arg>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.49_timespan_name">
+                <path>
+                    <source_relation>
+                        <relation>arrival_date_original</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <exists>text()</exists>
+                        </if>
+                        <relationship>crm:P4_has_time-span</relationship>
+                        <entity variable="timespan">
+                            <type>crm:E52_Time-Span</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="type" type="constant">timespan</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">TimeSpan of the Voyage of Ship</arg>
+                                <arg name="text" type="xpath">../ship_label/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">voyage</arg>
+                                <arg name="hierarchy_id" type="xpath">../voyage_id/text()</arg>
+                                <arg name="term_simple" type="constant">arrival_date_original</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>arrival date original</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_TypeShortURI">
+                                        <arg name="type_id" type="constant">arrival date original</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">arrival date original</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>arrival_date_original</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2001/XMLSchema#string</type>
+                            <instance_generator name="Custom_typedLiteralGen">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="type" type="constant">http://www.w3.org/2001/XMLSchema#string</arg>
                             </instance_generator>
                         </entity>
                     </target_node>
@@ -430,13 +743,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>source</constant>
+                                        <constant>overall source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">source</arg>
+                                    <instance_generator name="Custom_TypeURI">
+                                        <arg name="type_id" type="constant">overall_source</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">source</arg>
+                                        <arg name="text" type="constant">overall source</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -445,8 +758,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity>
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">text()</arg>
@@ -458,8 +774,8 @@
                                     <instance_info>
                                         <constant>URI</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">http://vocab.getty.edu/aat/300404629</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404629</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">URI</arg>
@@ -508,13 +824,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>url</constant>
+                                        <constant>URL</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">url</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404630</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">url</arg>
+                                        <arg name="text" type="constant">URL</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -523,8 +839,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity>
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">text()</arg>

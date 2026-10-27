@@ -331,7 +331,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- ========== LABEL SOURCE FAMILY ========== -->
+            </link>
             <link template="SRDC.10_specific_citation">
                 <path>
                     <source_relation>
@@ -530,7 +530,7 @@
                         </instance_generator>
                     </entity>
                 </target_node>
-            </domain><!-- ========== LABEL REMARKS SOURCE FAMILY ========== -->
+            </domain>
             <link template="SRDC.10_specific_citation">
                 <path>
                     <source_relation>
@@ -984,5 +984,4 @@
             </link>
         </mapping>
     </mappings>
-    
 </x3ml>

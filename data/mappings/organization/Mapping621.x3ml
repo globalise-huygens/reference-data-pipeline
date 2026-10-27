@@ -443,8 +443,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity variable="source_identifier">
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>

@@ -142,7 +142,7 @@
                         <instance_generator name="Custom_GenericOneArgHashedURI">
                             <arg name="hierarchy" type="constant">group</arg>
                             <arg name="hierarchy_id" type="xpath">../ORG_ID/text()</arg>
-                            <arg name="term_simple" type="constant">classificatory_status</arg>
+                            <arg name="term_simple" type="constant">classification_status</arg>
                             <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                         </instance_generator>
                         <additional>
@@ -398,7 +398,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/zotero_link</source_node>
+                <source_node>/data/item/zotero_link[normalize-space(../poolparty_uri_classification/text())!='']</source_node>
                 <target_node>
                     <entity variable="source">
                         <type>crm:E33_Linguistic_Object</type>
@@ -422,8 +422,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity variable="source_identifier">
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
@@ -517,7 +520,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/pages</source_node>
+                <source_node>/data/item/pages[normalize-space(../poolparty_uri_classification/text())!='' and normalize-space(../zotero_link/text())!='']</source_node>
                 <target_node>
                     <entity variable="pages">
                         <type>crm:E33_Linguistic_Object</type>

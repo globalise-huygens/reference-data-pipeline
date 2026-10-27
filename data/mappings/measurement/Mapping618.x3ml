@@ -325,7 +325,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- ========== SOURCE FAMILY ========== --><!-- Link 1: Source reference (conditional: source exists AND source_page does NOT) -->
+            </link>
             <link template="SRDC.10_specific_citation">
                 <path>
                     <source_relation>
@@ -380,7 +380,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 2: Page reference (conditional: source_page exists) -->
+            </link>
             <link template="">
                 <path>
                     <source_relation>
@@ -465,7 +465,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 3: SRDF.368 page forms_part_of source (conditional: source_page exists) -->
+            </link>
             <link template="SRDF.368_specific_citation_part_of_bibliographic_item">
                 <path>
                     <source_relation>
@@ -506,7 +506,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- ========== CONVERSION FORMULA SOURCE FAMILY ========== --><!-- Link 4: Conversion formula source reference (conditional: source exists AND page does NOT) -->
+            </link>
             <link template="">
                 <path>
                     <source_relation>
@@ -561,7 +561,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 5: Conversion formula source page reference (conditional: page exists) -->
+            </link>
             <link template="">
                 <path>
                     <source_relation>
@@ -646,7 +646,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 6: SRDF.368 conversion formula source page forms_part_of source (conditional: page exists) -->
+            </link>
             <link template="SRDF.368_specific_citation_part_of_bibliographic_item">
                 <path>
                     <source_relation>
@@ -1058,7 +1058,7 @@
                     </target_node>
                 </range>
             </link>
-        </mapping><!-- ========== SOURCE DOMAIN MAPPING ========== -->
+        </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/source</source_node>
@@ -1193,7 +1193,7 @@
                     </target_node>
                 </range>
             </link>
-        </mapping><!-- ========== SOURCE PAGE DOMAIN MAPPING ========== --><!-- ========== CONVERSION FORMULA SOURCE DOMAIN MAPPING ========== -->
+        </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/conversion_formula_source</source_node>
@@ -1328,7 +1328,6 @@
                     </target_node>
                 </range>
             </link>
-        </mapping><!-- ========== CONVERSION FORMULA SOURCE PAGE DOMAIN MAPPING ========== -->
+        </mapping>
     </mappings>
-    
 </x3ml>

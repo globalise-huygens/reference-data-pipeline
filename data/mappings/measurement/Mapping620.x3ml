@@ -281,7 +281,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- ========== SOURCE FAMILY ========== --><!-- Link 1: Source reference (conditional: source exists AND source_page does NOT) -->
+            </link>
             <link template="SRDC.10_specific_citation">
                 <path>
                     <source_relation>
@@ -336,7 +336,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 2: Page reference -->
+            </link>
             <link template="">
                 <path>
                     <source_relation>
@@ -421,7 +421,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Link 3: SRDF.368 page forms_part_of source -->
+            </link>
             <link template="SRDF.368_specific_citation_part_of_bibliographic_item">
                 <path>
                     <source_relation>
@@ -581,7 +581,7 @@
                     </target_node>
                 </range>
             </link>
-        </mapping><!-- ========== SOURCE DOMAIN MAPPING ========== -->
+        </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/source</source_node>
@@ -718,5 +718,4 @@
             </link>
         </mapping>
     </mappings>
-    
 </x3ml>

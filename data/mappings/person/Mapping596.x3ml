@@ -173,7 +173,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -267,9 +267,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -283,9 +283,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -361,9 +361,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -377,9 +377,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -448,9 +448,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -508,9 +508,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -568,9 +568,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -628,9 +628,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -688,7 +688,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">birth</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">comment</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -735,7 +735,7 @@
                         <relation>observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -748,17 +748,17 @@
                                     </not>
                                 </if>
                             </and>
-                        </if>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        </if></and></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -803,16 +803,17 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        <if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -901,16 +902,17 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        <if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -955,7 +957,7 @@
                         <relation>reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -968,17 +970,17 @@
                                     </not>
                                 </if>
                             </and>
-                        </if>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        </if></and></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -1023,16 +1025,17 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        <if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -1121,16 +1124,17 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P100i_died_in</relationship>
-                        <entity variable="death">
-                            <type>crm:E69_Death</type>
+                        <if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="type" type="constant">death</arg>
+                                <arg name="type" type="constant">birth</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
-                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                             </label_generator>
                         </entity>
@@ -1347,7 +1351,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">comment</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1417,9 +1421,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1433,9 +1437,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1511,9 +1515,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1527,9 +1531,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple2" type="constant">appellation</arg>
                                 <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1598,9 +1602,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1658,9 +1662,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1718,9 +1722,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1778,9 +1782,9 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="term_simple" type="constant">death</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
                                 <arg name="premise" type="constant">TimeSpan of the Existence of Person identified by</arg>
@@ -1808,7 +1812,7 @@
                         <relation>observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -1821,7 +1825,7 @@
                                     </not>
                                 </if>
                             </and>
-                        </if>
+                        </if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1876,6 +1880,7 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
+                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1974,6 +1979,7 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
+                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2028,7 +2034,7 @@
                         <relation>reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -2041,7 +2047,7 @@
                                     </not>
                                 </if>
                             </and>
-                        </if>
+                        </if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2096,6 +2102,7 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
+                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2194,6 +2201,7 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
+                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2242,7 +2250,141 @@
                     </target_node>
                 </range>
             </link>
-        </mapping>
+        <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>original_label</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><exists>text()</exists></if><if><equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals></if></and></if>
+                        <relationship>crm:P98i_was_born</relationship>
+                        <entity variable="birth">
+                            <type>crm:E67_Birth</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="type" type="constant">birth</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Birth of Person identified by</arg>
+                                <arg name="text" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="term_simple" type="constant">birth</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original title</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>original_label</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>original_label</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if><exists>text()</exists></if><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if></and></if>
+                        <relationship>crm:P100i_died_in</relationship>
+                        <entity variable="death">
+                            <type>crm:E69_Death</type>
+                            <instance_generator name="Custom_GenericUniqueEventURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="type" type="constant">death</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Death of Person identified by</arg>
+                                <arg name="text" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="term_simple" type="constant">death</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original title</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>original_label</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/reconstruction_source</source_node>

@@ -162,7 +162,7 @@ $(S3_DIR)/.place.stamp: data/output/place/place.ttl
 #------------------------------------------------------------
 # 3. Person Pipeline
 #------------------------------------------------------------
-PERSON_ZIP := $(wildcard data/input/person/persons_data_dataverse.zip)
+PERSON_ZIP := $(wildcard data/input/person/*.zip)
 
 data/input/person/csv/.stamp: $(PERSON_ZIP)
 	@mkdir -p data/input/person/csv

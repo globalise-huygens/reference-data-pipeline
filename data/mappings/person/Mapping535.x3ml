@@ -110,7 +110,7 @@
                     </source_relation>
                     <target_relation>
                         <if>
-                            <exists>text()</exists>
+                            <exists>text()[not(starts-with(normalize-space(.),'http'))]</exists>
                         </if>
                         <relationship>aaao:ZP26i_is_residence_subject_of</relationship>
                         <entity variable="residential_status">
@@ -143,8 +143,120 @@
                                 <arg name="hierarchy_id" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">../original_location_description/text()</arg>
+                                <arg name="label" type="xpath">../location_pref_label/text()</arg>
                             </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="SRDF.422_residential_status_residence">
+                <path>
+                    <source_relation>
+                        <relation>location</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <exists>text()[starts-with(normalize-space(.),'http')]</exists>
+                        </if>
+                        <relationship>aaao:ZP26i_is_residence_subject_of</relationship>
+                        <entity variable="residential_status">
+                            <type>aaao:ZE9_Residential_Status</type>
+                            <instance_generator name="Custom_ResidentialStatusHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_ThreeArgumentsLabel">
+                                <arg name="premise" type="constant">Residential Status</arg>
+                                <arg name="text" type="xpath">../original_label/text()</arg>
+                                <arg name="premise1" type="constant">at</arg>
+                                <arg name="text1" type="xpath">../original_location_description/text()</arg>
+                                <arg name="premise2" type="constant">of Person identified by</arg>
+                                <arg name="text2" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>aaao:ZP27_ascribes_residence_place</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>location</source_node>
+                    <target_node>
+                        <entity variable="location">
+                            <type>crm:E53_Place</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">normalize-space(text())</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">../location_pref_label/text()</arg>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.15_statement_content">
+                <path>
+                    <source_relation>
+                        <relation>original_location_description</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <exists>text()</exists>
+                        </if>
+                        <relationship>aaao:ZP26i_is_residence_subject_of</relationship>
+                        <entity variable="residential_status">
+                            <type>aaao:ZE9_Residential_Status</type>
+                            <instance_generator name="Custom_ResidentialStatusHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P67i_is_referred_to_by</relationship>
+                        <entity>
+                            <type>crm:E33_Linguistic_Object</type>
+                            <instance_generator name="Custom_ResidentialStatusStatementHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="statement" type="constant">original_location</arg>
+                                <arg name="statement_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Original location description of Residential Status of Person identified by</arg>
+                                <arg name="text" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original title</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>original_location_description</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
                         </entity>
                     </target_node>
                 </range>
@@ -1078,7 +1190,7 @@
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
                                 <arg name="residential_status" type="constant">residential_status</arg>
-                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">../observation_id/text()</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="statement" type="constant">statement</arg>
                                 <arg name="statement_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1119,7 +1231,79 @@
                     </target_node>
                 </range>
             </link>
-        </mapping>
+        <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>original_label</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()</exists></if>
+                        <relationship>aaao:ZP26i_is_residence_subject_of</relationship>
+                        <entity variable="residential_status">
+                            <type>aaao:ZE9_Residential_Status</type>
+                            <instance_generator name="Custom_ResidentialStatusHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_ThreeArgumentsLabel">
+                                <arg name="premise" type="constant">Residential Status</arg>
+                                <arg name="text" type="xpath">../original_label/text()</arg>
+                                <arg name="premise1" type="constant">at</arg>
+                                <arg name="text1" type="xpath">../original_location_description/text()</arg>
+                                <arg name="premise2" type="constant">of Person identified by</arg>
+                                <arg name="text2" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="term_simple" type="constant">residential_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original title</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>original_label</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/reconstruction_source</source_node>

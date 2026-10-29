@@ -102,7 +102,7 @@
                         </label_generator>
                     </entity>
                 </target_node>
-            </domain><!-- LAF.10: URI identifier --><!-- SRDF.524: appellative_status_ascribed_appellation -->
+            </domain>
             <link template="SRDF.524_appellative_status_ascribed_appellation">
                 <path>
                     <source_relation>
@@ -171,7 +171,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.522: appellative_status_type -->
+            </link>
             <link template="SRDF.522_appellative_status_type">
                 <path>
                     <source_relation>
@@ -206,7 +206,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- toponym_location → Similarity Status → Place -->
+            </link>
             <link template="SRDF.525_appellative_status_similarity_target">
                 <path>
                     <source_relation>
@@ -294,7 +294,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Data assignment: aligned to 532 pattern --><!-- Timespan: startDate → P82_at_some_time_within -->
+            </link>
             <link template="SRDF.523_appellative_status_time-span">
                 <path>
                     <source_relation>
@@ -380,7 +380,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- Timespan: endDate → P82_at_some_time_within -->
+            </link>
             <link template="SRDF.523_appellative_status_time-span">
                 <path>
                     <source_relation>
@@ -466,7 +466,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.25: startDate_min → P82a_begin_of_the_begin -->
+            </link>
             <link template="LAF.25_timespan_begin_of_the_begin">
                 <path>
                     <source_relation>
@@ -518,7 +518,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.23: startDate_max → P81a_end_of_the_begin -->
+            </link>
             <link template="LAF.23_timespan_end_of_the_begin">
                 <path>
                     <source_relation>
@@ -570,7 +570,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.24: endDate_min → P81b_begin_of_the_end -->
+            </link>
             <link template="LAF.24_timespan_begin_of_the_end">
                 <path>
                     <source_relation>
@@ -622,7 +622,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.26: endDate_max → P82b_end_of_the_end -->
+            </link>
             <link template="LAF.26_timespan_end_of_the_end">
                 <path>
                     <source_relation>
@@ -674,7 +674,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.520: appellative_status_identifier (observation_id) -->
+            </link>
             <link template="SRDF.649_appellative_status_data_assignment">
                 <path>
                     <source_relation>
@@ -1162,7 +1162,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.521: appellative_status_statement (comment) -->
+            </link>
             <link template="SRDF.521_appellative_status_statement">
                 <path>
                     <source_relation>
@@ -1508,5 +1508,4 @@
             </link>
         </mapping>
     </mappings>
-    
 </x3ml>

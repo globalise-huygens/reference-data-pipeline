@@ -191,6 +191,23 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Polity/text()</arg>
                             </label_generator>
+                        <additional>
+                                <relationship>pwro:WP4i_was_subject_population_of</relationship>
+                                <entity>
+                                    <type>pwro:WE2_Sovereignty</type>
+                                    <instance_info>
+                                        <constant>same one</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_EntityURI">
+                            <arg name="hierarchy" type="constant">reign</arg>
+                            <arg name="hierarchy_id" type="xpath">../Reign_ID/text()</arg>
+                        </instance_generator>
+                                    <label_generator name="Custom_OneArgumentLabel">
+                            <arg name="premise" type="constant">The Reign of</arg>
+                            <arg name="text" type="xpath">../Ruler_Name/text()</arg>
+                        </label_generator>
+                                </entity>
+                            </additional>
                         </entity>
                     </target_node>
                 </range>
@@ -216,6 +233,23 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Ruler_Name/text()</arg>
                             </label_generator>
+                        <additional>
+                                <relationship>pwro:WP3i_exercised_authority_of</relationship>
+                                <entity>
+                                    <type>pwro:WE2_Sovereignty</type>
+                                    <instance_info>
+                                        <constant>same one</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_EntityURI">
+                            <arg name="hierarchy" type="constant">reign</arg>
+                            <arg name="hierarchy_id" type="xpath">../Reign_ID/text()</arg>
+                        </instance_generator>
+                                    <label_generator name="Custom_OneArgumentLabel">
+                            <arg name="premise" type="constant">The Reign of</arg>
+                            <arg name="text" type="xpath">../Ruler_Name/text()</arg>
+                        </label_generator>
+                                </entity>
+                            </additional>
                         </entity>
                     </target_node>
                 </range>
@@ -413,6 +447,21 @@
                                 <arg name="premise" type="constant">The Reign of</arg>
                                 <arg name="text" type="xpath">../Successor_Name/text()</arg>
                             </label_generator>
+                        <additional>
+                                <relationship>globalise:GR11i_is_succeeded_sovereignty_ascribed_by</relationship>
+                                <entity>
+                                    <type>globalise:G10_Successor_Status</type>
+                                    <instance_info>
+                                        <constant>same one</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                            <arg name="hierarchy" type="constant">reign</arg>
+                            <arg name="hierarchy_id" type="xpath">../Reign_ID/text()</arg>
+                            <arg name="term_simple" type="constant">successor_status</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                        </instance_generator>
+                                </entity>
+                            </additional>
                         </entity>
                     </target_node>
                 </range>
@@ -447,7 +496,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|successor_source'), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Successor_Source_Citation/text()</arg>
@@ -483,7 +532,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Successor_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Successor_Source/text(),'|successor_source'), 1, string-length(../Successor_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../Reign_ID/text(),'|',../Successor_Reign/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -520,7 +569,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Successor_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Successor_Source/text(),'|successor_source'), 1, string-length(../Successor_Source/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Successor_Source_Citation/text()</arg>
@@ -540,7 +589,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Successor_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Successor_Source/text(),'|successor_source'), 1, string-length(../Successor_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../Reign_ID/text(),'|',../Successor_Reign/text())), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -556,7 +605,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericTwoArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Successor_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Successor_Source/text(),'|successor_source'), 1, string-length(../Successor_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../Reign_ID/text(),'|',../Successor_Reign/text())), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
@@ -607,7 +656,7 @@
                         <type>crm:E33_Linguistic_Object</type>
                         <instance_generator name="Custom_GenericHierarchyHashedURI">
                             <arg name="hierarchy" type="constant">textualwork</arg>
-                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|successor_source'), 1, string-length(text()) * 10000)</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
                             <arg name="label" type="xpath">../Successor_Source_Citation/text()</arg>
@@ -626,7 +675,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|successor_source'), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -677,7 +726,7 @@
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Successor_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Successor_Source/text(),'|successor_source'), 1, string-length(../Successor_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>

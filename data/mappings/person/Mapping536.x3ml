@@ -102,7 +102,7 @@
                         </label_generator>
                     </entity>
                 </target_node>
-            </domain><!-- SRDF.375: classificatory_status_classification (identity → E55 Type) -->
+            </domain>
             <link template="SRDF.375_classificatory_status_classification">
                 <path>
                     <source_relation>
@@ -213,7 +213,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.647: classificatory_status_data_assignment (annotationDate → E13 Attribute Assignment) --><!-- FIX: Aligned to 532 pattern — source from identity, check ../annotationDate/text(), use P82_at_some_time_within, Custom_GenericTwoArgHashedURI --><!-- SRDF.377: classificatory_status_time-span (startDate → P82_at_some_time_within) -->
+            </link>
             <link template="SRDF.377_classificatory_status_time-span">
                 <path>
                     <source_relation>
@@ -385,7 +385,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.377: classificatory_status_time-span (endDate → P82_at_some_time_within) --><!-- LAF.25: timespan_begin_of_the_begin (startDate_min) -->
+            </link>
             <link template="LAF.25_timespan_begin_of_the_begin">
                 <path>
                     <source_relation>
@@ -437,7 +437,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.23: timespan_end_of_the_begin (startDate_max) -->
+            </link>
             <link template="LAF.23_timespan_end_of_the_begin">
                 <path>
                     <source_relation>
@@ -489,7 +489,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.24: timespan_begin_of_the_end (endDate_min) -->
+            </link>
             <link template="LAF.24_timespan_begin_of_the_end">
                 <path>
                     <source_relation>
@@ -541,7 +541,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- LAF.26: timespan_end_of_the_end (endDate_max) -->
+            </link>
             <link template="LAF.26_timespan_end_of_the_end">
                 <path>
                     <source_relation>
@@ -593,7 +593,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.383: classificatory_status_identifier (observation_id) -->
+            </link>
             <link template="SRDF.648_classificatory_status_data_assignment">
                 <path>
                     <source_relation>
@@ -659,7 +659,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.769: classificatory_status_geographic_scope (location) -->
+            </link>
             <link template="SRDF.769_classificatory_status_geographic_scope">
                 <path>
                     <source_relation>
@@ -1119,7 +1119,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- SRDF.384: classificatory_status_statement (comment) --><!-- FIX: classification_status_HASHED_CONTENTS now uses ../identity/text(), not text(); removed stray quotes from "comment" instance_info -->
+            </link>
             <link template="SRDF.384_classificatory_status_statement">
                 <path>
                     <source_relation>
@@ -1187,7 +1187,93 @@
                     </target_node>
                 </range>
             </link>
-        </mapping>
+        <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>original_label</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()</exists></if>
+                        <relationship>aaao:ZP11i_is_classificatory_subject_of</relationship>
+                        <entity variable="classificatory_status">
+                            <type>aaao:ZE4_Classificatory_Status</type>
+                            <instance_generator name="Custom_ClassificationStatusHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="classification_status" type="constant">classification_status</arg>
+                                <arg name="classification_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_TwoArgumentsLabel">
+                                <arg name="premise" type="constant">Classificatory Status</arg>
+                                <arg name="text" type="xpath">../original_label/text()</arg>
+                                <arg name="premise1" type="constant">of Person</arg>
+                                <arg name="text1" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>aaao:ZP13_ascribes_classification_relation</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>P2 has type</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P2_has_type</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">P2 has type</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="term_simple" type="constant">classification_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>original title</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>original_label</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            </mapping>
         <mapping>
             <domain>
                 <source_node>/data/item/reconstruction_source</source_node>
@@ -1465,5 +1551,4 @@
             </link>
         </mapping>
     </mappings>
-    
 </x3ml>

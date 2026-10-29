@@ -120,7 +120,7 @@
                                 <arg name="hierarchy" type="constant">group</arg>
                                 <arg name="hierarchy_id" type="xpath">text()</arg>
                                 <arg name="term_simple" type="constant">social_relation_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
                                 <arg name="premise" type="constant">Social Relation Status of Organization</arg>
@@ -145,7 +145,7 @@
                             <arg name="hierarchy" type="constant">group</arg>
                             <arg name="hierarchy_id" type="xpath">text()</arg>
                             <arg name="term_simple" type="constant">social_relation_status</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                         </instance_generator>
                         <additional>
                             <relationship>aaao:ZP104_ascribes_social_relation</relationship>
@@ -233,9 +233,9 @@
                                 <arg name="hierarchy" type="constant">group</arg>
                                 <arg name="hierarchy_id" type="xpath">../ORG_ID/text()</arg>
                                 <arg name="term_simple" type="constant">social_relation_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Timespan of the social relationship between</arg>
@@ -374,9 +374,9 @@
                             <arg name="hierarchy" type="constant">group</arg>
                             <arg name="hierarchy_id" type="xpath">../ORG_ID/text()</arg>
                             <arg name="term_simple" type="constant">social_relation_status</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                             <arg name="term_simple1" type="constant">timespan</arg>
-                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../related_to/text()</arg>
+                            <arg name="term_simple1_HASHED_CONTENTS" type="xpath">substring(concat(../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text()), 1, string-length(../related_to/text()) * 10000)</arg>
                         </instance_generator>
                     </entity>
                 </target_node>
@@ -426,7 +426,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/zotero_link</source_node>
+                <source_node>/data/item/zotero_link[normalize-space(../related_to/text())!='']</source_node>
                 <target_node>
                     <entity variable="source">
                         <type>crm:E33_Linguistic_Object</type>
@@ -450,8 +450,11 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity variable="source_identifier">
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
@@ -545,7 +548,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/pages</source_node>
+                <source_node>/data/item/pages[normalize-space(../related_to/text())!='' and normalize-space(../zotero_link/text())!='']</source_node>
                 <target_node>
                     <entity variable="pages">
                         <type>crm:E33_Linguistic_Object</type>
@@ -567,8 +570,13 @@
                         <relationship>crm:P1_is_identified_by</relationship>
                         <entity variable="pages_identifier">
                             <type>crm:E42_Identifier</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="xpath">text()</arg>
+                            <instance_generator name="Custom_GenericTwoArgHierarchyHashedURI">
+                                <arg name="hierarchy" type="constant">textualwork</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../zotero_link/text()</arg>
+                                <arg name="term_simple" type="constant">part</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',concat(../ORG_ID/text(),'|',../related_to/text(),'|',../relationship_type_uri/text(),'|',../startDate/text(),'|',../endDate/text())), 1, string-length(text()) * 10000)</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>

@@ -162,7 +162,7 @@ $(S3_DIR)/.place.stamp: data/output/place/place.ttl
 #------------------------------------------------------------
 # 3. Person Pipeline
 #------------------------------------------------------------
-PERSON_ZIP := $(wildcard data/input/person/persons_data_dataverse.zip)
+PERSON_ZIP := $(wildcard data/input/person/*.zip)
 
 data/input/person/csv/.stamp: $(PERSON_ZIP)
 	@mkdir -p data/input/person/csv
@@ -291,6 +291,7 @@ data/output/ship/rdf/.stamp: data/input/ship/xml/.stamp
 	$(RUN_X3ML) data/input/ship/xml ship_ownership.xml data/mappings/ship/Mapping550.x3ml data/output/ship/rdf 550_ownership
 	$(RUN_X3ML) data/input/ship/xml ship_transaction_events.xml data/mappings/ship/Mapping581.x3ml data/output/ship/rdf 581_transactions
 	$(RUN_X3ML) data/input/ship/xml ship_voyage_links.xml data/mappings/ship/Mapping585.x3ml data/output/ship/rdf 585_translocation_links
+	$(RUN_X3ML) data/input/ship/xml ship_types.xml data/mappings/ship/Mapping_ShipTypes.x3ml data/output/ship/rdf ship_types
 	@touch $@
 
 data/output/ship/ship.ttl: data/output/ship/rdf/.stamp

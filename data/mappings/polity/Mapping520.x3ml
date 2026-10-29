@@ -442,6 +442,23 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Polity/text()</arg>
                             </label_generator>
+                        <additional>
+                                <relationship>pwro:WP4i_was_subject_population_of</relationship>
+                                <entity>
+                                    <type>pwro:WE2_Sovereignty</type>
+                                    <instance_info>
+                                        <constant>same one</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_EntityURI">
+                            <arg name="hierarchy" type="constant">dynasty</arg>
+                            <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
+                        </instance_generator>
+                                    <label_generator name="Custom_OneArgumentLabel">
+                            <arg name="premise" type="constant">Rulership of</arg>
+                            <arg name="text" type="xpath">concat(../Rulership_Type/text(),' ',../Rulership_Name_Standard/text())</arg>
+                        </label_generator>
+                                </entity>
+                            </additional>
                         </entity>
                     </target_node>
                 </range>
@@ -528,7 +545,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|overall_source'), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Rulership_Overall_Source_Citation/text()</arg>
@@ -564,7 +581,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Overall_Source/text(),'|overall_source'), 1, string-length(../Rulership_Overall_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -601,7 +618,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Overall_Source/text(),'|overall_source'), 1, string-length(../Rulership_Overall_Source/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Rulership_Overall_Source_Citation/text()</arg>
@@ -621,7 +638,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Overall_Source/text(),'|overall_source'), 1, string-length(../Rulership_Overall_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -637,7 +654,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericTwoArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Overall_Source/text(),'|overall_source'), 1, string-length(../Rulership_Overall_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
@@ -860,7 +877,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|period_source'), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Rulership_Period_Source_Citation/text()</arg>
@@ -899,7 +916,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Period_Source/text(),'|period_source'), 1, string-length(../Rulership_Period_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -936,7 +953,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Period_Source/text(),'|period_source'), 1, string-length(../Rulership_Period_Source/text()) * 10000)</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../Rulership_Period_Source_Citation/text()</arg>
@@ -956,7 +973,7 @@
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Period_Source/text(),'|period_source'), 1, string-length(../Rulership_Period_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                             </instance_generator>
@@ -972,7 +989,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericTwoArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Period_Source/text(),'|period_source'), 1, string-length(../Rulership_Period_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">part</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|',../Rulership_ID/text()), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
@@ -1023,7 +1040,7 @@
                         <type>crm:E33_Linguistic_Object</type>
                         <instance_generator name="Custom_GenericHierarchyHashedURI">
                             <arg name="hierarchy" type="constant">textualwork</arg>
-                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|period_source'), 1, string-length(text()) * 10000)</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
                             <arg name="label" type="xpath">../Rulership_Period_Source_Citation/text()</arg>
@@ -1042,7 +1059,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|period_source'), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1093,7 +1110,7 @@
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Period_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Period_Source/text(),'|period_source'), 1, string-length(../Rulership_Period_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1142,7 +1159,7 @@
                         <type>crm:E33_Linguistic_Object</type>
                         <instance_generator name="Custom_GenericHierarchyHashedURI">
                             <arg name="hierarchy" type="constant">textualwork</arg>
-                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                            <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|overall_source'), 1, string-length(text()) * 10000)</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
                             <arg name="label" type="xpath">../Rulership_Overall_Source_Citation/text()</arg>
@@ -1161,7 +1178,7 @@
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(text(),'|overall_source'), 1, string-length(text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -1212,7 +1229,7 @@
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericOneArgHierarchyHashedURI">
                                 <arg name="hierarchy" type="constant">textualwork</arg>
-                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../Rulership_Overall_Source/text()</arg>
+                                <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">substring(concat(../Rulership_Overall_Source/text(),'|overall_source'), 1, string-length(../Rulership_Overall_Source/text()) * 10000)</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>

@@ -273,7 +273,7 @@
                         </entity>
                     </target_node>
                 </range>
-            </link><!-- ========== SOURCE FAMILY ========== -->
+            </link>
             <link template="SRDC.10_specific_citation">
                 <path>
                     <source_relation>
@@ -592,5 +592,4 @@
             </link>
         </mapping>
     </mappings>
-    
 </x3ml>

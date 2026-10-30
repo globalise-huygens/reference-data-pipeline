@@ -50,6 +50,8 @@ from export import (
     get_annotationcollections_for_inventory,
     series_to_jsonld,
     get_document_id,
+    SEGMENTATION_ROOT_DOCUMENTS,
+    SEGMENTATION_ROOT_FILTER,
 )
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
@@ -136,7 +138,7 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         .options(
             selectinload(Inventory.titles),
             selectinload(Inventory.member_of_series),
-            selectinload(Inventory.documents),
+            selectinload(SEGMENTATION_ROOT_DOCUMENTS),
             selectinload(Inventory.scans),
         )
         .all()
@@ -265,7 +267,7 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
     # 2. Export Documents
 
     print("Loading documents...")
-    doc_query = session.query(Document)
+    doc_query = session.query(Document).filter(SEGMENTATION_ROOT_FILTER)
     use_bucket = bool(s3_client and s3_config and getattr(s3_config, "bucket", None))
     if not use_bucket:
         print("Writing to disk: filtering documents to inventories 1053 and 3598...")
@@ -284,6 +286,11 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         selectinload(Document.pages)
         .selectinload(Page2Document.page)
         .selectinload(Page.scan),
+        selectinload(Document.sub_documents)
+        .selectinload(Document.pages)
+        .selectinload(Page2Document.page)
+        .selectinload(Page.scan),
+        selectinload(Document.evidence),
     ).all()
 
     total_docs = len(documents)

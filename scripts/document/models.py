@@ -5,7 +5,6 @@ Entities: Series, Inventory, Document, Scan, Page, DocumentType, Settlement
 and the junction / helper tables that connect them.
 """
 
-import os
 import re
 import uuid
 import enum
@@ -15,6 +14,7 @@ from datetime import date as Date
 from sqlalchemy import (
     String,
     Integer,
+    Float,
     Boolean,
     Text,
     Date as DateType,
@@ -220,63 +220,30 @@ class SettlementLabel(Base):
 
 
 def get_document_id(document) -> str:
-    """
-    Get the document identifier based on scan filenames:
-    NL-HaNA_1.04.02_4088_0329-0330 where the last two numbers represent
-    the first and last scan of the document.
-
-    If scans are unavailable or filenames cannot be parsed into a common prefix
-    and scan numbers, falls back to document.id.
-
-    Args:
-        document: Document instance or namespace with 'pages' and 'id'.
-
-    Returns:
-        Formatted document identifier string.
-
-    Examples:
-        >>> from types import SimpleNamespace
-        >>> scan1 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0329")
-        >>> scan2 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0330")
-        >>> page1 = SimpleNamespace(scan=scan1)
-        >>> page2 = SimpleNamespace(scan=scan2)
-        >>> doc = SimpleNamespace(id="uuid-1", pages=[SimpleNamespace(page=page1), SimpleNamespace(page=page2)])
-        >>> get_document_id(doc)
-        'NL-HaNA_1.04.02_4088_0329-0330'
-        >>> doc_single = SimpleNamespace(id="uuid-2", pages=[SimpleNamespace(page=page1)])
-        >>> get_document_id(doc_single)
-        'NL-HaNA_1.04.02_4088_0329-0329'
-        >>> doc_fallback = SimpleNamespace(id="NL-HaNA_1.04.02_3598_0795-0943", pages=[])
-        >>> get_document_id(doc_fallback)
-        'NL-HaNA_1.04.02_3598_0795-0943'
-        >>> doc_dummy = SimpleNamespace(id="doc-123", pages=[SimpleNamespace(page=SimpleNamespace(scan=SimpleNamespace(filename="scan1.jpg")))])
-        >>> get_document_id(doc_dummy)
-        'doc-123'
-    """
+    """Return a stable identifier based on the document's scan filenames."""
     if document is None:
         return ""
 
-    pages = getattr(document, "pages", None) or []
     scan_filenames: list[str] = []
-    for p in pages:
-        if not p:
-            continue
-        page = getattr(p, "page", None)
-        scan = getattr(page, "scan", None) if page else getattr(p, "scan", None)
-        fn = getattr(scan, "filename", None) if scan else None
-        if fn and fn not in scan_filenames:
-            scan_filenames.append(fn)
+    for page_link in getattr(document, "pages", None) or []:
+        page = getattr(page_link, "page", None)
+        scan = getattr(page, "scan", None) if page else getattr(page_link, "scan", None)
+        filename = getattr(scan, "filename", None) if scan else None
+        if filename and filename not in scan_filenames:
+            scan_filenames.append(filename)
 
-    if not scan_filenames and getattr(document, "sub_documents", None):
-        for subdoc in document.sub_documents:
-            for p in getattr(subdoc, "pages", None) or []:
-                if not p:
-                    continue
-                page = getattr(p, "page", None)
-                scan = getattr(page, "scan", None) if page else getattr(p, "scan", None)
-                fn = getattr(scan, "filename", None) if scan else None
-                if fn and fn not in scan_filenames:
-                    scan_filenames.append(fn)
+    if not scan_filenames:
+        for subdocument in getattr(document, "sub_documents", None) or []:
+            for page_link in getattr(subdocument, "pages", None) or []:
+                page = getattr(page_link, "page", None)
+                scan = (
+                    getattr(page, "scan", None)
+                    if page
+                    else getattr(page_link, "scan", None)
+                )
+                filename = getattr(scan, "filename", None) if scan else None
+                if filename and filename not in scan_filenames:
+                    scan_filenames.append(filename)
 
     if not scan_filenames:
         return getattr(document, "id", "") or ""
@@ -284,17 +251,28 @@ def get_document_id(document) -> str:
     sorted_scans = sorted(scan_filenames)
     first_scan = sorted_scans[0]
     last_scan = sorted_scans[-1]
-
     first_stem = re.sub(r"\.(jpe?g|tiff?|png)$", "", first_scan, flags=re.IGNORECASE)
     last_stem = re.sub(r"\.(jpe?g|tiff?|png)$", "", last_scan, flags=re.IGNORECASE)
-
     if "_" in first_stem and "_" in last_stem:
-        first_prefix, first_num = first_stem.rsplit("_", 1)
-        last_prefix, last_num = last_stem.rsplit("_", 1)
+        first_prefix, first_number = first_stem.rsplit("_", 1)
+        last_prefix, last_number = last_stem.rsplit("_", 1)
         if first_prefix == last_prefix:
-            return f"{first_prefix}_{first_num}-{last_num}"
-
+            return f"{first_prefix}_{first_number}-{last_number}"
     return getattr(document, "id", "") or ""
+
+
+class RectoVerso(str, enum.Enum):
+    RECTO = "Recto"
+    VERSO = "Verso"
+
+
+document_settlement = Table(
+    "document_settlement",
+    Base.metadata,
+    Column("document_id", String(128), ForeignKey("document.id"), primary_key=True),
+    Column("settlement_id", String(36), ForeignKey("settlement.id"), primary_key=True),
+    comment="Settlements of a document: an index entry exported once per settlement is merged into one (step 21)",
+)
 
 
 class Document(Base):
@@ -319,7 +297,18 @@ class Document(Base):
         String(36),
         ForeignKey("settlement.id"),
         index=True,
-        comment="FK to Settlement; populated from location_index.csv via OBP import",
+        comment=(
+            "FK to Settlement (the first one; all in document_settlement): from the OBP index, "
+            "or for segmentation documents their index entry's, court case's or inferred title's place when it is a settlement"
+        ),
+    )
+    place_glob_id: Mapped[Optional[str]] = mapped_column(
+        String(32),
+        index=True,
+        comment=(
+            "GLOB id of the document's place in the GLOBALISE places dataset: its settlement's, "
+            "or the closing place of an inferred title (step 22)"
+        ),
     )
     folio_start: Mapped[Optional[int]] = mapped_column(
         Integer,
@@ -332,6 +321,52 @@ class Document(Base):
     )
     method_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("document_identification_method.id"), index=True
+    )
+    toc_katern: Mapped[Optional[str]] = mapped_column(
+        Text,
+        comment=(
+            "Katern label in the TANAP index: settlement plus DEEL, e.g. 'Ternate 3'. "
+            "Not necessarily a physical section; see toc_folio_sequence"
+        ),
+    )
+    toc_deel: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        comment="DEEL (part number) of the katern in the TANAP index, if any",
+    )
+    toc_order: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        comment=(
+            "1-based position of the ToC entry within its inventory: physical order "
+            "from OBP NT_gecorrigeerd where available, else OBP index id order"
+        ),
+    )
+    toc_folio_sequence: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        comment=(
+            "1-based number of the foliation sequence (physical section) the entry "
+            "belongs to, derived from folio restarts in toc_order"
+        ),
+    )
+    nt_index: Mapped[Optional[int]] = mapped_column(
+        Integer,
+        comment="ID of the entry in OBP NT_gecorrigeerd.xlsx (first row of the document)",
+    )
+    title_source: Mapped[Optional[str]] = mapped_column(
+        String(32),
+        index=True,
+        comment=(
+            "Who made the title: 'VOC' (the VOC itself: the index, or a General Missive), 'VOC (other version)' "
+            "(the index entry of another version of the text), 'Resilient Diversity' (the court case dataset), "
+            "'page header' (step 16), 'inferred' (by this project from the text)"
+        ),
+    )
+    toc_folio_start_side: Mapped[Optional[RectoVerso]] = mapped_column(
+        SQLEnum(RectoVerso, values_callable=lambda obj: [e.value for e in obj]),
+        comment="Side of the start folio if the TANAP index specifies it (e.g. '14v')",
+    )
+    toc_folio_end_side: Mapped[Optional[RectoVerso]] = mapped_column(
+        SQLEnum(RectoVerso, values_callable=lambda obj: [e.value for e in obj]),
+        comment="Side of the end folio if the TANAP index specifies it (e.g. '16r')",
     )
 
     # Relationships
@@ -353,6 +388,9 @@ class Document(Base):
     location: Mapped[Optional["Settlement"]] = relationship(
         "Settlement", back_populates="documents"
     )
+    settlements: Mapped[List["Settlement"]] = relationship(
+        "Settlement", secondary=document_settlement
+    )  # all settlements of an index entry (location is the first); see step 21
     document_types: Mapped[List["Document2Type"]] = relationship(
         "Document2Type", back_populates="document", cascade="all, delete-orphan"
     )
@@ -365,20 +403,14 @@ class Document(Base):
     pages: Mapped[List["Page2Document"]] = relationship(
         "Page2Document", back_populates="document", cascade="all, delete-orphan"
     )
+    evidence: Mapped[Optional["DocumentEvidence"]] = relationship(
+        "DocumentEvidence", back_populates="document", uselist=False
+    )
 
     @property
     def number_of_pages(self):
         """Get the number of pages in the document."""
         return len(self.pages)
-
-    @property
-    def document_id(self) -> str:
-        """Get the human-readable document identifier based on scan filenames:
-        NL-HaNA_1.04.02_4088_0329-0330 where the last two numbers represent
-        the first and last scan of the document.
-        Falls back to self.id if scans are unavailable or filenames cannot be parsed.
-        """
-        return get_document_id(self)
 
     def __repr__(self):
         return f"<Document(title='{self.title}', inventory='{self.inventory_id}')>"
@@ -387,7 +419,7 @@ class Document(Base):
         return (
             f"{self.title} ({self.inventory.inventory_number})"
             if self.title
-            else f"Document {self.document_id}"
+            else f"Document {self.id}"
         )
 
 
@@ -602,11 +634,6 @@ class Scan(Base):
         return self.filename
 
 
-class RectoVerso(str, enum.Enum):
-    RECTO = "Recto"
-    VERSO = "Verso"
-
-
 class LinkConfidence(str, enum.Enum):
     """
     Confidence tier for a Page2Document link, ordered from strongest to weakest.
@@ -674,6 +701,127 @@ class Page(Base):
         elif self.scan:
             return f"Page for scan {self.scan.filename}"
         return f"Page {self.id}"
+
+
+class DocumentEvidence(Base):
+    """How the segmentation model arrived at a document (JSON), stored at import."""
+
+    __tablename__ = "document_evidence"
+
+    document_id: Mapped[str] = mapped_column(
+        String(128), ForeignKey("document.id"), primary_key=True
+    )
+    evidence: Mapped[str] = mapped_column(Text)
+    document: Mapped["Document"] = relationship("Document", back_populates="evidence")
+
+
+class TextVersion(Base):
+    """
+    Two runs of scans, in two inventories, that hold the same text (versions of
+    a document: neither is taken to be the copy). Keyed on the archive's own
+    identifiers: inventory number and scan number (the NN in
+    NL-HaNA_1.04.02_<inventory>_<NNNN>), so links survive re-segmentation.
+    Stored once per pair, the lower inventory number as a (see versions.py).
+    """
+
+    __tablename__ = "text_version"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    inventory_a: Mapped[str] = mapped_column(String(10), index=True)
+    scan_start_a: Mapped[int] = mapped_column(Integer)
+    scan_end_a: Mapped[int] = mapped_column(Integer)
+    inventory_b: Mapped[str] = mapped_column(String(10), index=True)
+    scan_start_b: Mapped[int] = mapped_column(Integer)
+    scan_end_b: Mapped[int] = mapped_column(Integer)
+    n_matches: Mapped[int] = mapped_column(Integer)
+    score: Mapped[float] = mapped_column(Float)
+    method: Mapped[str] = mapped_column(String(64))
+
+
+class RegisterReview(Base):
+    """
+    Scans labelled by hand as handwritten register (ToC) pages or not
+    (/review/registers in the app; sample drawn by `segmentation register-sample`).
+    label: start (first page of a register) | continuation | not | unsure; NULL = to do.
+    """
+
+    __tablename__ = "register_review"
+
+    filename: Mapped[str] = mapped_column(String(255), primary_key=True)
+    inventory: Mapped[str] = mapped_column(String(10), index=True)
+    score: Mapped[Optional[float]] = mapped_column(Float)
+    stratum: Mapped[Optional[str]] = mapped_column(String(64))
+    stratum_size: Mapped[Optional[int]] = mapped_column(Integer)
+    position: Mapped[int] = mapped_column(Integer)  # order of presentation
+    label: Mapped[Optional[str]] = mapped_column(String(16))
+    note: Mapped[Optional[str]] = mapped_column(Text)
+    labelled_at: Mapped[Optional[str]] = mapped_column(String(32))
+
+
+class RegisterLinkReview(Base):
+    """
+    Register entries linked by hand to the scan where their document starts
+    (/review/register-links; candidates from `segmentation register-match`).
+    choice: a candidate's scan filename, 'none' (not in the candidates; other_scan when known), 'skip'.
+    """
+
+    __tablename__ = "register_link_review"
+
+    entry_key: Mapped[str] = mapped_column(
+        String(255), primary_key=True
+    )  # <register first scan>:<entry>
+    inventory: Mapped[str] = mapped_column(String(10), index=True)
+    position: Mapped[int] = mapped_column(Integer)
+    stratum: Mapped[Optional[str]] = mapped_column(String(64))
+    stratum_size: Mapped[Optional[int]] = mapped_column(Integer)
+    register_scan: Mapped[str] = mapped_column(String(255))
+    title: Mapped[Optional[str]] = mapped_column(Text)
+    date: Mapped[Optional[str]] = mapped_column(String(64))
+    folio: Mapped[Optional[str]] = mapped_column(String(32))
+    entry_box: Mapped[Optional[str]] = mapped_column(
+        String(128)
+    )  # JSON [x0, y0, x1, y1] of the entry on its register page
+    candidates: Mapped[str] = mapped_column(Text)  # JSON: [{scan, score, why}]
+    choice: Mapped[Optional[str]] = mapped_column(String(255))
+    other_scan: Mapped[Optional[str]] = mapped_column(String(255))
+    note: Mapped[Optional[str]] = mapped_column(Text)
+    labelled_at: Mapped[Optional[str]] = mapped_column(String(32))
+
+
+class SegmentReview(Base):
+    """
+    Document boundaries of the segmentation model checked by hand
+    (/review/segments; segmentation/review.py). Append-only: the latest row
+    per (inventory, item_key) is the current label.
+    item_key identifies the document independently of the run: toc:<csv_id>,
+    entry:<entry_id>, gm:<id>, case:<id>, or <kind>:<model start scan> for
+    unindexed documents and subdocuments, added:<n> for documents the model missed.
+    start/end_status: confirmed (= model) | corrected | implied (moved along
+    with a neighbour's boundary) | NULL (not looked at).
+    verdict: NULL | not_document | merge_previous | not_in_inventory | unsure.
+    start/end_side: left | right on a double scan (where the boundary is), else NULL.
+    """
+
+    __tablename__ = "segment_review"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    inventory: Mapped[str] = mapped_column(String(10), index=True)
+    item_key: Mapped[str] = mapped_column(String(255), index=True)
+    kind: Mapped[Optional[str]] = mapped_column(String(32))
+    placed_by: Mapped[Optional[str]] = mapped_column(String(32))
+    model_start: Mapped[Optional[str]] = mapped_column(String(255))
+    model_end: Mapped[Optional[str]] = mapped_column(String(255))
+    start_scan: Mapped[Optional[str]] = mapped_column(String(255))
+    end_scan: Mapped[Optional[str]] = mapped_column(String(255))
+    start_side: Mapped[Optional[str]] = mapped_column(String(8))
+    end_side: Mapped[Optional[str]] = mapped_column(String(8))
+    start_status: Mapped[Optional[str]] = mapped_column(String(16))
+    end_status: Mapped[Optional[str]] = mapped_column(String(16))
+    verdict: Mapped[Optional[str]] = mapped_column(String(32))
+    title: Mapped[Optional[str]] = mapped_column(Text)
+    note: Mapped[Optional[str]] = mapped_column(Text)
+    reviewer: Mapped[Optional[str]] = mapped_column(String(64))
+    created_at: Mapped[str] = mapped_column(String(32))
 
 
 class Page2Document(Base):

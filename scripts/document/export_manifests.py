@@ -14,7 +14,7 @@ import time
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 from sqlalchemy import create_engine, func
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from tqdm import tqdm
 
 from utils import (
@@ -23,8 +23,19 @@ from utils import (
     create_s3_client,
     output_framed_json,
 )
-from models import Inventory
-from export import inventory_to_manifest_jsonld
+from models import (
+    Document,
+    Document2DocumentType,
+    Document2ExternalID,
+    Inventory,
+    Page2Document,
+    Settlement,
+)
+from export import (
+    SEGMENTATION_ROOT_DOCUMENT,
+    SEGMENTATION_ROOT_DOCUMENTS,
+    inventory_to_manifest_jsonld,
+)
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
 BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
@@ -37,7 +48,22 @@ def export_all_manifests(output_dir, gzipped, s3_client, s3_config):
     total = session.query(func.count(Inventory.id)).scalar()
     print(f"Exporting manifests for {total} inventories to {output_dir}/")
 
-    inventories = session.query(Inventory).all()
+    documents = selectinload(SEGMENTATION_ROOT_DOCUMENTS)
+    inventories = (
+        session.query(Inventory)
+        .options(
+            documents.selectinload(SEGMENTATION_ROOT_DOCUMENT.sub_documents)
+            .selectinload(Document.pages)
+            .selectinload(Page2Document.page),
+            documents.selectinload(SEGMENTATION_ROOT_DOCUMENT.document_types_linked)
+            .selectinload(Document2DocumentType.document_type),
+            documents.selectinload(SEGMENTATION_ROOT_DOCUMENT.external_ids)
+            .selectinload(Document2ExternalID.external),
+            documents.selectinload(SEGMENTATION_ROOT_DOCUMENT.location)
+            .selectinload(Settlement.labels),
+        )
+        .all()
+    )
 
     t0 = time.time()
     prefix = getattr(s3_config, "prefix", "") or "" if s3_config else ""

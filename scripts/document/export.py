@@ -4,17 +4,27 @@ Moved out of app.py to keep routes lean.
 """
 
 import os
+import re
 import sys
+import json
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
+from urllib.parse import quote
 
 import duckdb
+from sqlalchemy.orm import aliased
 
 _parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _parent_dir not in sys.path:
     sys.path.insert(0, _parent_dir)
 
-from models import Document, Inventory, RectoVerso, get_document_id
+from models import (
+    Document,
+    DocumentIdentificationMethod,
+    Inventory,
+    RectoVerso,
+    get_document_id,
+)
 from utils import (
     get_canvas_uri_from_annotation_id,
     get_manifest_uri_from_annotation_id,
@@ -24,6 +34,20 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 DEFAULT_LINKS_PARQUET = os.environ.get(
     "LINKS_PARQUET",
     os.path.join(ROOT_DIR, "data", "input", "links_data.parquet"),
+)
+SEGMENTATION_METHOD_NAME = "Segmentation model"
+SEGMENTATION_ROOT_FILTER = Document.part_of_id.is_(None) & Document.method.has(
+    DocumentIdentificationMethod.name == SEGMENTATION_METHOD_NAME
+)
+# An alias keeps relationship criteria from propagating to subdocument loads.
+SEGMENTATION_ROOT_DOCUMENT = aliased(Document)
+SEGMENTATION_ROOT_DOCUMENTS = Inventory.documents.of_type(
+    SEGMENTATION_ROOT_DOCUMENT
+).and_(
+    SEGMENTATION_ROOT_DOCUMENT.part_of_id.is_(None),
+    SEGMENTATION_ROOT_DOCUMENT.method.has(
+        DocumentIdentificationMethod.name == SEGMENTATION_METHOD_NAME
+    ),
 )
 
 
@@ -669,7 +693,7 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
         >>> ids[1]["content"]
         'OBP-456'
         >>> ids[1]["classified_as"]["_label"]
-        'OBP_INDEX Identifier'
+        'OBP Index Identifier'
         >>> document_identified_by_jsonld(SimpleNamespace(external_ids=[]))
         []
     """
@@ -685,7 +709,7 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
             identifier_type_label = "TANAP Identifier"
         elif "OBP_INDEX" in external_context:
             identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:2122ddb6-c61f-4288-a592-4970bf42fc13"
-            identifier_type_label = "OBP_INDEX Identifier"
+            identifier_type_label = "OBP Index Identifier"
         else:
             identifier_type = None
             identifier_type_label = None
@@ -701,7 +725,79 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
                 "_label": identifier_type_label,
             }
         identified_by.append(ident_obj)
+
+    if getattr(document, "nt_index", None) is not None:
+        identified_by.append(
+            {
+                "type": "Identifier",
+                "content": str(document.nt_index),
+                "classified_as": {
+                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
+                    "type": "Type",
+                    "_label": "NT Index Identifier",
+                },
+            }
+        )
     return identified_by
+
+
+def document_comments_jsonld(document) -> List[Dict[str, Any]]:
+    """Convert segmentation evidence into a Linked Art comment.
+
+    >>> from types import SimpleNamespace
+    >>> doc = SimpleNamespace(evidence=SimpleNamespace(evidence='{"start": "scan-1", "flags": [true, null, "title"]}'))
+    >>> document_comments_jsonld(doc)[0]["content"]
+    'start: scan-1; flags: yes, , title'
+    >>> doc.evidence.evidence = 'not JSON'
+    >>> document_comments_jsonld(doc)[0]["content"]
+    'not JSON'
+    """
+
+    evidence = getattr(document, "evidence", None)
+    content = getattr(evidence, "evidence", None) if evidence else None
+    if not content:
+        return []
+    try:
+        value = json.loads(content)
+    except TypeError, json.JSONDecodeError:
+        comment_text = str(content)
+    else:
+        fragments = []
+        pending = [(value, False)]
+        while pending:
+            value, literal = pending.pop()
+            if literal:
+                fragments.append(value)
+            elif isinstance(value, dict):
+                entries = list(value.items())
+                for index, (key, item) in reversed(list(enumerate(entries))):
+                    pending.append((item, False))
+                    pending.append((f"{key}: ", True))
+                    if index:
+                        pending.append(("; ", True))
+            elif isinstance(value, list):
+                for index, item in reversed(list(enumerate(value))):
+                    pending.append((item, False))
+                    if index:
+                        pending.append((", ", True))
+            elif value is None:
+                continue
+            elif isinstance(value, bool):
+                fragments.append("yes" if value else "no")
+            else:
+                fragments.append(str(value))
+        comment_text = "".join(fragments)
+    return [
+        {
+            "type": "LinguisticObject",
+            "classified_as": {
+                "id": "http://vocab.getty.edu/aat/300435416",
+                "type": "Type",
+                "_label": "Comment",
+            },
+            "content": comment_text,
+        }
+    ]
 
 
 def document_dimensions_jsonld(document) -> List[Dict[str, Any]]:
@@ -938,9 +1034,36 @@ def document_refers_to_jsonld(
     ]
 
 
+def subdocument_fragments(document) -> Dict[str, str]:
+    """Assign unique, deterministic fragments to all descendants of a document."""
+    descendants = []
+    pending = list(getattr(document, "sub_documents", None) or [])
+    while pending:
+        subdocument = pending.pop()
+        descendants.append(subdocument)
+        pending.extend(getattr(subdocument, "sub_documents", None) or [])
+
+    fragments: Dict[str, str] = {}
+    counts: Dict[str, int] = {}
+    for subdocument in sorted(
+        descendants, key=lambda doc: (get_document_id(doc), doc.id)
+    ):
+        match = re.search(r"_(\d+-\d+)$", get_document_id(subdocument))
+        fragment = (
+            match.group(1) if match else f"document-{quote(subdocument.id, safe='')}"
+        )
+        counts[fragment] = counts.get(fragment, 0) + 1
+        if counts[fragment] > 1:
+            fragment = f"{fragment}-{counts[fragment]}"
+        fragments[subdocument.id] = fragment
+    return fragments
+
+
 def document_physical_to_jsonld(
     document,
     links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
+    _root_id: Optional[str] = None,
+    _fragments: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     Serialize a physical Document record to Linked Art JSON-LD.
@@ -998,10 +1121,17 @@ def document_physical_to_jsonld(
         >>> res_scans["carries"]["referred_to_by"][0]["id"]
         'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330.annotations'
     """
+    is_root = _root_id is None
     doc_id = get_document_id(document)
+    if is_root:
+        _root_id = doc_id
+        _fragments = subdocument_fragments(document)
+    assert _root_id is not None and _fragments is not None
     base_id = (
-        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}"
+        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{_root_id}"
     )
+    if not is_root:
+        base_id = f"{base_id}#{_fragments[document.id]}"
     place = settlement_to_place_jsonld(document.location) if document.location else None
     languages = document_languages_jsonld(document)
 
@@ -1010,19 +1140,31 @@ def document_physical_to_jsonld(
         "_label": "Textual content of the document",
         "language": languages if languages else None,
         # "digitally_carried_by": None,
-        "referred_to_by": [  # All annotations in the document
+    }
+    if is_root:
+        carries["referred_to_by"] = [
             {
                 "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}.annotations",
                 "type": "Set",
                 "_label": f"Entity and event annotations for Document {doc_id}",
             }
-        ],
-    }
+        ]
     refers_to = document_refers_to_jsonld(document, links_parquet)
     if refers_to:
         carries["refers_to"] = refers_to
 
-    return {
+    parts = document_parts_jsonld(document)
+    parts = [
+        document_physical_to_jsonld(
+            subdocument,
+            links_parquet=links_parquet,
+            _root_id=_root_id,
+            _fragments=_fragments,
+        )
+        for subdocument in getattr(document, "sub_documents", None) or []
+    ] + parts
+
+    result = {
         "@context": "https://linked.art/ns/v1/linked-art.json",
         "id": base_id,
         "type": "PhysicalHumanMadeThing",
@@ -1037,7 +1179,7 @@ def document_physical_to_jsonld(
             "timespan": document_timespan_jsonld(document),
             # "carried_out_by": None,  # unknown actor
         },
-        "part": document_parts_jsonld(document),
+        "part": parts,
         "carries": carries,
         "subject_of": {
             # "id": f"https://globalise.huygens.knaw.nl/document/{doc_id}", # TODO: viewer uri???
@@ -1045,6 +1187,10 @@ def document_physical_to_jsonld(
             "_label": "This document shown by Globalise",
         },
     }
+    comments = document_comments_jsonld(document)
+    if comments:
+        result["referred_to_by"] = comments
+    return result
 
 
 # Series (Set) JSON-LD
@@ -1170,6 +1316,7 @@ def series_chain(series) -> Dict[str, Any]:
 
 
 def inventory_to_jsonld(inventory) -> Dict[str, Any]:
+    """Serialize an inventory whose documents are selected segmentation roots."""
     inv_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}"
 
     # Include all titles from inventory
@@ -1246,7 +1393,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     # Parts: physical documents within inventory with full structure (pages as parts)
     parts: List[Dict[str, Any]] = []
     if getattr(inventory, "documents", None):
-        for doc in inventory.documents:  # limit to avoid huge payloads
+        for doc in inventory.documents:
             doc_id = get_document_id(doc)
             title = doc.title or f"Document {doc_id}"
 
@@ -1421,6 +1568,8 @@ def get_first_page_index(doc) -> float | int:
 def create_document_range(
     doc: Document,
     inventory_number: str,
+    _root_id: Optional[str] = None,
+    _fragments: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     Create a IIIF Presentation 3.0 Range for a document and its subdocuments recursively.
@@ -1453,6 +1602,14 @@ def create_document_range(
         [{'label': {'en': ['Language']}, 'value': {'en': ['Dutch', 'French']}}]
     """
     doc_id = get_document_id(doc)
+    is_root = _root_id is None
+    if is_root:
+        _root_id = doc_id
+        _fragments = subdocument_fragments(doc)
+    assert _root_id is not None and _fragments is not None
+    fragment = None if is_root else _fragments[doc.id]
+    range_id = _root_id if is_root else f"{_root_id}/{fragment}"
+    identifier = _root_id if is_root else f"{_root_id}#{fragment}"
     # Determine label from title or ID
     if getattr(doc, "title", None):
         label_text = doc.title
@@ -1460,7 +1617,7 @@ def create_document_range(
         label_text = f"Document {doc_id}"
 
     doc_range: Dict[str, Any] = {
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{doc_id}",
+        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{range_id}",
         "type": "Range",
         "label": {"en": [label_text]},
         "metadata": [],
@@ -1592,14 +1749,14 @@ def create_document_range(
     doc_range["metadata"].append(
         {
             "label": {"en": ["Identifier"]},
-            "value": {"none": [doc_id]},
+            "value": {"none": [identifier]},
         }
     )
 
     # Link to the document physical metadata (via seeAlso)
     doc_range["seeAlso"] = [
         {
-            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}",
+            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{identifier}",
             "type": "PhysicalHumanMadeThing",
             "label": {"en": ["Document metadata"]},
         }
@@ -1642,6 +1799,8 @@ def create_document_range(
             subdoc_range = create_document_range(
                 subdoc,
                 inventory_number=inventory_number,
+                _root_id=_root_id,
+                _fragments=_fragments,
             )
             doc_range["items"].append(subdoc_range)
 
@@ -1650,7 +1809,7 @@ def create_document_range(
 
 def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]:
     """
-    Generate a IIIF Presentation 3.0 Manifest for the Inventory
+    Generate a IIIF Presentation 3.0 Manifest for an inventory with selected roots.
 
     Examples:
         >>> from types import SimpleNamespace
@@ -2201,9 +2360,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "items": [],
         }
 
-        # Only process top-level documents (those without a parent)
-        top_level_docs = [doc for doc in inventory.documents if doc.part_of_id is None]
-        sorted_docs = sorted(top_level_docs, key=get_first_page_index)
+        sorted_docs = sorted(inventory.documents, key=get_first_page_index)
 
         # Create ranges for all top-level documents
         for doc in sorted_docs:

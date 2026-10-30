@@ -410,6 +410,7 @@ test:
 	$(PYTHON) -m doctest scripts/document/export.py
 	$(PYTHON) -m doctest scripts/document/export_documents.py
 	$(PYTHON) -m doctest scripts/document/export_documents_csv.py
+	$(PYTHON) -m unittest discover -s scripts -p 'test_inventory_download.py'
 	$(PYTHON) -m unittest discover -s scripts/document -p 'test_*.py'
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \

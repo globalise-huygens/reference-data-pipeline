@@ -1,14 +1,21 @@
 import unittest
+import tempfile
 from types import SimpleNamespace
 from urllib.parse import urldefrag
 from unittest.mock import patch
 
+import duckdb
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 import export_documents
 import export_manifests
-from export import create_document_range, document_physical_to_jsonld
+from document_annotations import export_document_annotations
+from export import (
+    create_document_range,
+    document_identified_by_jsonld,
+    document_physical_to_jsonld,
+)
 from models import Base, Document, DocumentIdentificationMethod, Inventory
 
 
@@ -49,6 +56,23 @@ class DocumentExportTests(unittest.TestCase):
     def tearDown(self):
         self.engine.dispose()
 
+    def test_nt_external_identifier_has_same_classification_as_nt_index(self):
+        external = SimpleNamespace(context="NT", identifier="179762", URL=None)
+        document = SimpleNamespace(
+            external_ids=[SimpleNamespace(external=external)], nt_index=42
+        )
+        identifiers = document_identified_by_jsonld(document)
+        self.assertEqual([item["content"] for item in identifiers], ["179762", "42"])
+        expected = {
+            "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
+            "type": "Type",
+            "_label": "NT Index Identifier",
+        }
+        self.assertEqual([item["classified_as"] for item in identifiers], [expected, expected])
+
+        external.context = "OTHER"
+        self.assertNotIn("classified_as", document_identified_by_jsonld(document)[0])
+
     def test_inventory_and_document_exports_select_roots(self):
         emitted = {}
 
@@ -59,6 +83,7 @@ class DocumentExportTests(unittest.TestCase):
             patch.object(export_documents, "create_engine", return_value=self.engine),
             patch.object(export_documents, "output_framed_json", side_effect=capture),
             patch.object(export_documents, "generate_hydra_index_pages") as index,
+            patch.object(export_documents, "export_document_annotations") as annotations,
             patch("export.load_scan_entities_from_parquet", return_value={}),
         ):
             export_documents.export_documents("unused", False, None, None)
@@ -76,6 +101,7 @@ class DocumentExportTests(unittest.TestCase):
         self.assertEqual(child["part"][0]["id"], root["id"] + "#document-grandchild")
         document_members = index.call_args_list[-1].args[0]
         self.assertEqual([member["title"] for member in document_members], ["Root"])
+        self.assertEqual([doc.title for doc in annotations.call_args.args[0]], ["Root"])
 
     def test_manifest_selects_roots_and_keeps_all_descendants(self):
         emitted = {}
@@ -100,6 +126,37 @@ class DocumentExportTests(unittest.TestCase):
         self.assertEqual(
             child["items"][0]["seeAlso"][0]["id"], root_uri + "#document-grandchild"
         )
+
+    def test_document_export_emits_annotation_files(self):
+        emitted = {}
+
+        with tempfile.TemporaryDirectory() as directory:
+            parquet = f"{directory}/inventory.parquet"
+            with duckdb.connect() as conn:
+                conn.execute(
+                    "COPY (SELECT NULL::VARCHAR AS annotation_id, "
+                    "NULL::VARCHAR AS classified_as, NULL::BIGINT AS offset_scan "
+                    "WHERE false) TO ? (FORMAT PARQUET)",
+                    [parquet],
+                )
+            with (
+                patch.object(export_documents, "create_engine", return_value=self.engine),
+                patch.object(
+                    export_documents, "output_framed_json",
+                    side_effect=lambda data, path, **kwargs: emitted.update({path: data}),
+                ),
+                patch.object(export_documents, "generate_hydra_index_pages"),
+                patch.object(
+                    export_documents, "export_document_annotations",
+                    side_effect=lambda docs, emit: export_document_annotations(docs, emit, parquet),
+                ),
+                patch("export.load_scan_entities_from_parquet", return_value={}),
+            ):
+                export_documents.export_documents("unused", False, None, None)
+
+        self.assertEqual(len(emitted["document/root.annotations.json"]["member"]), 16)
+        self.assertEqual(emitted["document/root.annotations.per_name.json"]["total"], 0)
+        self.assertEqual(emitted["document/root.annotations.events/page-1.json"]["items"], [])
 
     def test_scan_range_fragments_are_unique_and_match_manifest_identifiers(self):
         scan = SimpleNamespace(

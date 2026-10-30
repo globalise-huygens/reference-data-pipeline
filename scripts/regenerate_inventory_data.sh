@@ -13,8 +13,8 @@ fi
 key_id="${SURF_GLOB_KEY_ID:-${AWS_ACCESS_KEY_ID:-}}"
 secret="${SURF_GLOB_SECRET:-${AWS_SECRET_ACCESS_KEY:-}}"
 if [ -z "$key_id" ] || [ -z "$secret" ]; then
-    echo "Set SURF_GLOB_KEY_ID/SURF_GLOB_SECRET or AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in .env or the environment." >&2
-    exit 1
+    echo "Skipping inventory download: set SURF_GLOB_KEY_ID/SURF_GLOB_SECRET or AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in .env or the environment." >&2
+    exit 0
 fi
 
 key_id="${key_id//\'/\'\'}"

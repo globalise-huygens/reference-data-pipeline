@@ -710,6 +710,9 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
         elif "OBP_INDEX" in external_context:
             identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:2122ddb6-c61f-4288-a592-4970bf42fc13"
             identifier_type_label = "OBP Index Identifier"
+        elif external_context == "NT":
+            identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051"
+            identifier_type_label = "NT Index Identifier"
         else:
             identifier_type = None
             identifier_type_label = None
@@ -726,18 +729,6 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
             }
         identified_by.append(ident_obj)
 
-    if getattr(document, "nt_index", None) is not None:
-        identified_by.append(
-            {
-                "type": "Identifier",
-                "content": str(document.nt_index),
-                "classified_as": {
-                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
-                    "type": "Type",
-                    "_label": "NT Index Identifier",
-                },
-            }
-        )
     return identified_by
 
 

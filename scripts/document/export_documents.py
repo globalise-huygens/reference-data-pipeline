@@ -9,6 +9,9 @@ rest of the pipeline's `convert_to_json.py`.
 
 Output paths (relative to --output-dir):
   document/<document_id>.json
+  document/<document_id>.annotations.json
+  document/<document_id>.annotations.<category>.json
+  document/<document_id>.annotations.<category>/page-<number>.json
   inventory/<inventory_number>.json
 """
 
@@ -53,6 +56,7 @@ from export import (
     SEGMENTATION_ROOT_DOCUMENTS,
     SEGMENTATION_ROOT_FILTER,
 )
+from document_annotations import export_document_annotations
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
 BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
@@ -301,6 +305,9 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         doc_id = get_document_id(doc)
         doc_data = document_physical_to_jsonld(doc)
         emit(doc_data, os.path.join("document", f"{doc_id}.json"))
+
+    print("Exporting document annotation collections...")
+    export_document_annotations(documents, emit)
 
     elapsed_doc = time.time() - t1
     print(f"Exported {total_docs} documents in {elapsed_doc:.1f}s.")

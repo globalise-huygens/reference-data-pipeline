@@ -15,7 +15,7 @@ dependencies = [
     "boto3-stubs>=1.43.59",
     "types-openpyxl>=3.1.5.20260724",
     "tqdm-stubs>=0.2.1",
-    "duckdb>=1.5.5",
+    "duckdb==1.5.6",
     "python-dotenv>=1.2.3",
     "sqlalchemy>=2.0.45",
     "jsonpath-ng>=1.10.1",

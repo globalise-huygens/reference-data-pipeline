@@ -41,7 +41,23 @@ build-all: organization place person polity ship measurement thesaurus document 
 
 .PHONY: links
 links:
-	$(PYTHON) scripts/regenerate_links_data.py
+	bash scripts/regenerate_inventory_data.sh
+
+# Order every processing stage after the shared download, including direct
+# requests for intermediate targets and parallel builds.
+data/input/organization/csv/.stamp data/input/organization/xml/.stamp \
+data/output/organization/rdf/.stamp data/output/organization/organization.ttl \
+data/input/place/csv/.stamp data/input/place/xml/.stamp \
+data/output/place/rdf/.stamp data/output/place/place.ttl \
+data/input/person/csv/.stamp data/input/person/xml/.stamp \
+data/output/person/rdf/.stamp data/output/person/ttl/.stamp \
+data/input/polity/csv/.stamp data/input/polity/xml/.stamp \
+data/output/polity/rdf/.stamp data/output/polity/polity.ttl \
+data/input/ship/csv/.stamp data/input/ship/xml/.stamp \
+data/output/ship/rdf/.stamp data/output/ship/ship.ttl \
+data/input/measurement/csv/.stamp data/input/measurement/xml/.stamp \
+data/output/measurement/rdf/.stamp data/output/measurement/measurement.ttl \
+$(addsuffix .stamp,$(addprefix $(S3_DIR)/.,organization place person polity ship measurement thesaurus document catalog)): | links
 
 .PHONY: organization
 organization: $(S3_DIR)/.organization.stamp
@@ -349,8 +365,8 @@ $(S3_DIR)/.measurement.stamp: data/output/measurement/measurement.ttl
 #------------------------------------------------------------
 THESAURUS_TRIG := data/input/concept/thesaurus.trig
 
-$(LINKS_PARQUET):
-	$(PYTHON) scripts/regenerate_links_data.py
+$(LINKS_PARQUET): | links
+	@test -f "$@" || { echo "Missing downloaded file: $@" >&2; exit 1; }
 
 $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	@mkdir -p $(S3_DIR) data/output/concept
@@ -394,6 +410,7 @@ test:
 	$(PYTHON) -m doctest scripts/document/export.py
 	$(PYTHON) -m doctest scripts/document/export_documents.py
 	$(PYTHON) -m doctest scripts/document/export_documents_csv.py
+	$(PYTHON) -m unittest discover -s scripts/document -p 'test_*.py'
 
 .PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
         clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document
@@ -478,7 +495,7 @@ help:
 	@echo -e "  $(BLUE)ship$(RESET)                       - to run ship ETL pipeline"
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
-	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate corpus annotation links parquet"
+	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate inventory and corpus annotation links parquet"
 	@echo -e "  $(BLUE)document$(RESET)                   - to export documents/manifests/collection JSON-LD & CSV from the review DB"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
 	@echo

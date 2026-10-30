@@ -11,7 +11,7 @@ from xml.sax.saxutils import escape
 
 from utils import xml_element_name
 
-DEFAULT_ROWS_PER_FILE = 10000
+DEFAULT_ROWS_PER_FILE = 5000
 
 
 def split_pipe_separated_values(value: str) -> list[str]:

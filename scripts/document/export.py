@@ -240,7 +240,7 @@ def scan_to_jsonld(scan) -> Dict[str, Any]:
         # "@context": "https://linked.art/ns/v1/linked-art.json",
         # "id": f"urn:uuid:{scan.id}",
         "type": "DigitalObject",
-        "_label": f"Scan {scan.filename}",
+        "_label": f"{scan.filename}",
         "classified_as": [
             {
                 "id": "http://vocab.getty.edu/aat/300417380",

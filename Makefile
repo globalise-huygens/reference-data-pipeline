@@ -26,6 +26,7 @@ GZIP_FLAG ?= --gzipped
 S3_FLAGS ?=
 
 S3_DIR := data/output/s3
+INVENTORY_PARQUET := data/input/inventory_data.parquet
 LINKS_PARQUET := data/input/links_data.parquet
 
 # SQLite DB produced by the GLOBALISE document review app (override in .env if needed)
@@ -41,7 +42,14 @@ build-all: organization place person polity ship measurement thesaurus document 
 
 .PHONY: links
 links:
-	bash scripts/regenerate_inventory_data.sh
+	@if [ -f "$(INVENTORY_PARQUET)" ] && [ -f "$(LINKS_PARQUET)" ]; then \
+		echo "Skipping inventory download: both Parquet files already exist."; \
+	else \
+		bash scripts/regenerate_inventory_data.sh; \
+	fi
+
+$(INVENTORY_PARQUET) $(LINKS_PARQUET): | links
+	@test -f "$@" || { echo "Missing downloaded file: $@" >&2; exit 1; }
 
 # Order every processing stage after the shared download, including direct
 # requests for intermediate targets and parallel builds.
@@ -365,9 +373,6 @@ $(S3_DIR)/.measurement.stamp: data/output/measurement/measurement.ttl
 #------------------------------------------------------------
 THESAURUS_TRIG := data/input/concept/thesaurus.trig
 
-$(LINKS_PARQUET): | links
-	@test -f "$@" || { echo "Missing downloaded file: $@" >&2; exit 1; }
-
 $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	@mkdir -p $(S3_DIR) data/output/concept
 	sed -E "s|$(OLD_BASE)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
@@ -413,11 +418,14 @@ test:
 	$(PYTHON) -m unittest discover -s scripts -p 'test_inventory_download.py'
 	$(PYTHON) -m unittest discover -s scripts/document -p 'test_*.py'
 
-.PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv \
+.PHONY: clean clean-json clean-ttl clean-rdf clean-xml clean-csv clean-links \
         clean-organization clean-place clean-person clean-polity clean-ship clean-measurement clean-thesaurus clean-document
 
-clean: clean-json clean-ttl clean-rdf clean-xml clean-csv
+clean: clean-json clean-ttl clean-rdf clean-xml clean-csv clean-links
 	rm -f .cache.sqlite
+
+clean-links:
+	rm -f $(INVENTORY_PARQUET) $(LINKS_PARQUET)
 
 clean-organization:
 	rm -rf data/input/organization/csv data/input/organization/csv/.stamp
@@ -496,7 +504,7 @@ help:
 	@echo -e "  $(BLUE)ship$(RESET)                       - to run ship ETL pipeline"
 	@echo -e "  $(BLUE)measurement$(RESET)                - to run measurement ETL pipeline"
 	@echo -e "  $(BLUE)thesaurus$(RESET)                  - to run thesaurus ETL pipeline"
-	@echo -e "  $(BLUE)links$(RESET)                      - to regenerate inventory and corpus annotation links parquet"
+	@echo -e "  $(BLUE)links$(RESET)                      - download inventory and corpus annotation links parquet if needed"
 	@echo -e "  $(BLUE)document$(RESET)                   - to export documents/manifests/collection JSON-LD & CSV from the review DB"
 	@echo -e "  $(BLUE)catalog$(RESET)                    - to generate Hydra catalog index"
 	@echo
@@ -508,9 +516,10 @@ help:
 	@echo -e "  $(BLUE)clean-measurement$(RESET)           - to remove intermediate files & output for measurement"
 	@echo -e "  $(BLUE)clean-thesaurus$(RESET)             - to remove intermediate files & output for thesaurus"
 	@echo -e "  $(BLUE)clean-document$(RESET)              - to remove intermediate files & output for document"
+	@echo -e "  $(BLUE)clean-links$(RESET)                 - to remove inventory and links parquet files"
 	@echo
 	@echo -e "  $(BLUE)test$(RESET)                       - to run doctests across all python scripts"
-	@echo -e "  $(BLUE)clean$(RESET)                      - to remove all generated intermediate files and outputs"
+	@echo -e "  $(BLUE)clean$(RESET)                      - to remove generated intermediates, outputs, and downloaded parquet files"
 	@echo -e "  $(BLUE)clean-json$(RESET)                 - to remove only framed JSON outputs and S3 stamps"
 	@echo -e "  $(BLUE)clean-ttl$(RESET)                  - to remove only merged Turtle (.ttl) files"
 	@echo -e "  $(BLUE)clean-rdf$(RESET)                  - to remove only generated RDF/XML files and stamps"

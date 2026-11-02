@@ -133,7 +133,7 @@ $(S3_DIR)/.organization.stamp: data/output/organization/organization.ttl
 #------------------------------------------------------------
 # 2. Place Pipeline
 #------------------------------------------------------------
-PLACE_XLSX := data/input/place/GLOBALISE\ -\ Places\ in\ the\ Dutch\ East\ India\ Company\ Archives\ (1602-1799).xlsx
+PLACE_XLSX := $(wildcard data/input/place/*.xlsx)
 
 data/input/place/csv/.stamp: $(PLACE_XLSX)
 	@mkdir -p data/input/place/csv

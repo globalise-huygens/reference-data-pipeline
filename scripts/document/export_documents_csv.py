@@ -369,7 +369,8 @@ def export_documents_csv(
     """Export segmentation-model root documents to CSV, locally or to S3.
 
     Uses DuckDB to query the SQLite database directly and stream the CSV export,
-    avoiding slow iterative ORM queries.
+    avoiding slow iterative ORM queries. Settlement labels and URIs are
+    comma-separated in matching order, with the primary settlement first.
 
     Args:
         output_dir: Base local output directory (or S3 key prefix root).
@@ -392,9 +393,12 @@ def export_documents_csv(
         ...     _ = conn.execute("CREATE TABLE scan (id TEXT PRIMARY KEY, filename TEXT, scan_type TEXT, languages TEXT)")
         ...     _ = conn.execute("CREATE TABLE settlement (id TEXT PRIMARY KEY, glob_id TEXT)")
         ...     _ = conn.execute("CREATE TABLE settlement_label (id TEXT, settlement_id TEXT, label TEXT)")
+        ...     _ = conn.execute("CREATE TABLE document_settlement (document_id TEXT, settlement_id TEXT)")
         ...     _ = conn.execute("CREATE TABLE document_identification_method (id TEXT PRIMARY KEY, name TEXT)")
         ...     _ = conn.execute("INSERT INTO document VALUES ('doc-1', 'inv-1', 'Test Title', '1650-01-01', '1650-01-01', '1650-01-02', '1650-01-02', 'loc-1', 'meth-1', NULL)")
         ...     _ = conn.execute("INSERT INTO document VALUES ('doc-2', 'inv-1', 'Doc with Scans', '1650-01-01', '1650-01-01', '1650-01-02', '1650-01-02', 'loc-1', 'meth-1', NULL)")
+        ...     _ = conn.execute("INSERT INTO document VALUES ('doc-3', 'inv-1', 'Linked only', NULL, NULL, NULL, NULL, NULL, 'meth-1', NULL)")
+        ...     _ = conn.execute("INSERT INTO document VALUES ('doc-4', 'inv-1', 'No settlement', NULL, NULL, NULL, NULL, NULL, 'meth-1', NULL)")
         ...     _ = conn.execute("INSERT INTO document VALUES ('child', 'inv-1', 'Child', NULL, NULL, NULL, NULL, NULL, 'meth-1', 'doc-1')")
         ...     _ = conn.execute("INSERT INTO document VALUES ('manual', 'inv-1', 'Manual', NULL, NULL, NULL, NULL, NULL, 'meth-2', NULL)")
         ...     _ = conn.execute("INSERT INTO scan VALUES ('scan-1', 'NL-HaNA_1.04.02_4088_0329', 'Text', 'nld')")
@@ -405,7 +409,12 @@ def export_documents_csv(
         ...     _ = conn.execute("INSERT INTO page2document VALUES ('doc-2', 'page-2')")
         ...     _ = conn.execute("INSERT INTO inventory VALUES ('inv-1', '1234')")
         ...     _ = conn.execute("INSERT INTO settlement VALUES ('loc-1', 'GLOB_1')")
+        ...     _ = conn.execute("INSERT INTO settlement VALUES ('loc-2', 'GLOB_2')")
+        ...     _ = conn.execute("INSERT INTO settlement VALUES ('loc-3', 'GLOB_3')")
         ...     _ = conn.execute("INSERT INTO settlement_label VALUES ('lbl-1', 'loc-1', 'Batavia')")
+        ...     _ = conn.execute("INSERT INTO settlement_label VALUES ('lbl-2', 'loc-2', 'Bantam')")
+        ...     _ = conn.execute("INSERT INTO settlement_label VALUES ('lbl-3', 'loc-2', 'Alternative name')")
+        ...     _ = conn.execute("INSERT INTO document_settlement VALUES ('doc-2', 'loc-1'), ('doc-2', 'loc-2'), ('doc-2', 'loc-3'), ('doc-3', 'loc-2'), ('child', 'loc-2')")
         ...     _ = conn.execute("INSERT INTO document_identification_method VALUES ('meth-1', 'Segmentation model')")
         ...     _ = conn.execute("INSERT INTO document_identification_method VALUES ('meth-2', 'Manual')")
         ...     conn.commit()
@@ -418,6 +427,11 @@ def export_documents_csv(
         ...     print(lines[1])
         ...     print(lines[2])
         ...     print(len(lines))
+        ...     import csv
+        ...     with open(os.path.join(out_dir, "document", "documents.csv"), newline="") as f:
+        ...         rows = list(csv.DictReader(f))
+        ...     print(rows[2]["settlement"], rows[2]["settlement_id"])
+        ...     print(repr(rows[3]["settlement"]), repr(rows[3]["settlement_id"]))
         ...     out_doc_dir = os.path.join(tmp_dir, "out_doc", "document")
         ...     export_documents_csv(out_doc_dir, gzipped=False, database_url=db_file)
         ...     print(os.path.exists(os.path.join(out_doc_dir, "documents.csv")))
@@ -429,8 +443,10 @@ def export_documents_csv(
         ...     print(uploaded["Key"])
         identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method,languages
         doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,Segmentation model,""
-        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,Segmentation model,"fra,nld"
-        3
+        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,"Batavia,Bantam,GLOB_3","https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_2,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_3",Segmentation model,"fra,nld"
+        5
+        Bantam https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_2
+        '' ''
         True
         objects/document/documents.csv
     """
@@ -506,6 +522,31 @@ def export_documents_csv(
                     FROM settlement l
                     LEFT JOIN settlement_label lbl ON lbl.settlement_id = l.id
                     QUALIFY ROW_NUMBER() OVER (PARTITION BY l.id ORDER BY lbl.rowid) = 1
+                ),
+                document_settlement_ids AS (
+                    SELECT document_id, settlement_id FROM document_settlement
+                    UNION
+                    SELECT id AS document_id, location_id AS settlement_id
+                    FROM document
+                    WHERE location_id IS NOT NULL
+                ),
+                document_settlements AS (
+                    SELECT
+                        ds.document_id,
+                        string_agg(
+                            s.settlement_label, ',' ORDER BY
+                            CASE WHEN ds.settlement_id = d.location_id THEN 0 ELSE 1 END,
+                            s.settlement_id, ds.settlement_id
+                        ) AS settlement_labels,
+                        string_agg(
+                            s.settlement_id, ',' ORDER BY
+                            CASE WHEN ds.settlement_id = d.location_id THEN 0 ELSE 1 END,
+                            s.settlement_id, ds.settlement_id
+                        ) AS settlement_ids
+                    FROM document_settlement_ids ds
+                    JOIN document d ON d.id = ds.document_id
+                    JOIN settlement_info s ON s.location_id = ds.settlement_id
+                    GROUP BY ds.document_id
                 )
                 SELECT
                     CASE
@@ -526,8 +567,8 @@ def export_documents_csv(
                     COALESCE(CAST(d.date_latest_begin AS VARCHAR), '') AS date_latest_begin,
                     COALESCE(CAST(d.date_earliest_end AS VARCHAR), '') AS date_earliest_end,
                     COALESCE(CAST(d.date_latest_end AS VARCHAR), '') AS date_latest_end,
-                    COALESCE(s.settlement_label, '') AS settlement,
-                    COALESCE(s.settlement_id, '') AS settlement_id,
+                    COALESCE(s.settlement_labels, '') AS settlement,
+                    COALESCE(s.settlement_ids, '') AS settlement_id,
                     COALESCE(m.name, '') AS method,
                     COALESCE(dl.languages, '') AS languages
                 FROM document d
@@ -535,7 +576,7 @@ def export_documents_csv(
                 LEFT JOIN doc_types dt ON dt.document_id = d.id
                 LEFT JOIN doc_scans ds ON ds.document_id = d.id
                 LEFT JOIN doc_languages dl ON dl.document_id = d.id
-                LEFT JOIN settlement_info s ON s.location_id = d.location_id
+                LEFT JOIN document_settlements s ON s.document_id = d.id
                 JOIN document_identification_method m ON m.id = d.method_id
                 WHERE d.part_of_id IS NULL AND m.name = 'Segmentation model'
                 ORDER BY d.id

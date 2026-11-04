@@ -17,7 +17,7 @@ from convert_to_json import (
     frame_graph,
     parse_rdf_graph,
 )
-from utils import local_identifier_path, output_framed_json
+from utils import is_empty_jsonld, is_valid_entity_uri, local_identifier_path, output_framed_json
 
 
 PERSON_TYPE = URIRef("http://www.cidoc-crm.org/cidoc-crm/E21_Person")
@@ -56,7 +56,9 @@ def main() -> None:
         {
             resource
             for resource in graph.subjects(RDF.type, PERSON_TYPE)
-            if isinstance(resource, URIRef) and PROJECT_URI_TOKEN in str(resource)
+            if isinstance(resource, URIRef)
+            and PROJECT_URI_TOKEN in str(resource)
+            and is_valid_entity_uri(resource)
         },
         key=str,
     )[:SAMPLE_SIZE]
@@ -72,9 +74,13 @@ def main() -> None:
         flush=True,
     )
     for resource in tqdm(resources, desc="Framing persons", unit="person"):
+        if not is_valid_entity_uri(resource):
+            continue
         entity_graph = graph.cbd(resource, include_reifications=False)
         entity_graph = add_referenced_data(entity_graph, graph)
         framed = frame_graph(entity_graph, frame_doc, str(resource))
+        if is_empty_jsonld(framed):
+            continue
         output_name = f"{local_identifier_path(resource)}.json"
         output_framed_json(framed, output_name, str(args.output), True, None, None)
 

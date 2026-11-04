@@ -27,6 +27,8 @@ from utils import (
     convert_html_literals_to_markdown,
     create_s3_client,
     identifier_path,
+    is_empty_jsonld,
+    is_valid_entity_uri,
     local_identifier,
     local_identifier_path,
     output_framed_json,
@@ -580,7 +582,9 @@ def _process_entity_chunk(
     resources = {
         res
         for res in g.subjects(RDF.type, resource_type)
-        if isinstance(res, URIRef) and PROJECT_URI_TOKEN in str(res)
+        if isinstance(res, URIRef)
+        and PROJECT_URI_TOKEN in str(res)
+        and is_valid_entity_uri(res)
     }
 
     if not resources:
@@ -593,6 +597,8 @@ def _process_entity_chunk(
         os.makedirs(output_dir, exist_ok=True)
 
     for res in sorted(resources, key=str):
+        if not is_valid_entity_uri(res):
+            continue
         annotation_ids = annotations_by_entity.get(str(res), [])
         relative_path = local_identifier_path(res)
         output_name = os.path.join(
@@ -625,6 +631,8 @@ def _process_entity_chunk(
                 annotation_page_size,
             )
         framed = frame_graph(graph, frame_doc, str(res))
+        if is_empty_jsonld(framed):
+            continue
         output_framed_json(
             framed,
             output_name,
@@ -657,13 +665,21 @@ def generate_hydra_collection_from_persons_csv(
         },
     ]
 
+    seen_ids: set[str] = set()
     members = []
     with open(persons_csv_path, "r", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
-            local_id = row["URI"]
-            label = (row.get("rdfs:label") or "").strip() or local_id
+            local_id = (row.get("URI") or "").strip()
+            if not local_id:
+                continue
             full_uri = f"{SARI_BASE}{uri_prefix}{local_id}"
+            if not is_valid_entity_uri(full_uri):
+                continue
+            if full_uri in seen_ids:
+                continue
+            seen_ids.add(full_uri)
+            label = (row.get("rdfs:label") or "").strip() or local_id
             members.append(
                 {
                     "@id": full_uri,
@@ -839,7 +855,9 @@ def convert_entity(
     resources = {
         res
         for res in g.subjects(RDF.type, resource_type)
-        if isinstance(res, URIRef) and PROJECT_URI_TOKEN in str(res)
+        if isinstance(res, URIRef)
+        and PROJECT_URI_TOKEN in str(res)
+        and is_valid_entity_uri(res)
     }
 
     if not resources:
@@ -858,6 +876,8 @@ def convert_entity(
 
     action = "Uploading" if s3_config else "Writing"
     for res in tqdm(resource_list, desc=f"{action} entity frames", unit="frame"):
+        if not is_valid_entity_uri(res):
+            continue
         annotation_ids = annotations_by_entity.get(str(res), [])
         relative_path = local_identifier_path(res)
         output_name = os.path.join(
@@ -890,6 +910,8 @@ def convert_entity(
                 getattr(args, "annotation_page_size", 1000),
             )
         framed = frame_graph(graph, frame_doc, str(res))
+        if is_empty_jsonld(framed):
+            continue
         output_framed_json(
             framed,
             output_name,
@@ -1029,9 +1051,19 @@ def convert_thesaurus(
     for pred in EXCLUDED_PREDICATES:
         ds.remove((None, pred, None))
 
-    schemes = set(ds.subjects(RDF.type, SKOS.ConceptScheme))
-    concepts = set(ds.subjects(RDF.type, SKOS.Concept))
-    collections = set(ds.subjects(RDF.type, SKOS.Collection))
+    schemes = {
+        res
+        for res in ds.subjects(RDF.type, SKOS.ConceptScheme)
+        if is_valid_entity_uri(res)
+    }
+    concepts = {
+        res for res in ds.subjects(RDF.type, SKOS.Concept) if is_valid_entity_uri(res)
+    }
+    collections = {
+        res
+        for res in ds.subjects(RDF.type, SKOS.Collection)
+        if is_valid_entity_uri(res)
+    }
 
     resources = schemes.union(concepts).union(collections)
 
@@ -1042,6 +1074,8 @@ def convert_thesaurus(
 
     action = "Uploading" if s3_config else "Writing"
     for res in tqdm(resource_list, desc=f"{action} thesaurus frames", unit="frame"):
+        if not is_valid_entity_uri(res):
+            continue
         annotation_ids = annotations_by_concept.get(str(res), [])
         rel_path = identifier_path(local_identifier(res))
         output_name = os.path.join(
@@ -1107,6 +1141,8 @@ def convert_thesaurus(
             frame = frame_doc
 
         framed = frame_graph(g, frame, str(res))
+        if is_empty_jsonld(framed):
+            continue
 
         output_framed_json(
             framed,
@@ -1290,7 +1326,20 @@ def generate_hydra_collection(
         },
     ]
 
-    resource_list = sorted(resources, key=str)
+    seen_ids: set[str] = set()
+    resource_list = []
+
+    for res in sorted(resources, key=str):
+        res_str = str(res)
+
+        if not is_valid_entity_uri(res_str):
+            continue
+
+        if res_str in seen_ids:
+            continue
+
+        seen_ids.add(res_str)
+        resource_list.append(res)
 
     page_size = max(1, page_size)
     total_items = len(resource_list)
@@ -1374,11 +1423,16 @@ def generate_hydra_catalog(
     """
     catalog_uri = f"{URI_BASE}catalog.json"
 
+    seen_ids: set[str] = set()
     members = []
     for cat_key, meta in CATEGORY_HYDRA_METADATA.items():
         uri_prefix = meta.get("uri_prefix", f"{cat_key}:")
         page_prefix = meta.get("page_prefix", "")
         page1_uri = f"{URI_BASE}{uri_prefix}index/{page_prefix}page-1.json"
+
+        if page1_uri in seen_ids or not is_valid_entity_uri(page1_uri):
+            continue
+        seen_ids.add(page1_uri)
 
         members.append(
             {
@@ -1387,21 +1441,19 @@ def generate_hydra_catalog(
             }
         )
 
-    # IIIF Collection for Inventories
-    members.append(
+    for special in [
         {
             "@id": f"{URI_BASE}inventory:collection",
             "title": "Inventory IIIF Collection",
-        }
-    )
-
-    # Big Set for Globalise Corpus
-    members.append(
+        },
         {
             "@id": f"{URI_BASE}inventory:set",
             "title": "Inventory Set",
-        }
-    )
+        },
+    ]:
+        if special["@id"] not in seen_ids and is_valid_entity_uri(special["@id"]):
+            seen_ids.add(special["@id"])
+            members.append(special)
 
     catalog_doc = {
         "@context": "http://www.w3.org/ns/hydra/context.jsonld",

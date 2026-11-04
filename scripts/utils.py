@@ -207,6 +207,92 @@ def safe_segment(value: str) -> str:
     return cleaned.strip("._-") or "entity"
 
 
+def is_valid_entity_uri(uri: str | Node | None) -> bool:
+    """
+    Check whether a URI is valid and not empty.
+
+    URIs with an empty identifier (such as ending with ':' or having nothing after
+    the prefix/colon, e.g. 'https://.../person:') are considered invalid/empty.
+
+    Args:
+        uri (str | Node | None): Resource URI reference or string.
+
+    Returns:
+        bool: True if URI is valid and non-empty, False otherwise.
+
+    Examples:
+        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123")
+        True
+        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:")
+        False
+        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:")
+        False
+        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/")
+        False
+        >>> is_valid_entity_uri("")
+        False
+        >>> is_valid_entity_uri(None)
+        False
+    """
+    if not uri:
+        return False
+    s = str(uri).strip()
+    if not s:
+        return False
+    if s.rstrip("/") == "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722":
+        return False
+    if s.endswith(":"):
+        return False
+    tail = s.rstrip("/").rsplit("/", 1)[-1]
+    if ":" in tail:
+        id_part = tail.rsplit(":", 1)[-1].strip()
+        if not id_part:
+            return False
+    else:
+        if not tail.strip():
+            return False
+    return True
+
+
+def is_empty_jsonld(framed: Any) -> bool:
+    """
+    Check if a framed JSON-LD document is empty or invalid.
+
+    Returns True if framed is None, empty, contains only @context,
+    or contains an invalid/empty entity identifier.
+
+    Args:
+        framed (Any): JSON-LD structure or Python dictionary/list.
+
+    Returns:
+        bool: True if empty or invalid, False otherwise.
+
+    Examples:
+        >>> is_empty_jsonld(None)
+        True
+        >>> is_empty_jsonld({})
+        True
+        >>> is_empty_jsonld([])
+        True
+        >>> is_empty_jsonld({"@context": "https://example.org/context.json"})
+        True
+        >>> is_empty_jsonld({"@context": "...", "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:", "type": "Person"})
+        True
+        >>> is_empty_jsonld({"@context": "...", "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123", "type": "Person"})
+        False
+    """
+    if not framed:
+        return True
+    if isinstance(framed, dict):
+        keys = set(framed.keys())
+        if not keys or keys <= {"@context"}:
+            return True
+        doc_id = framed.get("@id") or framed.get("id")
+        if doc_id and not is_valid_entity_uri(doc_id):
+            return True
+    return False
+
+
 def local_identifier(uri: str | Node) -> str:
     """
     Extract local identifier fragment from a URI string or RDF term node.
@@ -449,6 +535,7 @@ def output_framed_json(
 ) -> None:
     """
     Output framed JSON payload either to local disk or directly to S3 object store.
+    Silently skips empty or invalid JSON-LD documents.
 
     Args:
         framed (Any): Framed JSON data structure.
@@ -458,6 +545,8 @@ def output_framed_json(
         s3_client (Any, optional): Initialized Boto3 S3 client. Defaults to None.
         s3_config (S3UploadConfig, optional): S3 configuration object. Defaults to None.
     """
+    if is_empty_jsonld(framed):
+        return
     payload = serialise_framed_json(framed, gzipped=gzipped)
     output_bytes(
         payload,
@@ -1014,6 +1103,25 @@ def generate_hydra_index_pages(
         'thing/index/page-1.json'
         >>> emitted[0][1]
         1
+        >>> emitted.clear()
+        >>> n = generate_hydra_index_pages(
+        ...     [
+        ...         {"@id": "https://example.org/item1", "@type": "Thing", "title": "Item 1"},
+        ...         {"@id": "https://example.org/item1", "@type": "Thing", "title": "Item 1 duplicate"},
+        ...         {"@id": "https://example.org/thing:", "@type": "Thing", "title": "Empty URI"},
+        ...     ],
+        ...     "Thing Collection",
+        ...     "Thing",
+        ...     "http://example.org/Thing",
+        ...     "thing:",
+        ...     mock_emit,
+        ...     page_size=10,
+        ...     base_uri="https://example.org",
+        ... )
+        >>> n
+        1
+        >>> emitted[0][1]
+        1
     """
     page_context: list[Any] = [
         "http://www.w3.org/ns/hydra/context.jsonld",
@@ -1022,7 +1130,18 @@ def generate_hydra_index_pages(
         },
     ]
 
-    total_items = len(members)
+    seen_ids: set[str] = set()
+    unique_members: list[dict[str, Any]] = []
+    for m in members:
+        m_id = m.get("@id") or m.get("id")
+        if not m_id or not is_valid_entity_uri(m_id):
+            continue
+        if m_id in seen_ids:
+            continue
+        seen_ids.add(m_id)
+        unique_members.append(m)
+
+    total_items = len(unique_members)
     page_size = max(1, page_size)
     total_pages = max(1, (total_items + page_size - 1) // page_size)
 
@@ -1039,7 +1158,7 @@ def generate_hydra_index_pages(
 
         start_index = (page_num - 1) * page_size
         end_index = page_num * page_size
-        page_members = members[start_index:end_index]
+        page_members = unique_members[start_index:end_index]
 
         view: dict[str, Any] = {
             "@id": page_uri + "#view",

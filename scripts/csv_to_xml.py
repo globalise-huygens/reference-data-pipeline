@@ -368,8 +368,13 @@ def person_csvs_to_xml(
     uri_to_chunk: dict[str, int] = {}
     with open(persons_csv, "r", encoding="utf-8-sig") as handle:
         reader = csv.DictReader(handle)
-        for idx, row in enumerate(reader):
-            uri_to_chunk[row["URI"]] = (idx // rows_per_file) + 1
+        valid_idx = 0
+        for row in reader:
+            uri = (row.get("URI") or "").strip()
+            if not uri:
+                continue
+            uri_to_chunk[uri] = (valid_idx // rows_per_file) + 1
+            valid_idx += 1
 
     num_chunks = max(uri_to_chunk.values()) if uri_to_chunk else 1
 
@@ -393,7 +398,9 @@ def person_csvs_to_xml(
             elem_tags = [(col, xml_element_name(col)) for col in ordered]
 
             for row in reader:
-                uri = row.get("URI", "")
+                uri = (row.get("URI") or "").strip()
+                if not uri:
+                    continue
                 c_idx = uri_to_chunk.get(uri, 1)
                 expanded_rows = (
                     expand_row_by_pipe_values(row, ordered)

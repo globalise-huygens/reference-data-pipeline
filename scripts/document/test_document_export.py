@@ -1,5 +1,9 @@
 import unittest
 import tempfile
+import os
+import sys
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier, Event, Lock
 from types import SimpleNamespace
 from urllib.parse import urldefrag
 from unittest.mock import patch
@@ -17,6 +21,121 @@ from export import (
     document_physical_to_jsonld,
 )
 from models import Base, Document, DocumentIdentificationMethod, Inventory
+
+
+class ConcurrentAnnotationEmitterTests(unittest.TestCase):
+    def test_writes_run_concurrently_and_are_drained(self):
+        barrier = Barrier(2, timeout=5)
+        written = {}
+        lock = Lock()
+
+        def emit(data, path):
+            barrier.wait()
+            with lock:
+                written[path] = data
+
+        with export_documents.concurrent_annotation_emitter(emit, 2) as submit:
+            submit({"value": 1}, "one")
+            submit({"value": 2}, "two")
+        self.assertEqual(written, {"one": {"value": 1}, "two": {"value": 2}})
+
+    def test_same_path_preserves_write_order(self):
+        started = Event()
+        release = Event()
+        second_started = Event()
+        written = []
+
+        def emit(data, path):
+            if data["value"] == 1:
+                started.set()
+                if not release.wait(5):
+                    raise TimeoutError("first write was not released")
+            else:
+                second_started.set()
+            written.append((path, data["value"]))
+
+        def write_both():
+            with export_documents.concurrent_annotation_emitter(emit, 2) as submit:
+                submit({"value": 1}, "same")
+                submit({"value": 2}, "same")
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(write_both)
+            try:
+                self.assertTrue(started.wait(5))
+                self.assertFalse(second_started.wait(0.1))
+            finally:
+                release.set()
+            future.result(timeout=5)
+        self.assertEqual(written, [("same", 1), ("same", 2)])
+
+    def test_pending_writes_are_bounded(self):
+        started = Event()
+        release = Event()
+        attempting_fifth = Event()
+        fifth_submitted = Event()
+
+        def emit(data, path):
+            started.set()
+            if not release.wait(5):
+                raise TimeoutError("writes were not released")
+
+        def produce():
+            with export_documents.concurrent_annotation_emitter(emit, 2) as submit:
+                for index in range(5):
+                    if index == 4:
+                        attempting_fifth.set()
+                    submit({}, str(index))
+                fifth_submitted.set()
+
+        with ThreadPoolExecutor(max_workers=1) as executor:
+            future = executor.submit(produce)
+            try:
+                self.assertTrue(started.wait(5))
+                self.assertTrue(attempting_fifth.wait(5))
+                self.assertFalse(fifth_submitted.wait(0.1))
+            finally:
+                release.set()
+            future.result(timeout=5)
+        self.assertTrue(fifth_submitted.is_set())
+
+    def test_write_failures_and_invalid_worker_counts_are_reported(self):
+        def fail(data, path):
+            raise RuntimeError("upload failed")
+
+        with self.assertRaisesRegex(RuntimeError, "upload failed"):
+            with export_documents.concurrent_annotation_emitter(fail, 2) as submit:
+                submit({}, "failed")
+        with self.assertRaisesRegex(ValueError, "positive"):
+            with export_documents.concurrent_annotation_emitter(fail, 0):
+                pass
+
+    def test_one_worker_writes_synchronously(self):
+        written = []
+        with export_documents.concurrent_annotation_emitter(
+            lambda data, path: written.append(path), 1
+        ) as submit:
+            submit({}, "one")
+            self.assertEqual(written, ["one"])
+
+    def test_worker_configuration(self):
+        with (
+            patch.dict(os.environ, {"DOCUMENT_ANNOTATION_UPLOAD_WORKERS": "3"}),
+            patch.object(sys, "argv", ["export_documents.py"]),
+        ):
+            self.assertEqual(export_documents.parse_args().annotation_upload_workers, 3)
+        with (
+            patch.dict(os.environ, {"DOCUMENT_ANNOTATION_UPLOAD_WORKERS": "0"}),
+            patch.object(sys, "argv", ["export_documents.py"]),
+            patch("sys.stderr"),
+            self.assertRaises(SystemExit),
+        ):
+            export_documents.parse_args()
+        with (
+            patch.dict(os.environ, {"DOCUMENT_ANNOTATION_UPLOAD_WORKERS": "3"}),
+            patch.object(sys, "argv", ["export_documents.py", "--annotation-upload-workers", "1"]),
+        ):
+            self.assertEqual(export_documents.parse_args().annotation_upload_workers, 1)
 
 
 class DocumentExportTests(unittest.TestCase):
@@ -135,7 +254,8 @@ class DocumentExportTests(unittest.TestCase):
             with duckdb.connect() as conn:
                 conn.execute(
                     "COPY (SELECT NULL::VARCHAR AS annotation_id, "
-                    "NULL::VARCHAR AS classified_as, NULL::BIGINT AS offset_scan "
+                    "NULL::VARCHAR AS classified_as, NULL::BIGINT AS offset_scan, "
+                    "NULL::VARCHAR AS filename "
                     "WHERE false) TO ? (FORMAT PARQUET)",
                     [parquet],
                 )
@@ -157,6 +277,46 @@ class DocumentExportTests(unittest.TestCase):
         self.assertEqual(len(emitted["document/root.annotations.json"]["member"]), 16)
         self.assertEqual(emitted["document/root.annotations.per_name.json"]["total"], 0)
         self.assertEqual(emitted["document/root.annotations.events/page-1.json"]["items"], [])
+
+    def test_s3_annotation_uploads_finish_before_document_index(self):
+        emitted = {}
+        lock = Lock()
+
+        def capture(data, path, **kwargs):
+            with lock:
+                emitted[path] = data
+
+        def index(members, **kwargs):
+            if kwargs["cat_title"] == "Document Collection":
+                self.assertIn("document/root.annotations.events/page-1.json", emitted)
+                self.assertEqual(
+                    len([path for path in emitted if path.startswith("document/root.annotations")]),
+                    33,
+                )
+
+        with tempfile.TemporaryDirectory() as directory:
+            parquet = f"{directory}/inventory.parquet"
+            with duckdb.connect() as conn:
+                conn.execute(
+                    "COPY (SELECT NULL::VARCHAR AS annotation_id, "
+                    "NULL::VARCHAR AS classified_as, NULL::BIGINT AS offset_scan, "
+                    "NULL::VARCHAR AS filename "
+                    "WHERE false) TO ? (FORMAT PARQUET)",
+                    [parquet],
+                )
+            with (
+                patch.object(export_documents, "create_engine", return_value=self.engine),
+                patch.object(export_documents, "output_framed_json", side_effect=capture),
+                patch.object(export_documents, "generate_hydra_index_pages", side_effect=index),
+                patch.object(
+                    export_documents, "export_document_annotations",
+                    side_effect=lambda docs, emit: export_document_annotations(docs, emit, parquet),
+                ),
+                patch("export.load_scan_entities_from_parquet", return_value={}),
+            ):
+                export_documents.export_documents(
+                    "unused", False, object(), SimpleNamespace(bucket="test"), 2
+                )
 
     def test_scan_range_fragments_are_unique_and_match_manifest_identifiers(self):
         scan = SimpleNamespace(

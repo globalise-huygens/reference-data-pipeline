@@ -1,7 +1,10 @@
+import gzip
 import json
 import tempfile
 import unittest
+from functools import partial
 from pathlib import Path
+from threading import Lock
 from types import SimpleNamespace
 
 import duckdb
@@ -11,7 +14,7 @@ from document_annotations import (
     NER_CATEGORIES,
     export_document_annotations,
 )
-from export_documents import output_framed_json
+from export_documents import concurrent_annotation_emitter, output_framed_json
 
 
 class DocumentAnnotationTests(unittest.TestCase):
@@ -27,17 +30,17 @@ class DocumentAnnotationTests(unittest.TestCase):
         self.id3 = f"{BASE_URI}/annotations:entities:{self.scan2}#annotation:3"
         self.event = f"{BASE_URI}/annotations:events:{self.scan2}#annotation:4"
         rows = [
-            (self.id1, "Name of Person", 30),
-            (self.id2, "Name of Person", 5),
-            (self.id2, "Name of Person", 5),
-            (self.id3, "Name of Person", 1),
-            (self.event, "EVENT", 2),
-            (f"{BASE_URI}/annotations:entities:{self.scan3}#annotation:5", "Name of Location", 1),
-            (f"{BASE_URI}/annotations:entities:{self.scan1}#annotation:6", "bad label", 1),
+            (self.id1, "Name of Person", 30, self.scan1),
+            (self.id2, "Name of Person", 5, self.scan1),
+            (self.id2, "Name of Person", 5, self.scan1),
+            (self.id3, "Name of Person", 1, self.scan2),
+            (self.event, "EVENT", 2, self.scan2),
+            (f"{BASE_URI}/annotations:entities:{self.scan3}#annotation:5", "Name of Location", 1, self.scan3),
+            (f"{BASE_URI}/annotations:entities:{self.scan1}#annotation:6", "bad label", 1, self.scan1),
         ]
         with duckdb.connect() as conn:
-            conn.execute("CREATE TABLE annotations (annotation_id VARCHAR, classified_as VARCHAR, offset_scan BIGINT)")
-            conn.executemany("INSERT INTO annotations VALUES (?, ?, ?)", rows)
+            conn.execute("CREATE TABLE annotations (annotation_id VARCHAR, classified_as VARCHAR, offset_scan BIGINT, filename VARCHAR)")
+            conn.executemany("INSERT INTO annotations VALUES (?, ?, ?, ?)", rows)
             conn.execute("COPY annotations TO ? (FORMAT PARQUET)", [str(self.parquet)])
 
     def document(self, identifier, scans):
@@ -111,12 +114,13 @@ class DocumentAnnotationTests(unittest.TestCase):
                 f"{BASE_URI}/annotations:entities:{self.scan1}#annotation:{index}",
                 label,
                 index,
+                self.scan1,
             )
             for index, (_, label) in enumerate(NER_CATEGORIES)
         ]
         with duckdb.connect() as conn:
-            conn.execute("CREATE TABLE annotations (annotation_id VARCHAR, classified_as VARCHAR, offset_scan BIGINT)")
-            conn.executemany("INSERT INTO annotations VALUES (?, ?, ?)", rows)
+            conn.execute("CREATE TABLE annotations (annotation_id VARCHAR, classified_as VARCHAR, offset_scan BIGINT, filename VARCHAR)")
+            conn.executemany("INSERT INTO annotations VALUES (?, ?, ?, ?)", rows)
             conn.execute("COPY annotations TO ? (FORMAT PARQUET, OVERWRITE TRUE)", [str(self.parquet)])
         emitted = {}
         export_document_annotations(
@@ -131,6 +135,65 @@ class DocumentAnnotationTests(unittest.TestCase):
                 page = emitted[f"{prefix}.{tag.lower()}/page-1.json"]
                 self.assertEqual(collection["total"], 1)
                 self.assertEqual(page["items"][0]["id"], rows[index][0])
+
+    def test_filename_column_drives_scan_matching(self):
+        annotation_id = f"{BASE_URI}/annotations:entities:{self.scan3}#annotation:1"
+        with duckdb.connect() as conn:
+            conn.execute(
+                "CREATE TABLE annotations (annotation_id VARCHAR, classified_as VARCHAR, offset_scan BIGINT, filename VARCHAR)"
+            )
+            conn.executemany(
+                "INSERT INTO annotations VALUES (?, ?, ?, ?)",
+                [
+                    (annotation_id, "Name of Person", 1, self.scan1),
+                    (self.id1, "Name of Person", 2, None),
+                    (None, "Name of Person", 3, self.scan1),
+                ],
+            )
+            conn.execute("COPY annotations TO ? (FORMAT PARQUET, OVERWRITE TRUE)", [str(self.parquet)])
+        emitted = {}
+        export_document_annotations(
+            [self.document("root", [self.scan1])],
+            lambda data, path: emitted.update({path: data}),
+            str(self.parquet),
+        )
+        prefix = "document/NL-HaNA_1.04.02_1053_0001-0001.annotations"
+        page = emitted[f"{prefix}.per_name/page-1.json"]
+        self.assertEqual([item["id"] for item in page["items"]], [annotation_id])
+        self.assertEqual(page["items"][0]["partOf"]["id"], f"{BASE_URI}/canvas:{self.scan1}")
+
+    def test_concurrent_s3_output_matches_sequential_annotations(self):
+        doc = self.document("root", [self.scan2])
+        expected = {}
+        export_document_annotations(
+            [doc], lambda data, path: expected.update({path: data}), str(self.parquet)
+        )
+        uploaded = {}
+        lock = Lock()
+
+        class FakeS3:
+            def put_object(self, **kwargs):
+                with lock:
+                    uploaded[kwargs["Key"]] = kwargs
+
+        config = SimpleNamespace(bucket="test", prefix="objects/", acl=None)
+        emit = partial(
+            output_framed_json,
+            output_dir="unused",
+            gzipped=True,
+            s3_client=FakeS3(),
+            s3_config=config,
+        )
+        with concurrent_annotation_emitter(emit, 2) as submit:
+            export_document_annotations([doc], submit, str(self.parquet))
+
+        self.assertEqual(set(uploaded), {f"objects/{path}" for path in expected})
+        for path, data in expected.items():
+            item = uploaded[f"objects/{path}"]
+            self.assertEqual(item["Bucket"], "test")
+            self.assertEqual(item["ContentEncoding"], "gzip")
+            self.assertEqual(item["ContentType"], "application/ld+json; charset=utf-8")
+            self.assertEqual(json.loads(gzip.decompress(item["Body"])), data)
 
 
 if __name__ == "__main__":

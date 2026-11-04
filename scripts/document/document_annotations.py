@@ -2,10 +2,12 @@
 
 import logging
 import os
+import time
 from itertools import batched, groupby
 from typing import Any, Callable, Iterable
 
 import duckdb
+from tqdm import tqdm
 
 from models import get_document_id
 
@@ -94,6 +96,8 @@ def export_document_annotations(
 
     conn = duckdb.connect()
     try:
+        start = time.perf_counter()
+        print("Preparing document scan lookup...")
         conn.execute(
             "CREATE TEMP TABLE document_scans (doc_index INTEGER, scan_index INTEGER, filename VARCHAR)"
         )
@@ -114,23 +118,27 @@ def export_document_annotations(
                     [row[2] for row in batch],
                 ],
             )
+        print(f"Prepared document scan lookup in {time.perf_counter() - start:.1f}s.")
+        start = time.perf_counter()
+        print("Joining and sorting annotation inventory...")
         cursor = conn.execute(
             """
             SELECT s.doc_index, s.filename, a.annotation_id, a.classified_as
             FROM read_parquet(?) AS a
             JOIN document_scans AS s
-              ON s.filename = regexp_extract(
-                  a.annotation_id, '/annotations:(?:entities|events):([^#]+)#', 1
-              )
+              ON s.filename = a.filename
             WHERE a.annotation_id IS NOT NULL
             ORDER BY s.doc_index, s.scan_index, a.offset_scan NULLS LAST, a.annotation_id
             """,
             [parquet_path],
         )
+        print(f"Joined and sorted annotation inventory in {time.perf_counter() - start:.1f}s.")
         groups = iter(groupby(_rows(cursor), key=lambda row: row[0]))
         current = next(groups, None)
         unknown_labels: set[str] = set()
-        for doc_index, document in enumerate(documents):
+        for doc_index, document in enumerate(
+            tqdm(documents, desc="Preparing document annotations", unit="document")
+        ):
             mentions: dict[str, list[tuple[str, str]]] = {
                 tag: [] for tag, _ in NER_CATEGORIES
             }

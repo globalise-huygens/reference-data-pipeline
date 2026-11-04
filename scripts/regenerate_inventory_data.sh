@@ -33,10 +33,16 @@ CREATE OR REPLACE SECRET surf_glob (
 );
 
 COPY (
-    SELECT * FROM read_csv('s3://globalise-data/objects/inventory/*.csv', compression='gzip', auto_detect=true)
+    SELECT
+        *,
+        split_part(split_part(annotation_id, '#', 1), ':', -1) AS filename
+    FROM read_csv('s3://globalise-data/objects/inventory/*.csv', compression='gzip', auto_detect=true)
 ) TO 'data/input/inventory_data.parquet' (FORMAT PARQUET);
 
 COPY (
-    SELECT * FROM read_csv('s3://globalise-data/objects/inventory/links/*.csv', compression='gzip', auto_detect=true)
+    SELECT
+        *,
+        split_part(split_part(annotation_id, '#', 1), ':', -1) AS filename
+    FROM read_csv('s3://globalise-data/objects/inventory/links/*.csv', compression='gzip', auto_detect=true)
 ) TO 'data/input/links_data.parquet' (FORMAT PARQUET);
 EOF

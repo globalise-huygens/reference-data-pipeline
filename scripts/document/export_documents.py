@@ -19,11 +19,13 @@ import argparse
 import os
 import sys
 import time
+from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
+from contextlib import contextmanager
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."))
 
 from functools import partial
-from typing import Any, Dict
+from typing import Any, Callable, Dict, Iterator
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, selectinload
@@ -60,6 +62,44 @@ from document_annotations import export_document_annotations
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
 BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
+
+
+@contextmanager
+def concurrent_annotation_emitter(
+    emit: Callable[[dict, str], None], workers: int
+) -> Iterator[Callable[[dict, str], None]]:
+    """Bound concurrent writes and preserve submission order for the same path."""
+    if workers < 1:
+        raise ValueError("annotation upload workers must be positive")
+    if workers == 1:
+        yield emit
+        return
+
+    with ThreadPoolExecutor(max_workers=workers) as executor:
+        pending: dict[Future[None], str] = {}
+        paths: dict[str, Future[None]] = {}
+
+        def finish(future: Future[None]) -> None:
+            future.result()
+            path = pending.pop(future)
+            del paths[path]
+
+        def submit(data: dict, path: str) -> None:
+            if path in paths:
+                finish(paths[path])
+            if len(pending) >= workers * 2:
+                completed, _ = wait(pending, return_when=FIRST_COMPLETED)
+                for future in completed:
+                    finish(future)
+            future = executor.submit(emit, data, path)
+            pending[future] = path
+            paths[path] = future
+
+        yield submit
+        while pending:
+            completed, _ = wait(pending, return_when=FIRST_COMPLETED)
+            for future in completed:
+                finish(future)
 
 
 def natural_inv_sort_key(inv):
@@ -124,7 +164,9 @@ def build_nested_series_member(s) -> Dict[str, Any]:
     return s_data
 
 
-def export_documents(output_dir, gzipped, s3_client, s3_config):
+def export_documents(output_dir, gzipped, s3_client, s3_config, annotation_upload_workers=8):
+    if annotation_upload_workers < 1:
+        raise ValueError("annotation upload workers must be positive")
     engine = create_engine(DATABASE_URL, echo=False)
     session = Session(engine)
 
@@ -307,7 +349,11 @@ def export_documents(output_dir, gzipped, s3_client, s3_config):
         emit(doc_data, os.path.join("document", f"{doc_id}.json"))
 
     print("Exporting document annotation collections...")
-    export_document_annotations(documents, emit)
+    workers = annotation_upload_workers if use_bucket else 1
+    with concurrent_annotation_emitter(emit, workers) as annotation_emit:
+        export_document_annotations(documents, annotation_emit)
+        if workers > 1:
+            print("Waiting for remaining document annotation uploads...")
 
     elapsed_doc = time.time() - t1
     print(f"Exported {total_docs} documents in {elapsed_doc:.1f}s.")
@@ -352,12 +398,30 @@ def parse_args():
     parser.add_argument(
         "--gzipped", action="store_true", help="Output gzipped JSON files"
     )
+    parser.add_argument(
+        "--annotation-upload-workers",
+        type=positive_workers,
+        default=os.environ.get("DOCUMENT_ANNOTATION_UPLOAD_WORKERS", "8"),
+        help="Concurrent S3 uploads for document annotations (default: 8; 1 disables concurrency).",
+    )
     add_s3_arguments(parser)
     return parser.parse_args()
+
+
+def positive_workers(value: str) -> int:
+    try:
+        workers = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be a positive integer") from exc
+    if workers < 1:
+        raise argparse.ArgumentTypeError("must be a positive integer")
+    return workers
 
 
 if __name__ == "__main__":
     args = parse_args()
     s3_config = build_s3_upload_config(args)
     s3_client = create_s3_client(s3_config) if s3_config else None
-    export_documents(args.output_dir, args.gzipped, s3_client, s3_config)
+    export_documents(
+        args.output_dir, args.gzipped, s3_client, s3_config, args.annotation_upload_workers
+    )

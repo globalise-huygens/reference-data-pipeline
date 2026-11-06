@@ -25,10 +25,7 @@
         "_label": {}
     },
     "timespan": {
-        "@embed": "@always",
-        "_label": {},
-        "begin_of_the_begin": {},
-        "end_of_the_end": {}
+        "@embed": "@always"
     },
     "referred_to_by": {
         "@embed": "@always",

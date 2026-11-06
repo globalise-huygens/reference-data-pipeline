@@ -19,6 +19,7 @@ from export import (
     create_document_range,
     document_identified_by_jsonld,
     document_physical_to_jsonld,
+    inventory_to_manifest_jsonld,
 )
 from models import Base, Document, DocumentIdentificationMethod, Inventory
 
@@ -222,11 +223,35 @@ class DocumentExportTests(unittest.TestCase):
         self.assertEqual([member["title"] for member in document_members], ["Root"])
         self.assertEqual([doc.title for doc in annotations.call_args.args[0]], ["Root"])
 
-    def test_manifest_selects_roots_and_keeps_all_descendants(self):
+    def test_manifest_selects_only_segmentation_ranges_at_every_level(self):
         emitted = {}
 
         def capture(data, path, *args, **kwargs):
             emitted[path] = data
+
+        with Session(self.engine) as session:
+            inventory = session.get(Inventory, "inventory")
+            root = session.get(Document, "root")
+            segmentation = session.get(DocumentIdentificationMethod, "segmentation")
+            manual = session.get(DocumentIdentificationMethod, "manual")
+            child = Document(
+                id="seg-child", title="Seg child", inventory=inventory,
+                method=segmentation, part_of=root,
+            )
+            grandchild = Document(
+                id="seg-grandchild", title="Seg grandchild", inventory=inventory,
+                method=segmentation, part_of=child,
+            )
+            manual_child = Document(
+                id="manual-child", title="Manual child", inventory=inventory,
+                method=manual, part_of=child,
+            )
+            hidden_descendant = Document(
+                id="hidden", title="Hidden", inventory=inventory,
+                method=segmentation, part_of=manual_child,
+            )
+            session.add_all([grandchild, hidden_descendant])
+            session.commit()
 
         with (
             patch.object(export_manifests, "create_engine", return_value=self.engine),
@@ -237,14 +262,37 @@ class DocumentExportTests(unittest.TestCase):
         self.assertIn("1054.manifest.json", emitted)
         ranges = emitted["1053.manifest.json"]["structures"][0]["items"]
         self.assertEqual([item["label"]["en"] for item in ranges], [["Root"]])
-        child = ranges[0]["items"][0]
-        self.assertEqual(child["label"]["en"], ["Child"])
-        self.assertEqual(child["items"][0]["label"]["en"], ["Grandchild"])
-        root_uri = ranges[0]["seeAlso"][0]["id"]
-        self.assertEqual(child["seeAlso"][0]["id"], root_uri + "#document-child")
         self.assertEqual(
-            child["items"][0]["seeAlso"][0]["id"], root_uri + "#document-grandchild"
+            [item["label"]["en"] for item in ranges[0]["items"]], [["Seg child"]]
         )
+        child = ranges[0]["items"][0]
+        self.assertEqual(child["label"]["en"], ["Seg child"])
+        self.assertEqual(
+            [item["label"]["en"] for item in child["items"]], [["Seg grandchild"]]
+        )
+        root_uri = ranges[0]["seeAlso"][0]["id"]
+        self.assertEqual(child["seeAlso"][0]["id"], root_uri + "#document-seg-child")
+        self.assertEqual(
+            child["items"][0]["seeAlso"][0]["id"],
+            root_uri + "#document-seg-grandchild",
+        )
+
+        with Session(self.engine) as session:
+            inventory = session.get(Inventory, "inventory")
+            manifest = inventory_to_manifest_jsonld(inventory, "https://example.org/manifest")
+            self.assertEqual(
+                [item["label"]["en"] for item in manifest["structures"][0]["items"]],
+                [["Root"]],
+            )
+
+    def test_manifest_with_only_non_segmentation_documents_has_no_structures(self):
+        with Session(self.engine) as session:
+            inventory = session.get(Inventory, "empty")
+            manual = session.get(DocumentIdentificationMethod, "manual")
+            session.add(Document(id="manual-only", inventory=inventory, method=manual))
+            session.flush()
+            manifest = inventory_to_manifest_jsonld(inventory, "https://example.org/manifest")
+            self.assertNotIn("structures", manifest)
 
     def test_document_export_emits_annotation_files(self):
         emitted = {}
@@ -328,10 +376,12 @@ class DocumentExportTests(unittest.TestCase):
         )
         page = SimpleNamespace(id="page", scan=scan, scan_id="scan", recto_verso=None)
 
-        def doc(identifier, children=(), pages=True):
+        def doc(identifier, children=(), pages=True, method="Segmentation model"):
             return SimpleNamespace(
                 id=identifier,
                 title=identifier,
+                method=SimpleNamespace(name=method),
+                part_of_id=None,
                 location=None,
                 pages=[SimpleNamespace(page=page, index=0)] if pages else [],
                 sub_documents=list(children),
@@ -344,6 +394,7 @@ class DocumentExportTests(unittest.TestCase):
         child_b = doc("b")
         no_scan = doc("no/scan", pages=False)
         ranged = doc("range")
+        excluded = doc("0", method="Manual")
         scan2 = SimpleNamespace(
             filename="NL-HaNA_1.04.02_1053_0002",
             width=100,
@@ -353,17 +404,17 @@ class DocumentExportTests(unittest.TestCase):
         )
         page2 = SimpleNamespace(id="page2", scan=scan2, scan_id="scan2", recto_verso=None)
         ranged.pages.append(SimpleNamespace(page=page2, index=1))
-        root = doc("root", [child_b, no_scan, ranged, child_a])
+        root = doc("root", [child_b, no_scan, ranged, child_a, excluded])
         root.pages.append(SimpleNamespace(page=page2, index=1))
         physical = document_physical_to_jsonld(root, links_parquet={})
         children = {part["_label"]: part for part in physical["part"] if "id" in part}
         root_id = physical["id"]
-        self.assertEqual(children["a (Document)"]["id"], root_id + "#0001-0001")
-        self.assertEqual(children["b (Document)"]["id"], root_id + "#0001-0001-2")
+        self.assertEqual(children["a (Document)"]["id"], root_id + "#0001-0001-2")
+        self.assertEqual(children["b (Document)"]["id"], root_id + "#0001-0001-3")
         self.assertEqual(children["range (Document)"]["id"], root_id + "#0001-0002")
         self.assertEqual(children["no/scan (Document)"]["id"], root_id + "#document-no%2Fscan")
         nested = children["a (Document)"]["part"][0]
-        self.assertEqual(nested["id"], root_id + "#0001-0001-3")
+        self.assertEqual(nested["id"], root_id + "#0001-0001-4")
         self.assertNotIn("referred_to_by", nested["carries"])
         self.assertEqual(urldefrag(nested["id"]).url, root_id)
 
@@ -374,6 +425,7 @@ class DocumentExportTests(unittest.TestCase):
             for item in doc_range["items"]
             if item["type"] == "Range"
         }
+        self.assertNotIn("0", child_ranges)
         ids = [doc_range["id"]] + [item["id"] for item in child_ranges.values()]
         nested_range = next(
             item for item in child_ranges["a"]["items"] if item["type"] == "Range"

@@ -51,6 +51,12 @@ SEGMENTATION_ROOT_DOCUMENTS = Inventory.documents.of_type(
 )
 
 
+def is_segmentation_document(document: Document) -> bool:
+    return (
+        document.method is not None and document.method.name == SEGMENTATION_METHOD_NAME
+    )
+
+
 @lru_cache(maxsize=4)
 def load_scan_entities_from_parquet(
     parquet_path: str = DEFAULT_LINKS_PARQUET,
@@ -762,7 +768,7 @@ def document_comments_jsonld(document) -> List[Dict[str, Any]]:
         return []
     try:
         value = json.loads(content)
-    except (TypeError, json.JSONDecodeError):
+    except TypeError, json.JSONDecodeError:
         comment_text = str(content)
     else:
         fragments = []
@@ -1575,7 +1581,7 @@ def create_document_range(
     _fragments: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
-    Create a IIIF Presentation 3.0 Range for a document and its subdocuments recursively.
+    Create a IIIF Range for a document and its segmentation-model descendants.
 
     Examples:
         >>> from types import SimpleNamespace
@@ -1608,6 +1614,7 @@ def create_document_range(
     is_root = _root_id is None
     if is_root:
         _root_id = doc_id
+        # Include excluded descendants to match physical document fragment IDs.
         _fragments = subdocument_fragments(doc)
     assert _root_id is not None and _fragments is not None
     fragment = None if is_root else _fragments[doc.id]
@@ -1765,11 +1772,6 @@ def create_document_range(
         }
     ]
 
-    # Check if this document has subdocuments
-    has_subdocuments = bool(
-        getattr(doc, "sub_documents", None) and len(doc.sub_documents) > 0
-    )
-
     # Add canvas references for this document's pages
     if getattr(doc, "pages", None):
         # Sort pages by index
@@ -1795,24 +1797,25 @@ def create_document_range(
                     seen_canvas_ids.add(canvas_id)
                     doc_range["items"].append({"id": canvas_id, "type": "Canvas"})
 
-    # If it has subdocuments, add them as nested ranges
-    if has_subdocuments:
-        sorted_subdocs = sorted(doc.sub_documents, key=get_first_page_index)
-        for subdoc in sorted_subdocs:
-            subdoc_range = create_document_range(
-                subdoc,
-                inventory_number=inventory_number,
-                _root_id=_root_id,
-                _fragments=_fragments,
-            )
-            doc_range["items"].append(subdoc_range)
+    sorted_subdocs = sorted(
+        (subdoc for subdoc in doc.sub_documents if is_segmentation_document(subdoc)),
+        key=get_first_page_index,
+    )
+    for subdoc in sorted_subdocs:
+        subdoc_range = create_document_range(
+            subdoc,
+            inventory_number=inventory_number,
+            _root_id=_root_id,
+            _fragments=_fragments,
+        )
+        doc_range["items"].append(subdoc_range)
 
     return doc_range
 
 
 def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]:
     """
-    Generate a IIIF Presentation 3.0 Manifest for an inventory with selected roots.
+    Generate a IIIF Presentation 3.0 Manifest with segmentation-model ranges.
 
     Examples:
         >>> from types import SimpleNamespace
@@ -1838,6 +1841,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         ...     id="doc-1",
         ...     title="Test Doc",
         ...     part_of_id=None,
+        ...     method=SimpleNamespace(name="Segmentation model"),
         ...     location=None,
         ...     date_text=None,
         ...     date_earliest_begin=None,
@@ -2363,7 +2367,14 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "items": [],
         }
 
-        sorted_docs = sorted(inventory.documents, key=get_first_page_index)
+        sorted_docs = sorted(
+            (
+                doc
+                for doc in inventory.documents
+                if doc.part_of_id is None and is_segmentation_document(doc)
+            ),
+            key=get_first_page_index,
+        )
 
         # Create ranges for all top-level documents
         for doc in sorted_docs:

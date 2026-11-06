@@ -5,9 +5,20 @@ cd "$ROOT_DIR" || exit 1
 
 # Load environment variables
 if [ -f .env ]; then
-    export $(cat .env | grep -v '^#' | xargs)
+    set -a
+    source .env || exit 1
+    set +a
 fi
 
+key_id="${SURF_GLOB_KEY_ID:-${AWS_ACCESS_KEY_ID:-}}"
+secret="${SURF_GLOB_SECRET:-${AWS_SECRET_ACCESS_KEY:-}}"
+if [ -z "$key_id" ] || [ -z "$secret" ]; then
+    echo "Skipping inventory download: set SURF_GLOB_KEY_ID/SURF_GLOB_SECRET or AWS_ACCESS_KEY_ID/AWS_SECRET_ACCESS_KEY in .env or the environment." >&2
+    exit 0
+fi
+
+key_id="${key_id//\'/\'\'}"
+secret="${secret//\'/\'\'}"
 mkdir -p data/input || exit 1
 
 duckdb <<EOF
@@ -15,8 +26,8 @@ CREATE OR REPLACE SECRET surf_glob (
     TYPE s3,
     REGION 'default',
     PROVIDER config,
-    KEY_ID '${SURF_GLOB_KEY_ID}',
-    SECRET '${SURF_GLOB_SECRET}',
+    KEY_ID '${key_id}',
+    SECRET '${secret}',
     ENDPOINT 'objectstore.surf.nl',
     URL_STYLE path
 );

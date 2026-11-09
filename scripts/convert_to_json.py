@@ -1032,6 +1032,7 @@ def convert_thesaurus(
         (DCTERMS.title,),
         SKOS.prefLabel,
         default_language=None,
+        add_all=True,
     )
 
     for sub, pred, obj in set(ds.triples((None, DCTERMS.identifier, None))):
@@ -1611,6 +1612,7 @@ def add_labels(
     fallback_predicates: tuple[URIRef, ...],
     label_predicate: URIRef = RDFS.label,
     default_language: str | None = None,
+    add_all: bool = False,
 ) -> Graph | Dataset:
     """
     Ensure resources of specified target classes have a designated label predicate.
@@ -1620,7 +1622,9 @@ def add_labels(
         target_classes (tuple[URIRef, ...]): Target RDF classes.
         fallback_predicates (tuple[URIRef, ...]): Alternative predicates to inspect for labels.
         label_predicate (URIRef, optional): Target label predicate. Defaults to RDFS.label.
-        default_language (str, optional): Preferred language tag. Defaults to None.
+        default_language (str, optional): Preferred language tag when selecting one label.
+        add_all (bool, optional): Add all fallback labels when no label exists.
+            Defaults to False, selecting one label instead.
 
     Returns:
         Graph | Dataset: Updated RDF graph or dataset.
@@ -1644,6 +1648,36 @@ def add_labels(
         >>> res2 = add_labels(g2, (resource_class,), (alternate_label,), default_language="nl")
         >>> list(res2.objects(r2, RDFS.label))
         [rdflib.term.Literal('Nederlands')]
+        >>> from rdflib import Dataset
+        >>> other_label = URIRef("https://example.org/other-label")
+        >>> english = Literal("English", lang="en")
+        >>> dutch = Literal("Nederlands", lang="nl")
+        >>> french = Literal("Français", lang="fr")
+        >>> for graph_type in (Graph, Dataset):
+        ...     g = graph_type()
+        ...     _ = g.add((resource, RDF.type, resource_class))
+        ...     _ = g.add((resource, alternate_label, english))
+        ...     _ = g.add((resource, alternate_label, dutch))
+        ...     _ = g.add((resource, other_label, french))
+        ...     result = add_labels(g, (resource_class,), (alternate_label, other_label),
+        ...                         SKOS.prefLabel, default_language="nl", add_all=True)
+        ...     assert result is g
+        ...     assert set(g.objects(resource, SKOS.prefLabel)) == {english, dutch, french}
+        ...     _ = add_labels(g, (resource_class,), (alternate_label, other_label), add_all=True)
+        ...     assert set(g.objects(resource, RDFS.label)) == {
+        ...         Literal("English"), Literal("Nederlands"), Literal("Français")
+        ...     }
+        >>> existing = Graph()
+        >>> _ = existing.add((resource, RDF.type, resource_class))
+        >>> _ = existing.add((resource, SKOS.prefLabel, english))
+        >>> _ = existing.add((resource, alternate_label, dutch))
+        >>> _ = existing.add((r2, RDF.type, SKOS.Concept))
+        >>> _ = existing.add((r2, alternate_label, dutch))
+        >>> _ = add_labels(existing, (resource_class,), (alternate_label,), SKOS.prefLabel, add_all=True)
+        >>> set(existing.objects(resource, SKOS.prefLabel)) == {english}
+        True
+        >>> list(existing.objects(r2, SKOS.prefLabel))
+        []
     """
     for target_class in target_classes:
         for subject in graph.subjects(RDF.type, target_class):
@@ -1655,26 +1689,25 @@ def add_labels(
                 if not candidates:
                     continue
 
-                chosen: Node | None = None
-                if default_language:
-                    matching = [
-                        c
-                        for c in candidates
-                        if isinstance(c, Literal) and c.language == default_language
-                    ]
-                    if matching:
-                        chosen = matching[0]
+                if not add_all:
+                    chosen: Node | None = None
+                    if default_language:
+                        matching = [
+                            c
+                            for c in candidates
+                            if isinstance(c, Literal) and c.language == default_language
+                        ]
+                        if matching:
+                            chosen = matching[0]
+                    candidates = [chosen if chosen is not None else candidates[0]]
 
-                if chosen is None:
-                    chosen = candidates[0]
-
-                label: Node
-                if label_predicate == RDFS.label:
-                    label = Literal(str(chosen))
-                else:
-                    label = chosen
-
-                graph.add((subject, label_predicate, label))
+                for candidate in candidates:
+                    label = (
+                        Literal(str(candidate))
+                        if label_predicate == RDFS.label
+                        else candidate
+                    )
+                    graph.add((subject, label_predicate, label))
 
     return graph
 

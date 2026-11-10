@@ -155,6 +155,23 @@ def build_nested_series_member(s) -> Dict[str, Any]:
                 "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
                 "type": "CuratedHolding",
                 "_label": f"Inventory {inv.inventory_number}",
+                "identified_by": [
+                    {
+                        "type": "Identifier",
+                        "classified_as": [
+                            {
+                                "id": "http://vocab.getty.edu/aat/300312355",
+                                "type": "Type",
+                                "_label": "Accession number",
+                            }
+                        ],
+                        "content": inv.inventory_number,
+                    }
+                ],
+                "title": [
+                    {"type": "Title", "content": title.title}
+                    for title in getattr(inv, "titles", [])
+                ],
             }
         )
 
@@ -164,7 +181,9 @@ def build_nested_series_member(s) -> Dict[str, Any]:
     return s_data
 
 
-def export_documents(output_dir, gzipped, s3_client, s3_config, annotation_upload_workers=8):
+def export_documents(
+    output_dir, gzipped, s3_client, s3_config, annotation_upload_workers=8
+):
     if annotation_upload_workers < 1:
         raise ValueError("annotation upload workers must be positive")
     engine = create_engine(DATABASE_URL, echo=False)
@@ -423,5 +442,9 @@ if __name__ == "__main__":
     s3_config = build_s3_upload_config(args)
     s3_client = create_s3_client(s3_config) if s3_config else None
     export_documents(
-        args.output_dir, args.gzipped, s3_client, s3_config, args.annotation_upload_workers
+        args.output_dir,
+        args.gzipped,
+        s3_client,
+        s3_config,
+        args.annotation_upload_workers,
     )

@@ -20,6 +20,7 @@ from export import (
     document_identified_by_jsonld,
     document_physical_to_jsonld,
     inventory_to_manifest_jsonld,
+    load_scan_translations_from_parquet,
 )
 from models import Base, Document, DocumentIdentificationMethod, Inventory
 
@@ -447,6 +448,150 @@ class DocumentExportTests(unittest.TestCase):
             part["_label"]: part["id"] for part in reordered["part"] if "id" in part
         }
         self.assertEqual(reordered_ids, {label: part["id"] for label, part in children.items()})
+
+    def test_scan_translations_are_embedded_in_document_and_subdocument_pages(self):
+        with tempfile.TemporaryDirectory() as directory:
+            parquet = f"{directory}/translations.parquet"
+            with duckdb.connect() as conn:
+                conn.execute(
+                    "COPY (SELECT "
+                    "'NL-HaNA_1.04.02_3598_0005'::VARCHAR AS filename, "
+                    "'3598'::VARCHAR AS inventory, "
+                    "'Incoming letter book from Makassar, received 1782'::VARCHAR AS translation, "
+                    "'claude-haiku-5-5'::VARCHAR AS model, "
+                    "TIMESTAMPTZ '2026-11-07 22:41:25+01' AS generated_at "
+                    "UNION ALL SELECT "
+                    "'NL-HaNA_1.04.02_3598_0006', '3598', '   ', 'claude-haiku-5-5', "
+                    "TIMESTAMPTZ '2026-11-07 22:41:25+01') TO ? (FORMAT PARQUET)",
+                    [parquet],
+                )
+            load_scan_translations_from_parquet.cache_clear()
+            translations = load_scan_translations_from_parquet(parquet)
+            self.assertEqual(
+                translations,
+                {
+                    "NL-HaNA_1.04.02_3598_0005": {
+                        "translation": "Incoming letter book from Makassar, received 1782",
+                        "model": "claude-haiku-5-5",
+                        "generated_at": "2026-11-07T22:41:25+01:00",
+                    }
+                },
+            )
+
+            scan_with_trans = SimpleNamespace(
+                filename="NL-HaNA_1.04.02_3598_0005",
+                na_identifier="na-5",
+                width=100,
+                height=200,
+                languages="nld",
+                get_image_url=lambda size="max": "https://example.org/image5",
+            )
+            scan_without_trans = SimpleNamespace(
+                filename="NL-HaNA_1.04.02_3598_0006",
+                na_identifier="na-6",
+                width=100,
+                height=200,
+                languages="nld",
+                get_image_url=lambda size="max": "https://example.org/image6",
+            )
+            page_with_trans = SimpleNamespace(
+                id="p5", scan=scan_with_trans, scan_id="s5", page_or_folio_number="5", recto_verso=None
+            )
+            page_without_trans = SimpleNamespace(
+                id="p6", scan=scan_without_trans, scan_id="s6", page_or_folio_number="6", recto_verso=None
+            )
+            subdoc = SimpleNamespace(
+                id="sub-1",
+                title="Subdoc",
+                document_types_linked=[],
+                external_ids=[],
+                pages=[SimpleNamespace(page=page_with_trans, index=0)],
+                sub_documents=[],
+                location=None,
+            )
+            doc = SimpleNamespace(
+                id="doc-1",
+                title="Root Doc",
+                document_types_linked=[],
+                external_ids=[],
+                pages=[
+                    SimpleNamespace(page=page_with_trans, index=0),
+                    SimpleNamespace(page=page_without_trans, index=1),
+                ],
+                sub_documents=[subdoc],
+                location=None,
+            )
+
+            result = document_physical_to_jsonld(
+                doc, links_parquet={}, translations_parquet=parquet
+            )
+            subdoc_part, root_page_5, root_page_6 = result["part"]
+            expected_translation = [
+                {
+                    "type": "LinguisticObject",
+                    "_label": "Translation of NL-HaNA_1.04.02_3598_0005",
+                    "classified_as": [
+                        {
+                            "id": "http://vocab.getty.edu/aat/300027389",
+                            "type": "Type",
+                            "_label": "Translation",
+                        }
+                    ],
+                    "language": [
+                        {
+                            "id": "http://vocab.getty.edu/aat/300388277",
+                            "type": "Language",
+                            "_label": "English",
+                        }
+                    ],
+                    "content": "Incoming letter book from Makassar, received 1782",
+                    "assigned_by": [
+                        {
+                            "type": "AttributeAssignment",
+                            "carried_out_by": [
+                                {
+                                    "type": "DigitalObject",
+                                    "_label": "claude-haiku-5-5",
+                                    "classified_as": [
+                                        {
+                                            "id": "http://vocab.getty.edu/aat/300426696",
+                                            "type": "Type",
+                                            "_label": "Software",
+                                        }
+                                    ],
+                                }
+                            ],
+                            "timespan": {
+                                "type": "Timespan",
+                                "begin_of_the_begin": "2026-11-07T22:41:25+01:00",
+                                "end_of_the_end": "2026-11-07T22:41:25+01:00",
+                            },
+                        }
+                    ],
+                }
+            ]
+            self.assertEqual(
+                root_page_5["carries"]["digitally_carried_by"],
+                {
+                    "type": "DigitalObject",
+                    "_label": "PageXML + Plain Text",
+                    "part_of": [
+                        {
+                            "id": "https://doi.org/10.34894/50ZYWS",
+                            "type": "DigitalObject",
+                            "_label": 'GLOBALISE project, 2026, "VOC transcriptions v2 - GLOBALISE", https://doi.org/10.34894/50ZYWS, DataverseNL, V1',
+                        }
+                    ],
+                },
+            )
+            self.assertEqual(
+                root_page_5["carries"]["referred_to_by"], expected_translation
+            )
+            self.assertNotIn("referred_to_by", root_page_6["carries"])
+            self.assertEqual(
+                subdoc_part["part"][0]["carries"]["referred_to_by"],
+                expected_translation,
+            )
 
 
 if __name__ == "__main__":

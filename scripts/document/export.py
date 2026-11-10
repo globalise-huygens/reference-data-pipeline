@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import json
+from datetime import datetime
 from functools import lru_cache
 from typing import Any, Dict, List, Optional
 from urllib.parse import quote
@@ -35,6 +36,24 @@ DEFAULT_LINKS_PARQUET = os.environ.get(
     "LINKS_PARQUET",
     os.path.join(ROOT_DIR, "data", "input", "links_data.parquet"),
 )
+
+
+def _default_translations_parquet() -> str:
+    env_path = os.environ.get("TRANSLATIONS_PARQUET")
+    if env_path:
+        return env_path
+    input_doc_path = os.path.join(
+        ROOT_DIR, "data", "input", "document", "translations.parquet"
+    )
+    if os.path.isfile(input_doc_path):
+        return input_doc_path
+    data_path = os.path.join(ROOT_DIR, "data", "translations.parquet")
+    if os.path.isfile(data_path):
+        return data_path
+    return input_doc_path
+
+
+DEFAULT_TRANSLATIONS_PARQUET = _default_translations_parquet()
 SEGMENTATION_METHOD_NAME = "Segmentation model"
 SEGMENTATION_ROOT_FILTER = Document.part_of_id.is_(None) & Document.method.has(
     DocumentIdentificationMethod.name == SEGMENTATION_METHOD_NAME
@@ -118,6 +137,211 @@ def load_scan_entities_from_parquet(
             }
         )
     return scan_to_entities
+
+
+def _format_translation_timestamp(value: Any) -> Optional[str]:
+    if value is None:
+        return None
+    raw = str(value).strip()
+    if not raw:
+        return None
+    try:
+        return datetime.fromisoformat(raw).isoformat(timespec="seconds")
+    except ValueError:
+        return raw
+
+
+@lru_cache(maxsize=4)
+def load_scan_translations_from_parquet(
+    parquet_path: str = DEFAULT_TRANSLATIONS_PARQUET,
+) -> Dict[str, Dict[str, Optional[str]]]:
+    """
+    Load English scan translations keyed by scan filename from the translations parquet file.
+
+    Args:
+        parquet_path: Path to the translations parquet file.
+
+    Returns:
+        Mapping of scan filename to translation metadata dict with keys
+        ``translation``, ``model``, and ``generated_at``.
+
+    Examples:
+        >>> import tempfile
+        >>> from pathlib import Path
+        >>> import duckdb
+        >>> with tempfile.TemporaryDirectory() as directory:
+        ...     parquet_path = Path(directory) / "translations.parquet"
+        ...     _ = duckdb.execute(
+        ...         f"COPY (SELECT "
+        ...         f"'NL-HaNA_1.04.02_3598_0005'::VARCHAR AS filename, "
+        ...         f"'3598'::VARCHAR AS inventory, "
+        ...         f"'Incoming letter book'::VARCHAR AS translation, "
+        ...         f"'claude-haiku-5-5'::VARCHAR AS model, "
+        ...         f"TIMESTAMPTZ '2026-11-07 22:41:25+01' AS generated_at "
+        ...         f"UNION ALL SELECT "
+        ...         f"'NL-HaNA_1.04.02_3598_0006', '3598', '   ', 'claude-haiku-5-5', "
+        ...         f"TIMESTAMPTZ '2026-11-07 22:41:25+01') TO '{parquet_path}' (FORMAT PARQUET)"
+        ...     )
+        ...     res = load_scan_translations_from_parquet(str(parquet_path))
+        >>> res["NL-HaNA_1.04.02_3598_0005"]["translation"]
+        'Incoming letter book'
+        >>> res["NL-HaNA_1.04.02_3598_0005"]["model"]
+        'claude-haiku-5-5'
+        >>> res["NL-HaNA_1.04.02_3598_0005"]["generated_at"].startswith("2026-11-07T")
+        True
+    """
+    if not parquet_path or not os.path.isfile(parquet_path):
+        return {}
+
+    conn = duckdb.connect()
+    try:
+        cols = {
+            row[0]
+            for row in conn.execute(
+                "DESCRIBE SELECT * FROM read_parquet(?)", [parquet_path]
+            ).fetchall()
+        }
+        model_expr = "model::VARCHAR" if "model" in cols else "NULL::VARCHAR"
+        gen_expr = (
+            "generated_at::VARCHAR" if "generated_at" in cols else "NULL::VARCHAR"
+        )
+        query = f"""
+            SELECT filename, translation, {model_expr} AS model, {gen_expr} AS generated_at
+            FROM read_parquet(?)
+            WHERE filename IS NOT NULL
+              AND translation IS NOT NULL
+              AND trim(translation) != ''
+            ORDER BY filename
+        """
+        rows = conn.execute(query, [parquet_path]).fetchall()
+    finally:
+        conn.close()
+
+    result: Dict[str, Dict[str, Optional[str]]] = {}
+    for filename, translation, model, generated_at in rows:
+        fn = str(filename).strip()
+        text = str(translation).strip()
+        if not fn or not text:
+            continue
+        result[fn] = {
+            "translation": text,
+            "model": str(model).strip() if model and str(model).strip() else None,
+            "generated_at": _format_translation_timestamp(generated_at),
+        }
+    return result
+
+
+def scan_translation_jsonld(
+    scan,
+    translations_parquet: Optional[str | Dict[str, Any]] = None,
+) -> Optional[Dict[str, Any]]:
+    """
+    Build a Linked Art LinguisticObject for a scan's English translation, if available.
+
+    Examples:
+        >>> from types import SimpleNamespace
+        >>> scan = SimpleNamespace(filename="NL-HaNA_1.04.02_3598_0005")
+        >>> res = scan_translation_jsonld(
+        ...     scan,
+        ...     {
+        ...         "NL-HaNA_1.04.02_3598_0005": {
+        ...             "translation": "Incoming letter book",
+        ...             "model": "claude-haiku-5-5",
+        ...             "generated_at": "2026-11-07 22:41:25.9656+01",
+        ...         }
+        ...     },
+        ... )
+        >>> res["_label"]
+        'Translation of NL-HaNA_1.04.02_3598_0005'
+        >>> res["classified_as"][0]["id"]
+        'http://vocab.getty.edu/aat/300027389'
+        >>> res["language"][0]["id"]
+        'http://vocab.getty.edu/aat/300388277'
+        >>> res["content"]
+        'Incoming letter book'
+        >>> res["assigned_by"][0]["type"]
+        'AttributeAssignment'
+        >>> res["assigned_by"][0]["carried_out_by"][0]["_label"]
+        'claude-haiku-5-5'
+        >>> res["assigned_by"][0]["timespan"]["begin_of_the_begin"]
+        '2026-11-07T22:41:25+01:00'
+        >>> scan_translation_jsonld(scan, {}) is None
+        True
+    """
+    filename = getattr(scan, "filename", None) if scan is not None else None
+    if not filename:
+        return None
+
+    if isinstance(translations_parquet, dict):
+        scan_translations = translations_parquet
+    elif isinstance(translations_parquet, str):
+        scan_translations = load_scan_translations_from_parquet(translations_parquet)
+    else:
+        scan_translations = load_scan_translations_from_parquet(
+            DEFAULT_TRANSLATIONS_PARQUET
+        )
+
+    entry = scan_translations.get(filename)
+    if entry is None:
+        return None
+
+    if isinstance(entry, dict):
+        translation_text = entry.get("translation")
+        model_name = entry.get("model")
+        generated_at = _format_translation_timestamp(entry.get("generated_at"))
+    else:
+        translation_text = str(entry)
+        model_name = None
+        generated_at = None
+
+    if not translation_text or not str(translation_text).strip():
+        return None
+
+    translation_obj: Dict[str, Any] = {
+        "type": "LinguisticObject",
+        "_label": f"Translation of {filename}",
+        "classified_as": [
+            {
+                "id": "http://vocab.getty.edu/aat/300027389",
+                "type": "Type",
+                "_label": "Translation",
+            }
+        ],
+        "language": [
+            {
+                "id": "http://vocab.getty.edu/aat/300388277",
+                "type": "Language",
+                "_label": "English",
+            }
+        ],
+        "content": str(translation_text).strip(),
+    }
+
+    assignment: Dict[str, Any] = {"type": "AttributeAssignment"}
+    if model_name and str(model_name).strip():
+        assignment["carried_out_by"] = [
+            {
+                "type": "DigitalObject",
+                "_label": str(model_name).strip(),
+                "classified_as": [
+                    {
+                        "id": "http://vocab.getty.edu/aat/300426696",
+                        "type": "Type",
+                        "_label": "Software",
+                    }
+                ],
+            }
+        ]
+    if generated_at:
+        assignment["timespan"] = {
+            "type": "Timespan",
+            "begin_of_the_begin": generated_at,
+            "end_of_the_end": generated_at,
+        }
+    if len(assignment) > 1:
+        translation_obj["assigned_by"] = [assignment]
+
+    return translation_obj
 
 
 def get_annotationcollections_for_inventory(
@@ -582,7 +806,10 @@ def document_timespan_jsonld(document) -> Optional[Dict[str, Any]]:
     return timespan
 
 
-def document_parts_jsonld(document) -> List[Dict[str, Any]]:
+def document_parts_jsonld(
+    document,
+    translations_parquet: Optional[str | Dict[str, str]] = None,
+) -> List[Dict[str, Any]]:
     """
     Generate physical page parts (recto/verso) for a document.
 
@@ -592,13 +819,17 @@ def document_parts_jsonld(document) -> List[Dict[str, Any]]:
         >>> scan = SimpleNamespace(filename="NL-HaNA_1.04.02_1053_0001", na_identifier="na-1", width=1000, height=2000, languages=None, get_image_url=lambda size="max": "https://example.org/image.jpg")
         >>> page = SimpleNamespace(id="page-1", page_or_folio_number="12", recto_verso=RectoVerso.RECTO, scan=scan)
         >>> doc = SimpleNamespace(pages=[SimpleNamespace(index=0, page=page)])
-        >>> parts = document_parts_jsonld(doc)
+        >>> parts = document_parts_jsonld(doc, translations_parquet={"NL-HaNA_1.04.02_1053_0001": "English translation text"})
         >>> len(parts)
         1
         >>> parts[0]["_label"]
         'Fol. 12r'
         >>> parts[0]["classified_as"]["_label"]
         'Recto'
+        >>> parts[0]["carries"]["digitally_carried_by"]["part_of"][0]["id"]
+        'https://doi.org/10.34894/50ZYWS'
+        >>> parts[0]["carries"]["referred_to_by"][0]["content"]
+        'English translation text'
         >>> document_parts_jsonld(SimpleNamespace(pages=[]))
         []
     """
@@ -642,6 +873,26 @@ def document_parts_jsonld(document) -> List[Dict[str, Any]]:
         if getattr(pg, "scan", None):
             scan_ref = scan_to_jsonld(pg.scan)
 
+        page_carries: Dict[str, Any] = {
+            "type": "LinguisticObject",
+            "_label": "Textual content of the page",
+            "language": scan_languages_jsonld(pg.scan) or None,
+            "digitally_carried_by": {
+                "type": "DigitalObject",
+                "_label": "PageXML + Plain Text",
+                "part_of": [
+                    {
+                        "id": "https://doi.org/10.34894/50ZYWS",
+                        "type": "DigitalObject",
+                        "_label": 'GLOBALISE project, 2026, "VOC transcriptions v2 - GLOBALISE", https://doi.org/10.34894/50ZYWS, DataverseNL, V1',
+                    }
+                ],
+            },
+        }
+        translation_obj = scan_translation_jsonld(pg.scan, translations_parquet)
+        if translation_obj is not None:
+            page_carries["referred_to_by"] = [translation_obj]
+
         part: Dict[str, Any] = {
             "type": "PhysicalHumanMadeThing",
             "_label": label,
@@ -657,15 +908,7 @@ def document_parts_jsonld(document) -> List[Dict[str, Any]]:
                     }
                 ],
             },
-            "carries": {
-                "type": "LinguisticObject",
-                "_label": "Textual content of the page",
-                "language": scan_languages_jsonld(pg.scan) or None,
-                "digitally_carried_by": {
-                    "type": "DigitalObject",
-                    "_label": "PageXML + Plain Text",
-                },
-            },
+            "carries": page_carries,
             "shows": {
                 "type": "VisualItem",
                 "_label": "Visual depiction of the page.",
@@ -800,9 +1043,9 @@ def document_comments_jsonld(document) -> List[Dict[str, Any]]:
         {
             "type": "LinguisticObject",
             "classified_as": {
-                "id": "http://vocab.getty.edu/aat/300435416",
+                "id": "http://vocab.getty.edu/aat/300435438",
                 "type": "Type",
-                "_label": "Comment",
+                "_label": "Provenance description",
             },
             "content": comment_text,
         }
@@ -1073,6 +1316,7 @@ def document_physical_to_jsonld(
     links_parquet: Optional[str | Dict[str, List[Dict[str, Any]]]] = None,
     _root_id: Optional[str] = None,
     _fragments: Optional[Dict[str, str]] = None,
+    translations_parquet: Optional[str | Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     Serialize a physical Document record to Linked Art JSON-LD.
@@ -1081,6 +1325,8 @@ def document_physical_to_jsonld(
         document: SQLAlchemy Document instance.
         links_parquet: Optional pre-loaded scan_entities dict, parquet file path,
             or None to load from DEFAULT_LINKS_PARQUET.
+        translations_parquet: Optional pre-loaded scan_translations dict, parquet
+            file path, or None to load from DEFAULT_TRANSLATIONS_PARQUET.
 
     Returns:
         Linked Art JSON-LD dictionary representing the physical document.
@@ -1105,8 +1351,8 @@ def document_physical_to_jsonld(
         'PhysicalHumanMadeThing'
         >>> res["_label"]
         'Test Document (Document)'
-        >>> "refers_to" in res["carries"]
-        False
+        >>> res["carries"]["refers_to"]
+        []
         >>> scan1 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0329", na_identifier="na-1", width=1000, height=2000, languages=None, scan_type=None, get_image_url=lambda size="max": "https://example.org/img1.jpg")
         >>> scan2 = SimpleNamespace(filename="NL-HaNA_1.04.02_4088_0330", na_identifier="na-2", width=1000, height=2000, languages=None, scan_type=None, get_image_url=lambda size="max": "https://example.org/img2.jpg")
         >>> page1 = SimpleNamespace(id="p1", scan=scan1, scan_id="s1", page_or_folio_number="1", recto_verso=None)
@@ -1161,13 +1407,14 @@ def document_physical_to_jsonld(
     refers_to = document_refers_to_jsonld(document, links_parquet)
     carries["refers_to"] = refers_to
 
-    parts = document_parts_jsonld(document)
+    parts = document_parts_jsonld(document, translations_parquet=translations_parquet)
     parts = [
         document_physical_to_jsonld(
             subdocument,
             links_parquet=links_parquet,
             _root_id=_root_id,
             _fragments=_fragments,
+            translations_parquet=translations_parquet,
         )
         for subdocument in getattr(document, "sub_documents", None) or []
     ] + parts

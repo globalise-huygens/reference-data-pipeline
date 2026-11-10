@@ -1031,7 +1031,7 @@ def document_refers_to_jsonld(
     """
     entities_in_document = document_entities_to_jsonld(document, links_parquet)
     if not entities_in_document:
-        return None
+        return []
 
     doc_id = get_document_id(document)
     return [
@@ -1159,8 +1159,7 @@ def document_physical_to_jsonld(
             }
         ]
     refers_to = document_refers_to_jsonld(document, links_parquet)
-    if refers_to:
-        carries["refers_to"] = refers_to
+    carries["refers_to"] = refers_to
 
     parts = document_parts_jsonld(document)
     parts = [

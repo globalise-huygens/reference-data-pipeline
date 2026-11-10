@@ -36,3 +36,11 @@ fields:
     - "$.related[*].prefLabel[*]['@value']"
     - "$.related[*].altLabel[*]['@value']"
     - "$.related[*].hiddenLabel[*]['@value']"
+
+facets:
+  concept_scheme:
+    - "$.topConceptOf[*].id"
+    - "$.broader..topConceptOf[*].id"
+
+  concept_collection:
+    - "$.memberOf[*].id"

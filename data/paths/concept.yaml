@@ -23,12 +23,6 @@ fields:
     - "$.definition[*]['@value']"
     - "$.example[*]['@value']"
 
-  place: []
-
-  date_begin: []
-
-  date_end: []
-
   related:
     - "$.narrower..prefLabel[*]['@value']"
     - "$.narrower..altLabel[*]['@value']"
@@ -38,6 +32,12 @@ fields:
     - "$.related[*].hiddenLabel[*]['@value']"
 
 facets:
+  place: []
+
+  date_begin: []
+
+  date_end: []
+
   concept_scheme:
     - "$.topConceptOf[*].id"
     - "$.broader..topConceptOf[*].id"

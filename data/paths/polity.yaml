@@ -1,128 +1,66 @@
-# JSONPath specification for Polity and Rulership
-# Base JSON-LD Types:
-# - Polity: Polity (AAAO ZE39_Polity)
-# - Dynasty / Reign: Sovereignty (PWRO WE2_Sovereignty)
-#
-# Random samples - Polity (10):
-# - polity/Polity_263.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_263.json) [Page 1]
-# - polity/Polity_152.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_152.json) [Page 1]
-# - polity/Polity_55.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_55.json) [Page 1]
-# - polity/Polity_99.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_99.json) [Page 1]
-# - polity/Polity_193.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_193.json) [Page 1]
-# - polity/Polity_196.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_196.json) [Page 1]
-# - polity/Polity_190.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_190.json) [Page 1]
-# - polity/Polity_142.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_142.json) [Page 1]
-# - polity/Polity_255.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_255.json) [Page 1]
-# - polity/Polity_47.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/polity/Polity_47.json) [Page 1]
-#
-# Random samples - Dynasty (10):
-# - dynasty/Dynasty_165.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_165.json) [Page 1]
-# - dynasty/Dynasty_244.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_244.json) [Page 1]
-# - dynasty/Dynasty_107.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_107.json) [Page 1]
-# - dynasty/Dynasty_129.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_129.json) [Page 1]
-# - dynasty/Dynasty_457.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_457.json) [Page 1]
-# - dynasty/Dynasty_23.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_23.json) [Page 1]
-# - dynasty/Dynasty_445.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_445.json) [Page 1]
-# - dynasty/Dynasty_40.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_40.json) [Page 1]
-# - dynasty/Dynasty_197.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_197.json) [Page 1]
-# - dynasty/Dynasty_71.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/dynasty/Dynasty_71.json) [Page 1]
-#
-# Random samples - Reign across catalog pages (10):
-# - reign/Reign_0182.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0182.json) [Page 1]
-# - reign/Reign_0403.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0403.json) [Page 1]
-# - reign/Reign_0644.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_0644.json) [Page 2]
-# - reign/Reign_1559.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_1559.json) [Page 2]
-# - reign/Reign_1119.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_1119.json) [Page 2]
-# - reign/Reign_2026.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2026.json) [Page 3]
-# - reign/Reign_2414.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2414.json) [Page 3]
-# - reign/Reign_2288.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2288.json) [Page 3]
-# - reign/Reign_2677.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2677.json) [Page 4]
-# - reign/Reign_2888.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/reign/Reign_2888.json) [Page 4]
+type: Polity
+catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/polity:index/page-1.json
 
-polity:
-  file: polity/*.json
-  index:
-    # Core Identification
-    id: $.id
-    identifier: $.identified_by[?(@.type=='Identifier')].content
-    object_type: $.type
+fields:
+  id:
+    - "$.id"
 
-    # Names & Appellations
-    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  identifier:
+    - "$.identified_by[?(@.type=='Identifier')].content"
+    - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].identified_by[?(@.type=='Identifier')].content"
 
-    # Temporal Boundaries
-    start: $.was_population_of[*].timespan.begin_of_the_begin
-    end: $.was_population_of[*].timespan.end_of_the_end
-    start_earliest: $.was_population_of[*].timespan.begin_of_the_begin
-    start_latest: $.was_population_of[*].timespan.end_of_the_begin
-    end_earliest: $.was_population_of[*].timespan.begin_of_the_end
-    end_latest: $.was_population_of[*].timespan.end_of_the_end
+  title:
+    - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
 
-    # Location
-    location: $.is_physical_locative_subject_of[*].ascribes_place[*].id
+  description:
+    - "$.referred_to_by[*].content"
+    - "$.was_population_of[*].referred_to_by[*].content"
+    - "$.was_population_of[*].timespan.referred_to_by[*].content"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].referred_to_by[*].content"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.referred_to_by[*].content"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].is_successor_status_subject_of[*].referred_to_by[*].content"
 
-    # Sovereignty & Rulership
-    sovereign: $.had_sovereign[*].id
+  related:
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
-  other:
+facets:
+  place:
+    - "$.is_physical_locative_subject_of[*].ascribes_place[*].id"
 
-dynasty:
-  file: dynasty/*.json
-  index:
-    # Core Identification
-    id: $.id
-    identifier: $.identified_by[?(@.type=='Identifier')].content
-    object_type: $.type
+  date_begin:
+    - "$.was_population_of[*].timespan.begin_of_the_begin"
+    - "$.was_population_of[*].timespan.end_of_the_begin"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.begin_of_the_begin"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.end_of_the_begin"
 
-    # Names & Appellations
-    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
+  date_end:
+    - "$.was_population_of[*].timespan.end_of_the_end"
+    - "$.was_population_of[*].timespan.begin_of_the_end"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.end_of_the_end"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.begin_of_the_end"
 
-    # Temporal Boundaries
-    start: $.timespan.begin_of_the_begin
-    end: $.timespan.end_of_the_end
-    start_earliest: $.timespan.begin_of_the_begin
-    start_latest: $.timespan.end_of_the_begin
-    end_earliest: $.timespan.begin_of_the_end
-    end_latest: $.timespan.end_of_the_end
+  polity_classification:
+    - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].classified_as[*].id"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-    # Polity & Regnal Scope
-    polity: $.had_subject_population[*].id
-    reigns: $.part[*].id
-    ruler_role: $.was_context_for_exercise_of[*].id
+  polity_rulership:
+    - "$.['pwro:WP4i_was_subject_population_of'][*].id"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].part[*].id"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].part_of[*].id"
+    - "$.['pwro:WP4i_was_subject_population_of'][*].is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id"
 
-  other:
-
-reign:
-  file: reign/*.json
-  index:
-    # Core Identification
-    id: $.id
-    identifier: $.identified_by[?(@.type=='Identifier')].content
-    object_type: $.type
-
-    # Names & Appellations
-    title: $.is_appellative_subject_of[*].ascribes_appellation[*].content
-
-    # Temporal Boundaries
-    start: $.timespan.begin_of_the_begin
-    end: $.timespan.end_of_the_end
-    start_earliest: $.timespan.begin_of_the_begin
-    start_latest: $.timespan.end_of_the_begin
-    end_earliest: $.timespan.begin_of_the_end
-    end_latest: $.timespan.end_of_the_end
-
-    # Classification
-    classification: $.is_classificatory_subject_of[*].ascribes_classification[*].id
-    sovereignty_type: $.classified_as[*].id
-
-    # Ruler & Lineage
-    ruler: $.had_sovereign[*].id
-
-    # Polity & Succession
-    polity: $.had_subject_population[*].id
-    successor: $.is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id
-
-    # Dynasty
-    dynasty: $.part_of[*].id
-
-  other:
+  polity_ruler:
+    - "$.had_sovereign[*].id"
+    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].id"

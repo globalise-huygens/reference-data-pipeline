@@ -1,86 +1,58 @@
-# JSONPath specification for Occurrence and Conversion
-# Base JSON-LD Types:
-# - Occurrence: Event (CIDOC-CRM E5_Event)
-# - Conversion: FinancialExchange (GLOBALISE G1_Financial_Exchange)
-#
-# Historical random samples - Occurrence (10):
-# - occurrence/CO_0053.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0053.json) [Page 1]
-# - occurrence/CO_0045.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0045.json) [Page 1]
-# - occurrence/CO_0046.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0046.json) [Page 1]
-# - occurrence/CO_0008.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0008.json) [Page 1]
-# - occurrence/CO_0040.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0040.json) [Page 1]
-# - occurrence/CO_0016.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0016.json) [Page 1]
-# - occurrence/CO_0077.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0077.json) [Page 1]
-# - occurrence/CO_0089.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0089.json) [Page 1]
-# - occurrence/CO_0023.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0023.json) [Page 1]
-# - occurrence/CO_0024.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/occurrence/CO_0024.json) [Page 1]
-#
-# Random samples - Conversion (10):
-# - conversion/UC_0073.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0073.json) [Page 1]
-# - conversion/UC_0053.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0053.json) [Page 1]
-# - conversion/UC_0044.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0044.json) [Page 1]
-# - conversion/UC_0014.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0014.json) [Page 1]
-# - conversion/UC_0006.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0006.json) [Page 1]
-# - conversion/UC_0045.1.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0045.1.json) [Page 1]
-# - conversion/UC_0074.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0074.json) [Page 1]
-# - conversion/UC_0056.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0056.json) [Page 1]
-# - conversion/UC_0067.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0067.json) [Page 1]
-# - conversion/UC_0043.json (https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/objects/conversion/UC_0043.json) [Page 1]
+type:
+  - Event
+  - FinancialExchange
+catalog:
+  - https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/occurrence:index/page-1.json
+  - https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json
 
-occurrence:
-  file: occurrence/*.json
-  index:
-    # Core Identification
-    id: $.id
-    identifier: $.identified_by[?(@.type=='Identifier')].content
-    object_type: $.type
+fields:
+  id:
+    - "$.id"
 
-    # Temporal Boundaries
-    start: $.timespan.begin_of_the_begin
-    end: $.timespan.end_of_the_end
-    start_earliest: $.timespan.begin_of_the_begin
-    start_latest: $.timespan.end_of_the_begin
-    end_earliest: $.timespan.begin_of_the_end
-    end_latest: $.timespan.end_of_the_end
+  identifier:
+    - "$.identified_by[?(@.type=='Identifier')].content"
 
-    # Currency
-    involved: $.involved[*].id
+  title: []
 
-    # Location
-    location: $.is_event_location_subject_of[*].ascribes_place[*].id
+  description:
+    - "$.referred_to_by[*].content"
 
-  other:
-    # Location & Entities
-    location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
+  related:
+    # From conversion/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json)
+    - "$.intentionally_initiated[*].has_exchange_value_subject[*].value"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].value"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].lower_value_limit"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].upper_value_limit"
 
-conversion:
-  file: conversion/*.json
-  index:
-    # Core Identification
-    id: $.id
-    identifier: $.identified_by[?(@.type=='Identifier')].content
-    object_type: $.type
+facets:
+  place:
+    - "$.is_event_location_subject_of[*].ascribes_place[*].id"
 
-    # Temporal Boundaries
-    start: $.timespan.end_of_the_begin
-    end: $.timespan.begin_of_the_end
-    start_earliest: $.timespan.end_of_the_begin
-    start_latest: $.timespan.end_of_the_begin
-    end_earliest: $.timespan.begin_of_the_end
-    end_latest: $.timespan.begin_of_the_end
+  date_begin:
+    # From occurrence/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/occurrence:index/page-1.json)
+    - "$.timespan.begin_of_the_begin"
+    - "$.timespan.end_of_the_begin"
+    # From conversion/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json)
+    - "$.timespan['crm:P82a_begin_of_the_begin']['@value']"
+    - "$.timespan['crm:P81a_end_of_the_begin']['@value']"
 
-    # Exchange Units
-    from_unit: $.intentionally_initiated[*].has_exchange_value_subject[*].unit.id
-    to_unit: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id
+  date_end:
+    # From occurrence/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/occurrence:index/page-1.json)
+    - "$.timespan.end_of_the_end"
+    - "$.timespan.begin_of_the_end"
+    # From conversion/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json)
+    - "$.timespan['crm:P82b_end_of_the_end']['@value']"
+    - "$.timespan['crm:P81b_begin_of_the_end']['@value']"
 
-    # Location
-    location: $.is_event_location_subject_of[*].ascribes_place[*].id
+  occurrence_unit:
+    # From occurrence/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/occurrence:index/page-1.json)
+    - "$.involved[*].id"
+    # From conversion/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json)
+    - "$.intentionally_initiated[*].has_exchange_value_subject[*].unit.id"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id"
 
-  other:
-    # Values & Context
-    from_value: $.intentionally_initiated[*].has_exchange_value_subject[*].value
-    to_value: $.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].value
-
-    commodity_type: $.is_dimension_of_commodity_type[*].id
-
-    location_relation: $.is_event_location_subject_of[*].ascribes_event_location_relation[*].id
+  occurrence_commodity:
+    # From conversion/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json)
+    - "$.is_dimension_of_commodity_type[*].id"
+    - "$.intentionally_initiated[*].has_exchange_value_subject[*].is_dimension_of_commodity_type[*].id"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].is_dimension_of_commodity_type[*].id"

@@ -300,14 +300,14 @@ def fetch_json(
     raise last_error or RuntimeError(f"Failed to fetch {full_url}")
 
 
-def parse_yaml_spec(filepath: str) -> Dict[str, Dict[str, str]]:
+def parse_yaml_spec(filepath: str) -> Dict[str, Any]:
     """
-    Parse a YAML specification file.
-    Supports:
-    - Root or section-level 'file: ...'
-    - Nested 'index:' and 'other:' field blocks under entity sections
-    - Multi-section definitions (e.g. polity, dynasty, reign)
-    Returns: {section_name: {field: jsonpath, ..., 'file': pattern}}
+    Parse a unified YAML specification file (matching concept.yaml format).
+    Expected top-level keys:
+    - type: str or list[str]
+    - catalog: str or list[str]
+    - fields: dict[str, list[str]]
+    - facets: dict[str, list[str]]
     """
     with open(filepath, "r", encoding="utf-8") as f:
         raw = yaml.safe_load(f)
@@ -315,40 +315,7 @@ def parse_yaml_spec(filepath: str) -> Dict[str, Dict[str, str]]:
     if not isinstance(raw, dict):
         raise ValueError(f"Root of {filepath} must be a YAML mapping")
 
-    top_file = raw.get("file")
-    stem = os.path.splitext(os.path.basename(filepath))[0]
-    sections: Dict[str, Dict[str, str]] = {}
-
-    for k, v in raw.items():
-        if k == "file":
-            continue
-        if isinstance(v, dict):
-            sec_name = k
-            file_pat = v.get("file", top_file)
-            fields: Dict[str, str] = {}
-            if file_pat:
-                fields["file"] = file_pat
-
-            if "index" in v and isinstance(v["index"], dict):
-                fields.update(v["index"])
-            if "other" in v and isinstance(v["other"], dict):
-                fields.update(v["other"])
-
-            for sub_k, sub_v in v.items():
-                if sub_k not in ("index", "other", "file") and isinstance(sub_v, str):
-                    fields[sub_k] = sub_v
-
-            sections[sec_name] = fields
-
-    # If flat file without nested entity blocks
-    if not sections and top_file:
-        fields = {"file": top_file}
-        for k, v in raw.items():
-            if k != "file" and isinstance(v, str):
-                fields[k] = v
-        sections[stem] = fields
-
-    return sections
+    return raw
 
 
 def verify_specification(
@@ -358,7 +325,7 @@ def verify_specification(
     verbose: bool = False,
     max_samples: int = 10,
 ) -> bool:
-    """Validate a specification file and test all sections against real data."""
+    """Validate a specification file and test all paths against real data."""
     filepath = os.path.join(spec_dir, spec_filename)
     stem = os.path.splitext(spec_filename)[0]
     print(f"\n========================================================")
@@ -370,120 +337,121 @@ def verify_specification(
         return False
 
     try:
-        sections = parse_yaml_spec(filepath)
+        spec = parse_yaml_spec(filepath)
     except Exception as e:
         print(f"❌ Failed to parse YAML structure: {e}")
         return False
 
-    is_multi_source = len(sections) > 1
-    if is_multi_source:
-        print(
-            f"  • Multi-source specification: {len(sections)} distinct JSON sources defined:"
-        )
-        for sec, items in sections.items():
-            file_pattern = items.get("file", "NOT SPECIFIED")
-            print(f"    - Section [{sec}]: file -> {file_pattern}")
-    else:
-        sec = next(iter(sections.keys()))
-        file_pattern = sections[sec].get("file", "NOT SPECIFIED")
-        print(f"  • Single-source specification: file -> {file_pattern}")
+    entity_type = spec.get("type")
+    catalog = spec.get("catalog")
+    fields = spec.get("fields")
+    facets = spec.get("facets")
 
-    # 1. Verify 'file' key presence
-    missing_files = []
-    for sec, items in sections.items():
-        if "file" not in items:
-            missing_files.append(sec)
-
-    if missing_files:
-        print(f"❌ FAILED: Missing 'file' definition in section(s): {missing_files}")
+    if not entity_type or not catalog:
+        print(f"❌ FAILED: Missing 'type' or 'catalog' in {spec_filename}")
         return False
-    else:
-        print("  ✓ 'file' target source pattern specified for all sections.")
+    if not isinstance(fields, dict) or not isinstance(facets, dict):
+        print(f"❌ FAILED: 'fields' and 'facets' must be mappings in {spec_filename}")
+        return False
 
-    # 2. Strict check: assert NO '_label' anywhere
+    print(f"  • Type:    {entity_type}")
+    print(f"  • Catalog: {catalog}")
+
+    # Collect all paths from fields and facets
+    all_groups: Dict[str, List[str]] = {}
+    for k, v in fields.items():
+        if not isinstance(v, list):
+            print(f"❌ FAILED: fields.{k} must be a list of JSONPath strings")
+            return False
+        all_groups[f"fields.{k}"] = v
+
+    for k, v in facets.items():
+        if not isinstance(v, list):
+            print(f"❌ FAILED: facets.{k} must be a list of JSONPath strings")
+            return False
+        all_groups[f"facets.{k}"] = v
+
+    # Strict check: assert NO '_label' anywhere
     label_violations = []
-    for sec, items in sections.items():
-        for k, p in items.items():
-            if k == "file":
-                continue
+    for group_key, paths in all_groups.items():
+        for p in paths:
             if "_label" in p:
-                label_violations.append((sec, k, p))
+                label_violations.append((group_key, p))
 
     if label_violations:
         print("❌ FAILED: Found prohibited '_label' in specification paths:")
-        for sec, k, p in label_violations:
-            print(f"    [{sec}] {k}: {p}")
+        for gk, p in label_violations:
+            print(f"    {gk}: {p}")
         return False
     else:
         print("  ✓ Strict check passed: No '_label' present in any path or filter.")
 
-    # 3. Parse and compile all JSONPath expressions
-    compiled_by_sec: Dict[str, Dict[str, Any]] = {}
+    # Parse and compile all JSONPath expressions
+    compiled_groups: Dict[str, List[Any]] = {}
     compile_errors = []
     total_paths = 0
 
-    for sec, items in sections.items():
-        compiled_by_sec[sec] = {}
-        for k, p in items.items():
-            if k == "file":
-                continue
+    for group_key, paths in all_groups.items():
+        compiled_groups[group_key] = []
+        for p in paths:
             total_paths += 1
             try:
                 compiled = parse_jsonpath(p)
-                compiled_by_sec[sec][k] = compiled
+                compiled_groups[group_key].append(compiled)
             except Exception as e:
-                compile_errors.append((sec, k, p, str(e)))
+                compile_errors.append((group_key, p, str(e)))
 
     if compile_errors:
         print(
             f"❌ FAILED: {len(compile_errors)} JSONPath expressions have syntax errors:"
         )
-        for sec, k, p, err in compile_errors:
-            print(f"    [{sec}] {k}: {p} -> {err}")
+        for gk, p, err in compile_errors:
+            print(f"    {gk}: {p} -> {err}")
         return False
     else:
         print(f"  ✓ All {total_paths} JSONPath expressions parsed successfully.")
 
-    # 4. Live evaluation against sample JSON-LD records for each section
-    for sec, compiled_paths in compiled_by_sec.items():
-        # Find sample target for this section
-        target_key = sec if sec in SECTION_SAMPLE_TARGETS else stem
-        samples = SECTION_SAMPLE_TARGETS.get(target_key, [])
-        file_pat = sections[sec].get("file")
+    # Live evaluation against sample JSON-LD records
+    samples = SECTION_SAMPLE_TARGETS.get(stem, [])
+    if stem == "occurrence":
+        samples = SECTION_SAMPLE_TARGETS.get("occurrence", [])[:max_samples] + SECTION_SAMPLE_TARGETS.get("conversion", [])[:max_samples]
 
-        print(f"\n  Testing section [{sec}] (target file: {file_pat}):")
-        if not samples:
-            print(f"    ⚠ No sample target configured for section [{sec}].")
-            continue
+    print(f"\n  Testing [{stem}] against sample records:")
+    if not samples:
+        print(f"    ⚠ No sample target configured for [{stem}].")
+        return True
 
-        for idx, (label, sample_rel) in enumerate(samples[:max_samples], start=1):
-            try:
-                doc = fetch_json(sample_rel, local_dirs=local_dirs)
-            except Exception as e:
-                print(
-                    f"      ❌ [{idx}/{len(samples)}] Failed to fetch sample {sample_rel}: {e}"
-                )
-                return False
-
-            matched_count = 0
-            extracted = {}
-            for k, expr in compiled_paths.items():
-                res = [m.value for m in expr.find(doc)]
-                if res:
-                    matched_count += 1
-                    extracted[k] = res
-
+    for idx, (label, sample_rel) in enumerate(samples[:max_samples], start=1):
+        try:
+            doc = fetch_json(sample_rel, local_dirs=local_dirs)
+        except Exception as e:
             print(
-                f"    [{idx:2d}/{min(len(samples), max_samples)}] ✓ {label[:30]:30s} ({sample_rel}) -> matched {matched_count}/{len(compiled_paths)} fields"
+                f"      ❌ [{idx}/{len(samples)}] Failed to fetch sample {sample_rel}: {e}"
             )
-            if verbose or idx == 1:
-                preview_keys = list(extracted.keys())[:4]
-                for pk in preview_keys:
-                    val = extracted[pk]
-                    d_val = val[0] if len(val) == 1 else val[:3]
-                    if isinstance(d_val, str) and len(d_val) > 60:
-                        d_val = d_val[:57] + "..."
-                    print(f"         • {pk:16}: {d_val}")
+            return False
+
+        matched_count = 0
+        extracted = {}
+        non_empty_groups = [gk for gk, exprs in compiled_groups.items() if exprs]
+        for gk, exprs in compiled_groups.items():
+            res = []
+            for expr in exprs:
+                res.extend(m.value for m in expr.find(doc) if m.value is not None)
+            if res:
+                matched_count += 1
+                extracted[gk] = res
+
+        print(
+            f"    [{idx:2d}/{min(len(samples), max_samples)}] ✓ {label[:30]:30s} ({sample_rel}) -> matched {matched_count}/{len(non_empty_groups)} active keys"
+        )
+        if verbose or idx == 1:
+            preview_keys = list(extracted.keys())[:4]
+            for pk in preview_keys:
+                val = extracted[pk]
+                d_val = val[0] if len(val) == 1 else val[:3]
+                if isinstance(d_val, str) and len(d_val) > 60:
+                    d_val = d_val[:57] + "..."
+                print(f"         • {pk:20}: {d_val}")
 
     return True
 

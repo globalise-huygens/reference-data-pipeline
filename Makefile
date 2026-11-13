@@ -121,13 +121,12 @@ data/input/organization/xml/.stamp: data/input/organization/csv/.stamp
 
 data/output/organization/rdf/.stamp: data/input/organization/xml/.stamp
 	@mkdir -p data/output/organization/rdf
-	$(RUN_X3ML) data/input/organization/xml persons_in_organization.xml data/mappings/organization/Mapping621.x3ml data/output/organization/rdf 621_membership
-	$(RUN_X3ML) data/input/organization/xml classifications.xml data/mappings/organization/Mapping605.x3ml data/output/organization/rdf 605_classifications
-	$(RUN_X3ML) data/input/organization/xml relations_between_units.xml data/mappings/organization/Mapping607.x3ml data/output/organization/rdf 607_relations
-	$(RUN_X3ML) data/input/organization/xml locations.xml data/mappings/organization/Mapping608.x3ml data/output/organization/rdf 608_locations
-	$(RUN_X3ML) data/input/organization/xml external_links.xml data/mappings/organization/Mapping609.x3ml data/output/organization/rdf 609_external
-	$(RUN_X3ML) data/input/organization/xml labels.xml data/mappings/organization/Mapping610.x3ml data/output/organization/rdf 610_labels
-	$(RUN_X3ML) data/input/organization/xml organization_overview.xml data/mappings/organization/Mapping611.x3ml data/output/organization/rdf 611_overview
+	$(RUN_X3ML) data/input/organization/xml Organisation_Classifications.xml data/mappings/organization/Mapping605.x3ml data/output/organization/rdf 605_classifications
+	$(RUN_X3ML) data/input/organization/xml Relations_Between_Organisations.xml data/mappings/organization/Mapping607.x3ml data/output/organization/rdf 607_relations
+	$(RUN_X3ML) data/input/organization/xml Organisation_Locations.xml data/mappings/organization/Mapping608.x3ml data/output/organization/rdf 608_locations
+	$(RUN_X3ML) data/input/organization/xml External_References.xml data/mappings/organization/Mapping609.x3ml data/output/organization/rdf 609_external
+	$(RUN_X3ML) data/input/organization/xml Organisation_Labels.xml data/mappings/organization/Mapping610.x3ml data/output/organization/rdf 610_labels
+	$(RUN_X3ML) data/input/organization/xml Organisation_Overview.xml data/mappings/organization/Mapping611.x3ml data/output/organization/rdf 611_overview
 	@touch $@
 
 data/output/organization/organization.ttl: data/output/organization/rdf/.stamp
@@ -415,6 +414,7 @@ test:
 	$(PYTHON) -m doctest scripts/document/export.py
 	$(PYTHON) -m doctest scripts/document/export_documents.py
 	$(PYTHON) -m doctest scripts/document/export_documents_csv.py
+	$(PYTHON) -m doctest scripts/document/export_collection.py
 	$(PYTHON) -m unittest discover -s scripts -p 'test_catalog_validation.py'
 	$(PYTHON) -m unittest discover -s scripts/document -p 'test_*.py'
 

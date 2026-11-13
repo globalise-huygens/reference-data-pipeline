@@ -9,14 +9,14 @@ fields:
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
 
-  title:
+  title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
 
   description: []
 
-  related: # Enkel de Overlaps
+  related: # full-text
     # Follows $.is_topographical_subject_of[*].ascribes_place[*].id -> place (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:index/page-1.json)
-    - "$.is_topographical_subject_of[*].ascribes_place[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
   place:
@@ -41,8 +41,8 @@ facets:
   place_classification:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  place_hierarchy: # enkel waar aaao:ZP88_ascribes_topographical_relation = crm:P89_falls_within
-    - "$.is_topographical_subject_of[*].ascribes_place[*].id"
+  place_hierarchy:
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P89_falls_within')].ascribes_place[*].id"
 
   place_latitude:
     - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387565')].content"

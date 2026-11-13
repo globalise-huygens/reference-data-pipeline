@@ -1246,12 +1246,12 @@ def document_refers_to_jsonld(
 
     Returns:
         List containing a single Set object with members if entities exist,
-        otherwise None.
+        otherwise an empty list.
 
     Examples:
         >>> from types import SimpleNamespace
         >>> dummy_doc = SimpleNamespace(id="doc-123", pages=[])
-        >>> document_refers_to_jsonld(dummy_doc, links_parquet={}) is None
+        >>> document_refers_to_jsonld(dummy_doc, links_parquet={}) == []
         True
         >>> dummy_page = SimpleNamespace(scan=SimpleNamespace(filename="scan1.jpg"))
         >>> dummy_doc_with_page = SimpleNamespace(id="doc-123", pages=[SimpleNamespace(page=dummy_page)])

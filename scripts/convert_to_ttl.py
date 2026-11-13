@@ -9,7 +9,7 @@ import logging
 import os
 import sys
 
-from rdflib import Graph, Literal, Namespace, XSD
+from rdflib import RDF, RDFS, SKOS, Graph, Literal, Namespace, XSD, URIRef
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
@@ -23,6 +23,7 @@ import re
 from concurrent.futures import ProcessPoolExecutor
 
 CRM = Namespace("http://www.cidoc-crm.org/cidoc-crm/")
+AAT = Namespace("http://vocab.getty.edu/aat/")
 
 TIMESTAMP_SUFFIXES = {
     CRM["P82a_begin_of_the_begin"]: "T00:00:00",
@@ -124,7 +125,95 @@ def normalize_dates_to_datetimes(graph: Graph) -> None:
             graph.add((s, p, new_literal))
 
 
-def load_graph(rdf_dir: str) -> Graph:
+def other_replacements(graph: Graph, category: str) -> None:
+    """
+    Convert ship-related places in person graphs to ship objects.
+
+    Args:
+        graph (Graph): The RDF graph to modify in place.
+        category (str): Entity category; only person graphs are changed.
+
+    Examples:
+        >>> from rdflib import BNode
+        >>> base = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+        >>> markers = ("DAS_ship", "gzm_ship", "monsoon_traders")
+        >>> places = [URIRef(base + "place:" + marker) for marker in markers]
+        >>> ships = [URIRef(base + "ship:" + marker) for marker in markers]
+        >>> ordinary = URIRef(base + "place:ordinary")
+        >>> untyped = URIRef(base + "place:DAS_ship_untyped")
+        >>> no_place_prefix = URIRef(base + "ship:DAS_ship_existing")
+        >>> blank = BNode("place")
+        >>> g = Graph()
+        >>> for place in [*places, ordinary, no_place_prefix, blank]:
+        ...     _ = g.add((place, RDF.type, CRM["E53_Place"]))
+        >>> _ = g.add((places[0], RDFS.label, Literal("DAS_ship")))
+        >>> _ = g.add((ordinary, RDFS.seeAlso, places[0]))
+        >>> _ = g.add((places[0], RDFS.seeAlso, places[0]))
+        >>> _ = g.add((places[1], RDFS.seeAlso, places[2]))
+        >>> _ = g.add((untyped, RDFS.label, Literal("untyped")))
+        >>> original = set(g)
+        >>> other_replacements(g, "place")
+        >>> set(g) == original
+        True
+        >>> other_replacements(g, "person")
+        >>> expected = {
+        ...     (ordinary, RDF.type, CRM["E53_Place"]),
+        ...     (no_place_prefix, RDF.type, CRM["E53_Place"]),
+        ...     (blank, RDF.type, CRM["E53_Place"]),
+        ...     (ships[0], RDFS.label, Literal("DAS_ship")),
+        ...     (ordinary, RDFS.seeAlso, ships[0]),
+        ...     (ships[0], RDFS.seeAlso, ships[0]),
+        ...     (ships[1], RDFS.seeAlso, ships[2]),
+        ...     (untyped, RDFS.label, Literal("untyped")),
+        ...     (AAT["300082981"], RDF.type, SKOS.Concept),
+        ...     (AAT["300082981"], RDFS.label, Literal("ship")),
+        ... }
+        >>> for ship in ships:
+        ...     expected.add((ship, RDF.type, CRM["E22_Human-Made_Object"]))
+        ...     expected.add((ship, CRM["P2_has_type"], AAT["300082981"]))
+        >>> set(g) == expected
+        True
+        >>> other_replacements(g, "person")
+        >>> set(g) == expected
+        True
+    """
+
+    if category == "person":
+        # Replace 'place:' by 'ship:' in all URIs that have 'DAS_ship', 'gzm_ship', or 'monsoon_traders' in their URI
+        # And replace all triples with the new URI
+        for s, p, o in list(graph.triples((None, RDF.type, CRM["E53_Place"]))):
+            if isinstance(s, URIRef) and any(
+                substr in str(s)
+                for substr in (
+                    "DAS_ship",
+                    "gzm_ship",
+                    "monsoon_traders",
+                )
+            ):
+                if "place:" not in str(s):
+                    continue
+
+                new_s = URIRef(str(s).replace("place:", "ship:"))
+
+                # For everywhere where s is subject
+                for subj, pred, obj in list(graph.triples((s, None, None))):
+                    graph.remove((subj, pred, obj))
+                    graph.add((new_s, pred, obj))
+
+                    # Replace the type of the new URI
+                    graph.remove((new_s, RDF.type, CRM["E53_Place"]))
+                    graph.add((new_s, RDF.type, CRM["E22_Human-Made_Object"]))
+                    graph.add((new_s, CRM["P2_has_type"], AAT["300082981"]))
+                    graph.add((AAT["300082981"], RDF.type, SKOS.Concept))
+                    graph.add((AAT["300082981"], RDFS.label, Literal("ship")))
+
+                # For everywhere where s is object
+                for subj, pred, obj in list(graph.triples((None, None, s))):
+                    graph.remove((subj, pred, obj))
+                    graph.add((subj, pred, new_s))
+
+
+def load_graph(rdf_dir: str, category: str) -> Graph:
     """
     Load all Turtle files in a directory into a single normalized RDF graph.
 
@@ -158,10 +247,15 @@ def load_graph(rdf_dir: str) -> Graph:
         )
 
     normalize_dates_to_datetimes(graph)
+
+    other_replacements(graph, category)
+
     return graph
 
 
-def combine_single_chunk(chunk_files: list[str], output_path: str) -> str:
+def combine_single_chunk(
+    chunk_files: list[str], output_path: str, category: str
+) -> str:
     """
     Combine a list of chunk Turtle files into a single normalized Turtle file.
 
@@ -180,6 +274,8 @@ def combine_single_chunk(chunk_files: list[str], output_path: str) -> str:
     normalize_uris(graph)
     convert_uris_to_bnodes(graph)
     normalize_dates_to_datetimes(graph)
+
+    other_replacements(graph, category)
 
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
     graph.serialize(destination=output_path, format="turtle")
@@ -229,7 +325,7 @@ def combine_chunk_ttls(
 
     with ProcessPoolExecutor(max_workers=nprocs) as executor:
         futures = [
-            executor.submit(combine_single_chunk, files, out_path)
+            executor.submit(combine_single_chunk, files, out_path, category)
             for files, out_path in tasks
         ]
         for future in futures:
@@ -314,7 +410,7 @@ def main() -> int:
         return 1
 
     try:
-        graph = load_graph(input_dir)
+        graph = load_graph(input_dir, category)
     except FileNotFoundError as e:
         print(f"Error: {e}")
         return 1

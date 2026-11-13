@@ -15,6 +15,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, selectinload
 from tqdm import tqdm
 
+from iiif_metadata import GLOBALISE_URL, IIIF_ATTRIBUTION, IIIF_RIGHTS
 from utils import (
     add_s3_arguments,
     build_s3_upload_config,
@@ -39,6 +40,37 @@ def natural_inv_sort_key(inv):
 
 
 def export_collection(output_dir, gzipped, s3_client, s3_config):
+    """
+    Export an inventory collection with the same rights as its manifests.
+
+    Examples:
+        >>> from contextlib import redirect_stdout
+        >>> from io import StringIO
+        >>> from unittest.mock import patch
+        >>> from models import Base
+        >>> engine = create_engine("sqlite://")
+        >>> Base.metadata.create_all(engine)
+        >>> emitted = {}
+        >>> def capture(data, path, *args):
+        ...     emitted[path] = data
+        >>> replacements = {
+        ...     "create_engine": lambda *args, **kwargs: engine,
+        ...     "output_framed_json": capture,
+        ...     "tqdm": lambda items, **kwargs: items,
+        ... }
+        >>> with patch.dict(export_collection.__globals__, replacements), redirect_stdout(StringIO()):
+        ...     export_collection("unused", False, None, None)
+        >>> collection = emitted["collection.json"]
+        >>> collection["rights"]
+        'https://creativecommons.org/licenses/by/4.0/'
+        >>> collection["requiredStatement"]["value"]["en"][0]
+        'Scans provided by the National Archives of the Netherlands are available under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Transcriptions, created by Globalise, are available under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Metadata, entities and events were created by the <a href="https://globalise.nl">Globalise project</a>. Entities and events are available under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'
+        >>> collection["homepage"][0]["id"], collection["provider"][0]["id"]
+        ('https://globalise.nl', 'https://globalise.nl')
+        >>> collection["provider"][0]["homepage"][0]["id"]
+        'https://globalise.nl'
+        >>> engine.dispose()
+    """
     engine = create_engine(DATABASE_URL, echo=False)
     session = Session(engine)
 
@@ -127,20 +159,12 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
         },
         "requiredStatement": {
             "label": {"en": ["Attribution"]},
-            "value": {
-                "en": [
-                    "<span>Globalise Project. "
-                    '<a href="https://creativecommons.org/publicdomain/zero/1.0/">'
-                    '<img src="https://licensebuttons.net/l/zero/1.0/88x31.png" '
-                    'alt="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"/> '
-                    "</a> </span>"
-                ]
-            },
+            "value": {"en": [IIIF_ATTRIBUTION]},
         },
-        "rights": "http://creativecommons.org/publicdomain/zero/1.0/",
+        "rights": IIIF_RIGHTS,
         "homepage": [
             {
-                "id": "https://globalise.huygens.knaw.nl",
+                "id": GLOBALISE_URL,
                 "type": "Text",
                 "label": {"en": ["Globalise Project"]},
                 "format": "text/html",
@@ -148,12 +172,12 @@ def export_collection(output_dir, gzipped, s3_client, s3_config):
         ],
         "provider": [
             {
-                "id": "https://globalise.huygens.knaw.nl",
+                "id": GLOBALISE_URL,
                 "type": "Agent",
                 "label": {"en": ["Globalise Project"]},
                 "homepage": [
                     {
-                        "id": "https://globalise.huygens.knaw.nl",
+                        "id": GLOBALISE_URL,
                         "type": "Text",
                         "label": {"en": ["Globalise Project"]},
                         "format": "text/html",

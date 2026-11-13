@@ -19,6 +19,7 @@ _parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 if _parent_dir not in sys.path:
     sys.path.insert(0, _parent_dir)
 
+from iiif_metadata import GLOBALISE_URL, IIIF_ATTRIBUTION, IIIF_RIGHTS
 from models import (
     Document,
     DocumentIdentificationMethod,
@@ -2110,6 +2111,12 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         ...     handle=None,
         ... )
         >>> m = inventory_to_manifest_jsonld(inv, "https://example.org/manifest")
+        >>> m["rights"]
+        'https://creativecommons.org/licenses/by/4.0/'
+        >>> m["requiredStatement"]["value"]["en"][0]
+        'Scans provided by the National Archives of the Netherlands are available under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Transcriptions, created by Globalise, are available under <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Metadata, entities and events were created by the <a href="https://globalise.nl">Globalise project</a>. Entities and events are available under <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>.'
+        >>> m["provider"][0]["id"], m["provider"][0]["homepage"][0]["id"]
+        ('https://globalise.nl', 'https://globalise.nl')
         >>> canvas = m["items"][0]
         >>> canvas["language"]
         ['nld']
@@ -2281,21 +2288,17 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         "label": {"en": [f"Inventory {inventory.inventory_number}"]},
         "requiredStatement": {
             "label": {"en": ["Attribution"]},
-            "value": {
-                "en": [
-                    '<span>Globalise Project. <a href="https://creativecommons.org/publicdomain/zero/1.0/"> <img src="https://licensebuttons.net/l/zero/1.0/88x31.png" alt="CC0 1.0 Universal (CC0 1.0) Public Domain Dedication"/> </a> </span>'
-                ]
-            },
+            "value": {"en": [IIIF_ATTRIBUTION]},
         },
-        "rights": "http://creativecommons.org/publicdomain/zero/1.0/",
+        "rights": IIIF_RIGHTS,
         "provider": [
             {
-                "id": "https://globalise.huygens.knaw.nl",
+                "id": GLOBALISE_URL,
                 "type": "Agent",
                 "label": {"en": ["Globalise Project"]},
                 "homepage": [
                     {
-                        "id": "https://globalise.huygens.knaw.nl",
+                        "id": GLOBALISE_URL,
                         "type": "Text",
                         "label": {"en": ["Globalise Project"]},
                         "format": "text/html",

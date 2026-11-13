@@ -24,6 +24,7 @@ from concurrent.futures import ProcessPoolExecutor
 
 CRM = Namespace("http://www.cidoc-crm.org/cidoc-crm/")
 AAT = Namespace("http://vocab.getty.edu/aat/")
+AAAO = Namespace("https://ontology.swissartresearch.net/aaao/")
 
 TIMESTAMP_SUFFIXES = {
     CRM["P82a_begin_of_the_begin"]: "T00:00:00",
@@ -125,9 +126,24 @@ def normalize_dates_to_datetimes(graph: Graph) -> None:
             graph.add((s, p, new_literal))
 
 
+def _replace_uri(graph: Graph, old: URIRef, new: URIRef) -> None:
+    triples = set(graph.triples((old, None, None))) | set(
+        graph.triples((None, None, old))
+    )
+    for subject, predicate, obj in triples:
+        graph.remove((subject, predicate, obj))
+        graph.add(
+            (
+                new if subject == old else subject,
+                predicate,
+                new if obj == old else obj,
+            )
+        )
+
+
 def other_replacements(graph: Graph, category: str) -> None:
     """
-    Convert ship-related places in person graphs to ship objects.
+    Convert ship- and polity-related places in person graphs to their entity types.
 
     Args:
         graph (Graph): The RDF graph to modify in place.
@@ -178,39 +194,50 @@ def other_replacements(graph: Graph, category: str) -> None:
         True
     """
 
-    if category == "person":
-        # Replace 'place:' by 'ship:' in all URIs that have 'DAS_ship', 'gzm_ship', or 'monsoon_traders' in their URI
-        # And replace all triples with the new URI
-        for s, p, o in list(graph.triples((None, RDF.type, CRM["E53_Place"]))):
-            if isinstance(s, URIRef) and any(
-                substr in str(s)
-                for substr in (
-                    "DAS_ship",
-                    "gzm_ship",
-                    "monsoon_traders",
+    if category != "person":
+        return
+
+    ship_markers = ("DAS_ship", "gzm_ship", "monsoon_traders")
+    for place in list(graph.subjects(RDF.type, CRM["E53_Place"])):
+        if not isinstance(place, URIRef):
+            continue
+
+        uri = str(place)
+        if "place:" not in uri or not any(marker in uri for marker in ship_markers):
+            continue
+
+        ship = URIRef(uri.replace("place:", "ship:"))
+        _replace_uri(graph, place, ship)
+        graph.remove((ship, RDF.type, CRM["E53_Place"]))
+        graph.add((ship, RDF.type, CRM["E22_Human-Made_Object"]))
+        graph.add((ship, CRM["P2_has_type"], AAT["300082981"]))
+        graph.add((AAT["300082981"], RDF.type, SKOS.Concept))
+        graph.add((AAT["300082981"], RDFS.label, Literal("ship")))
+
+    for place in list(graph.subjects(RDF.type, CRM["E53_Place"])):
+        if not isinstance(place, URIRef):
+            continue
+
+        uri = str(place)
+        if "place:" not in uri or "polity" not in uri.lower():
+            continue
+
+        polity = URIRef(uri.replace("place:", "polity:"))
+        _replace_uri(graph, place, polity)
+        graph.remove((polity, RDF.type, CRM["E53_Place"]))
+        graph.add((polity, RDF.type, AAAO["ZE39_Polity"]))
+
+        for subject, predicate, obj in list(
+            graph.triples((None, AAAO["ZP114_has_geographic_scope"], polity))
+        ):
+            graph.remove((subject, predicate, obj))
+            graph.add(
+                (
+                    subject,
+                    AAAO["ZP70_ascribes_social_status_in_relation_to"],
+                    polity,
                 )
-            ):
-                if "place:" not in str(s):
-                    continue
-
-                new_s = URIRef(str(s).replace("place:", "ship:"))
-
-                # For everywhere where s is subject
-                for subj, pred, obj in list(graph.triples((s, None, None))):
-                    graph.remove((subj, pred, obj))
-                    graph.add((new_s, pred, obj))
-
-                    # Replace the type of the new URI
-                    graph.remove((new_s, RDF.type, CRM["E53_Place"]))
-                    graph.add((new_s, RDF.type, CRM["E22_Human-Made_Object"]))
-                    graph.add((new_s, CRM["P2_has_type"], AAT["300082981"]))
-                    graph.add((AAT["300082981"], RDF.type, SKOS.Concept))
-                    graph.add((AAT["300082981"], RDFS.label, Literal("ship")))
-
-                # For everywhere where s is object
-                for subj, pred, obj in list(graph.triples((None, None, s))):
-                    graph.remove((subj, pred, obj))
-                    graph.add((subj, pred, new_s))
+            )
 
 
 def load_graph(rdf_dir: str, category: str) -> Graph:

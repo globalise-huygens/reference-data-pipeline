@@ -14,16 +14,16 @@ fields:
     - "$.relatedMatch[*]"
     - "$.source['@value']"
 
-  title:
+  title: # full-text, boost
     - "$.prefLabel[*]['@value']"
     - "$.altLabel[*]['@value']"
     - "$.hiddenLabel[*]['@value']"
 
-  description:
+  description: # full-text
     - "$.definition[*]['@value']"
     - "$.example[*]['@value']"
 
-  related:
+  related: # full-text
     - "$.narrower..prefLabel[*]['@value']"
     - "$.narrower..altLabel[*]['@value']"
     - "$.narrower..hiddenLabel[*]['@value']"

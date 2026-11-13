@@ -9,7 +9,7 @@ fields:
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
 
-  title:
+  title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
 
   description: []
@@ -17,11 +17,13 @@ fields:
   related: []
 
 facets:
-  place: --> En schepen dan?
-    - "$.born.took_place_at[*].id"
-    - "$.died.took_place_at[*].id"
-    - "$.is_residence_subject_of[*].ascribes_residence_place[*].id"
-    - "$.is_social_status_subject_of[*].has_geographic_scope[*].id"
+  place:
+    # Follows -> place (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:index/page-1.json)
+    - "$.born.took_place_at[?(@.type=='Place')].id"
+    - "$.died.took_place_at[?(@.type=='Place')].id"
+    - "$.is_residence_subject_of[*].ascribes_residence_place[?(@.type=='Place')].id"
+    - "$.is_social_status_subject_of[*].has_geographic_scope[?(@.type=='Place')].id"
+    - "$.is_classificatory_subject_of[*].has_geographic_scope[?(@.type=='Place')].id"
 
   date_begin:
     - "$.born.timespan.begin_of_the_begin"
@@ -35,8 +37,8 @@ facets:
     - "$.is_social_status_subject_of[*].timespan.end_of_the_end"
     - "$.is_social_status_subject_of[*].timespan.begin_of_the_end"
 
-  person_relation: #TODO --> type relatie, directioneel?
-    - "$.is_familial_subject_of[*].ascribes_relative[*].id"
+  person_relation:
+    - "$.is_familial_subject_of[*].ascribes_familial_relation[*].id"
 
   person_identity:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
@@ -50,4 +52,5 @@ facets:
     - "$.is_social_status_subject_of[*].ascribes_social_status[?(@.inScheme[*].id!='https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:225cef07-5b8e-4a8b-a141-2471a0cffce8')].id"
 
   person_polity:
-    - "$.is_sovereign_of"
+    # Follows $.is_sovereign_of[*] -> sovereign (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/sovereign:index/page-1.json) -> exercised_authority_of[*].id -> polity (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/polity:index/page-1.json)
+    - "$.is_sovereign_of[*].exercised_authority_of[*].id"

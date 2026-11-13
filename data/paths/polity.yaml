@@ -8,26 +8,21 @@ fields:
   identifier:
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].identified_by[?(@.type=='Identifier')].content"
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.was_subject_population_of[*].identified_by[?(@.type=='Identifier')].content"
+    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json)
+    - "$.was_subject_population_of[*].had_sovereign[*].identified_by[?(@.type=='Identifier')].content"
 
-  title:
+  title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+    - "$.was_subject_population_of[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
-  description:
-    - "$.referred_to_by[*].content"
-    - "$.was_population_of[*].referred_to_by[*].content"
-    - "$.was_population_of[*].timespan.referred_to_by[*].content"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].referred_to_by[*].content"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.referred_to_by[*].content"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].is_successor_status_subject_of[*].referred_to_by[*].content"
+  description: []
 
   related:
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].is_appellative_subject_of[*].ascribes_appellation[*].content"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+    - "$.was_subject_population_of[*].had_sovereign[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
   place:
@@ -36,31 +31,20 @@ facets:
   date_begin:
     - "$.was_population_of[*].timespan.begin_of_the_begin"
     - "$.was_population_of[*].timespan.end_of_the_begin"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.begin_of_the_begin"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.end_of_the_begin"
 
   date_end:
     - "$.was_population_of[*].timespan.end_of_the_end"
     - "$.was_population_of[*].timespan.begin_of_the_end"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.end_of_the_end"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].timespan.begin_of_the_end"
 
-  polity_classification:
+  polity_polity_classification:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].classified_as[*].id"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  polity_rulership:
-    - "$.['pwro:WP4i_was_subject_population_of'][*].id"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].part[*].id"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].part_of[*].id"
-    - "$.['pwro:WP4i_was_subject_population_of'][*].is_successor_status_subject_of[*].ascribes_succeeded_sovereignty[*].id"
+  polity_reign_classification:
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.was_subject_population_of[*].is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  polity_ruler:
-    - "$.had_sovereign[*].id"
-    # Follows $.['pwro:WP4i_was_subject_population_of'][*].id -> rulership: reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
-    - "$.['pwro:WP4i_was_subject_population_of'][*].had_sovereign[*].id"
+  polity_ruler: # was_subject_population_of -> had_sovereign -> person (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+    - "$.was_subject_population_of[*].had_sovereign[*].id
+
+  polity_dynasty: # TODO: filter op classification = dynasty (aat:????)
+    - "$.was_subject_population_of[*].id

@@ -9,42 +9,29 @@ fields:
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
 
-  title:
+  title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
 
-  description:
+  description: # full-text # TODO: comment in LinguisticObject + classificatie
     - "$.referred_to_by[*].content"
-    - "$.created_by.referred_to_by[*].content"
-    - "$.dissolved_by.referred_to_by[*].content"
-    - "$.is_classificatory_subject_of[*].referred_to_by[*].content"
-    - "$.is_residence_subject_of[*].referred_to_by[*].content"
-    - "$.is_membership_subject_of[*].referred_to_by[*].content"
-    - "$.is_social_relation_subject_of[*].referred_to_by[*].content"
 
-  related:
-    # Follows $.is_membership_subject_of[*].ascribes_group[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
-    - "$.is_membership_subject_of[*].ascribes_group[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
-    # Follows $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
-    - "$.is_social_relation_subject_of[*].ascribes_social_relation_target[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+  related: # TODO: Labels van relations-between-organisations
+    # # Follows $.is_membership_subject_of[*].ascribes_group[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
+    # - "$.is_membership_subject_of[*].ascribes_group[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+    # # Follows $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
+    # - "$.is_social_relation_subject_of[*].ascribes_social_relation_target[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
   place:
-    - "$.is_residence_subject_of[*].ascribes_residence_place[*].id"
     - "$.is_intentional_subject_of[*].ascribes_place[*].id"
-    - "$.created_by.took_place_at[*].id"
-    - "$.dissolved_by.took_place_at[*].id"
 
   date_begin:
-    - "$.created_by.timespan.begin_of_the_begin"
-    - "$.created_by.timespan.end_of_the_begin"
     - "$.is_classificatory_subject_of[*].timespan.begin_of_the_begin"
     - "$.is_classificatory_subject_of[*].timespan.end_of_the_begin"
     - "$.is_intentional_subject_of[*].timespan.begin_of_the_begin"
     - "$.is_intentional_subject_of[*].timespan.end_of_the_begin"
 
   date_end:
-    - "$.dissolved_by.timespan.end_of_the_end"
-    - "$.dissolved_by.timespan.begin_of_the_end"
     - "$.is_classificatory_subject_of[*].timespan.end_of_the_end"
     - "$.is_classificatory_subject_of[*].timespan.begin_of_the_end"
     - "$.is_intentional_subject_of[*].timespan.end_of_the_end"
@@ -52,9 +39,3 @@ facets:
 
   organization_classification:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
-
-  organization_member_of:
-    - "$.is_membership_subject_of[*].ascribes_group[*].id"
-
-  organization_relation:
-    - "$.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id"

@@ -5,7 +5,7 @@ fields:
   id:
     - "$.id"
 
-  identifier:
+  identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
     # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
@@ -20,32 +20,32 @@ fields:
 
   description: []
 
-  related:
+  related: # full-text
     # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].had_sovereign[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
-  place:
+  place: # keyword
     - "$.is_physical_locative_subject_of[*].ascribes_place[*].id"
 
-  date_begin:
+  date_begin: # date
     - "$.was_population_of[*].timespan.begin_of_the_begin"
     - "$.was_population_of[*].timespan.end_of_the_begin"
 
-  date_end:
+  date_end: # date
     - "$.was_population_of[*].timespan.end_of_the_end"
     - "$.was_population_of[*].timespan.begin_of_the_end"
 
-  polity_polity_classification:
+  polity_polity_classification: # keyword
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  polity_reign_classification:
+  polity_reign_classification: # keyword
     # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[*].is_classificatory_subject_of[*].ascribes_classification[*].id"
 
   polity_ruler: # was_subject_population_of -> had_sovereign -> person (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].had_sovereign[*].id"
 
-  polity_dynasty:
+  polity_dynasty: # keyword
     # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300386176')].id"

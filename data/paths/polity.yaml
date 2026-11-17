@@ -46,5 +46,6 @@ facets:
   polity_ruler: # was_subject_population_of -> had_sovereign -> person (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].had_sovereign[*].id"
 
-  polity_dynasty: # TODO: filter op classification = dynasty (aat:????)
-    - "$.was_subject_population_of[*].id
+  polity_dynasty:
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    - "$.was_subject_population_of[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300386176')].id"

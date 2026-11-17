@@ -1,0 +1,34 @@
+type:
+  - FinancialExchange
+catalog:
+  - https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json
+
+fields:
+  id:
+    - "$.id"
+
+  identifier: # keyword
+    - "$.identified_by[?(@.type=='Identifier')].content"
+
+  title: # full-text
+    - "$._label"
+
+  description: []
+
+  related: []
+
+facets:
+  place: # keyword
+    - "$.is_event_location_subject_of[*].ascribes_place[*].id"
+
+  date_begin: # date
+    - "$.timespan.begin_of_the_begin"
+    - "$.timespan.end_of_the_begin"
+
+  date_end: # date
+    - "$.timespan.end_of_the_end"
+    - "$.timespan.begin_of_the_end"
+
+  conversion_unit: # keyword
+    - "$.intentionally_initiated[*].has_exchange_value_subject[*].unit.id"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id"

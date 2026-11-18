@@ -442,7 +442,7 @@ def expand_date_literal(lexical_value: str, suffix: str) -> str:
         return lexical_value
     if len(lexical_value) < 4:
         lexical_value = lexical_value.zfill(4)
-    if len(lexical_value) == 4:
+    if len(lexical_value) == 4 or len(lexical_value) == 5 and lexical_value[0] == "-":
         return (
             f"{lexical_value}-01-01"
             if "00:00:00" in suffix

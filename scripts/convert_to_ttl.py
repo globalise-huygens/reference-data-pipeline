@@ -275,6 +275,13 @@ def load_graph(rdf_dir: str, category: str) -> Graph:
 
     normalize_dates_to_datetimes(graph)
 
+    # Fix for negative dates
+    if category == "polity":
+        from rdflib.term import _toPythonMapping
+
+        _toPythonMapping.pop(XSD.dateTime, None)
+        _toPythonMapping.pop(XSD.date, None)
+
     other_replacements(graph, category)
 
     return graph

@@ -228,11 +228,11 @@ $(S3_DIR)/.person.stamp: data/output/person/ttl/.stamp
 #------------------------------------------------------------
 # 4. Polity Pipeline
 #------------------------------------------------------------
-POLITY_XLSX := data/input/polity/GLOBALISE-\ Polities\ Dataset.xlsx
+POLITY_ZIP := $(wildcard data/input/polity/*.zip)
 
-data/input/polity/csv/.stamp: $(POLITY_XLSX)
+data/input/polity/csv/.stamp: $(POLITY_ZIP)
 	@mkdir -p data/input/polity/csv
-	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/polity/csv
+	unzip -o -q -j "$<" "*.csv" -x "*/._*" -d data/input/polity/csv
 	@for f in data/input/polity/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
@@ -252,12 +252,12 @@ data/input/polity/xml/.stamp: data/input/polity/csv/.stamp
 
 data/output/polity/rdf/.stamp: data/input/polity/xml/.stamp
 	@mkdir -p data/output/polity/rdf
-	$(RUN_X3ML) data/input/polity/xml Sheet_1_Polities.xml data/mappings/polity/Mapping411.x3ml data/output/polity/rdf 411_polities
-	$(RUN_X3ML) data/input/polity/xml Sheet_2_Polity_Labels.xml data/mappings/polity/Mapping413.x3ml data/output/polity/rdf 413_polity_labels
-	$(RUN_X3ML) data/input/polity/xml Sheet_3_Rulerships.xml data/mappings/polity/Mapping520.x3ml data/output/polity/rdf 520_rulerships
-	$(RUN_X3ML) data/input/polity/xml Sheet_4_Rulership_Labels.xml data/mappings/polity/Mapping601.x3ml data/output/polity/rdf 601_rulership_labels
-	$(RUN_X3ML) data/input/polity/xml Sheet_5_Rulers.xml data/mappings/polity/Mapping602.x3ml data/output/polity/rdf 602_rulers
-	$(RUN_X3ML) data/input/polity/xml Sheet_7_Succession.xml data/mappings/polity/Mapping521.x3ml data/output/polity/rdf 521_succession
+	$(RUN_X3ML) data/input/polity/xml Polities.xml data/mappings/polity/Mapping411.x3ml data/output/polity/rdf 411_polities
+	$(RUN_X3ML) data/input/polity/xml "Polity Labels.xml" data/mappings/polity/Mapping413.x3ml data/output/polity/rdf 413_polity_labels
+	$(RUN_X3ML) data/input/polity/xml Rulerships.xml data/mappings/polity/Mapping520.x3ml data/output/polity/rdf 520_rulerships
+	$(RUN_X3ML) data/input/polity/xml "Rulerships Labels.xml" data/mappings/polity/Mapping601.x3ml data/output/polity/rdf 601_rulership_labels
+	$(RUN_X3ML) data/input/polity/xml Rulers.xml data/mappings/polity/Mapping602.x3ml data/output/polity/rdf 602_rulers
+	$(RUN_X3ML) data/input/polity/xml Succession.xml data/mappings/polity/Mapping521.x3ml data/output/polity/rdf 521_succession
 	@touch $@
 
 data/output/polity/polity.ttl: data/output/polity/rdf/.stamp

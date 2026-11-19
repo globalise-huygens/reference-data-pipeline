@@ -108,6 +108,112 @@
                     </entity>
                 </target_node>
             </domain>
+            <link template="SRDF.752_topographical_status">
+                <path>
+                    <source_relation>
+                        <relation>ccodes[text()]</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>aaao:ZP85i_is_topographical_subject_of</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>ccodes[text()]</source_node>
+                    <target_node>
+                        <entity>
+                            <type>aaao:ZE44_Topographical_Status</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">place</arg>
+                                <arg name="hierarchy_id" type="xpath">../glob_id/text()</arg>
+                                <arg name="term_simple" type="constant">present_day_country_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_TwoArgumentsLabel">
+                                <arg name="premise" type="constant">Topographical Status of</arg>
+                                <arg name="text" type="xpath">../pref_label/text()</arg>
+                                <arg name="premise1" type="constant">as overlapping with present day country</arg>
+                                <arg name="text1" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300387506</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">country</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                            <additional>
+                                <relationship>aaao:ZP88_ascribes_topographical_relation</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P121_overlaps_with</arg>
+                                    </instance_generator>
+                                </entity>
+                            </additional>
+                            <additional>
+                                <relationship>aaao:ZP77_ascribes_place</relationship>
+                                <entity>
+                                    <type>crm:E53_Place</type>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">place</arg>
+                                        <arg name="hierarchy_id" type="xpath">text()</arg>
+                                        <arg name="term_simple" type="constant">country</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                    </instance_generator>
+                                    <label_generator name="Custom_SimpleLabel">
+                                        <arg name="label" type="xpath">text()</arg>
+                                    </label_generator>
+                                    <additional>
+                                        <relationship>crm:P1_is_identified_by</relationship>
+                                        <entity>
+                                            <type>crm:E42_Identifier</type>
+                                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                                <arg name="hierarchy" type="constant">place</arg>
+                                                <arg name="hierarchy_id" type="xpath">text()</arg>
+                                                <arg name="term_simple" type="constant">country_code_identifier</arg>
+                                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                            </instance_generator>
+                                            <label_generator name="Literal">
+                                                <arg name="text" type="xpath">text()</arg>
+                                                <arg name="language" type="constant"/>
+                                            </label_generator>
+                                            <additional>
+                                                <relationship>crm:P2_has_type</relationship>
+                                                <entity>
+                                                    <type>crm:E55_Type</type>
+                                                    <instance_generator name="Custom_URIorUUID">
+                                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300458903</arg>
+                                                    </instance_generator>
+                                                    <label_generator name="Literal">
+                                                        <arg name="text" type="constant">ISO 3166-1 alpha-2 code</arg>
+                                                        <arg name="language" type="constant"/>
+                                                    </label_generator>
+                                                </entity>
+                                            </additional>
+                                            <additional>
+                                                <relationship>crm:P190_has_symbolic_content</relationship>
+                                                <entity>
+                                                    <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                                                    <instance_generator name="Literal">
+                                                        <arg name="text" type="xpath">text()</arg>
+                                                        <arg name="language" type="constant"/>
+                                                    </instance_generator>
+                                                </entity>
+                                            </additional>
+                                        </entity>
+                                    </additional>
+                                </entity>
+                            </additional>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
             <link template="">
                 <path>
                     <source_relation>
@@ -1690,12 +1796,11 @@
                     <target_node>
                         <entity variable="esta_place">
                             <type>crm:E53_Place</type>
-                            <instance_generator name="Custom_EntityURI">
-                                <arg name="hierarchy" type="constant">place</arg>
-                                <arg name="hierarchy_id" type="xpath">text()</arg>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
-                                <arg name="text" type="constant">ESTA</arg>
+                                <arg name="text" type="xpath">../esta_id_label/text()</arg>
                                 <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
@@ -1758,7 +1863,7 @@
                                 <arg name="text" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
-                                <arg name="text" type="constant">GeoNames</arg>
+                                <arg name="text" type="xpath">../geonames_id_label/text()</arg>
                                 <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>

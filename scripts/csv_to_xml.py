@@ -112,6 +112,10 @@ def parse_args(args_list: list[str] | None = None) -> argparse.Namespace:
         action="store_true",
         help="Treat a pipe character as a value separator and emit repeated XML elements for each item.",
     )
+    parser.add_argument(
+        "--split-commas-column",
+        help="Emit separate XML elements for comma-separated values in this column.",
+    )
     return parser.parse_args(args_list)
 
 
@@ -198,6 +202,7 @@ def write_item(
     ordered_columns: list[str],
     elem_tags: list[tuple[str, str]] | None = None,
     split_pipe_values: bool = False,
+    split_commas_column: str | None = None,
 ) -> None:
     """
     Write a single CSV row dictionary as an XML item element.
@@ -208,6 +213,7 @@ def write_item(
         ordered_columns (list[str]): Ordered list of column header names.
         elem_tags (list[tuple[str, str]], optional): Pre-computed (column, xml_element_name) pairs.
         split_pipe_values (bool): Whether to treat pipe-separated values as repeated XML values.
+        split_commas_column (str | None): Column whose comma-separated values become separate elements.
 
     Examples:
         >>> import io
@@ -221,36 +227,24 @@ def write_item(
         '  <item>\\n    <name>alpha</name>\\n  </item>\\n  <item>\\n    <name>beta</name>\\n  </item>\\n'
     """
 
-    if split_pipe_values:
-        expanded_rows = expand_row_by_pipe_values(row, ordered_columns)
-        if len(expanded_rows) > 1:
-            for expanded_row in expanded_rows:
-                handle.write("  <item>\n")
-                if elem_tags is None:
-                    elem_tags = [
-                        (col, xml_element_name(col)) for col in ordered_columns
-                    ]
-                for col, element_name in elem_tags:
-                    value = (expanded_row.get(col) or "").strip()
-                    if value:
-                        handle.write(
-                            f"    <{element_name}>{escape(value)}</{element_name}>\n"
-                        )
-                    else:
-                        handle.write(f"    <{element_name}></{element_name}>\n")
-                handle.write("  </item>\n")
-            return
-
-    handle.write("  <item>\n")
     if elem_tags is None:
         elem_tags = [(col, xml_element_name(col)) for col in ordered_columns]
-    for col, element_name in elem_tags:
-        value = (row.get(col) or "").strip()
-        if value:
-            handle.write(f"    <{element_name}>{escape(value)}</{element_name}>\n")
-        else:
-            handle.write(f"    <{element_name}></{element_name}>\n")
-    handle.write("  </item>\n")
+    expanded_rows = (
+        expand_row_by_pipe_values(row, ordered_columns) if split_pipe_values else [row]
+    )
+    rows = expanded_rows if len(expanded_rows) > 1 else [row]
+    for expanded_row in rows:
+        handle.write("  <item>\n")
+        for col, element_name in elem_tags:
+            value = (expanded_row.get(col) or "").strip()
+            values = (
+                [part.strip() for part in value.split(",") if part.strip()] or [""]
+                if col == split_commas_column
+                else [value]
+            )
+            for part in values:
+                handle.write(f"    <{element_name}>{escape(part)}</{element_name}>\n")
+        handle.write("  </item>\n")
 
 
 def csv_to_xml(
@@ -258,6 +252,7 @@ def csv_to_xml(
     output_path: str,
     rows_per_file: int,
     split_pipe_values: bool = False,
+    split_commas_column: str | None = None,
 ) -> None:
     """
     Convert CSV file to XML items, splitting into multiple files if row count exceeds chunk limit.
@@ -267,6 +262,7 @@ def csv_to_xml(
         output_path (str): Target XML output path.
         rows_per_file (int): Maximum rows per XML chunk file.
         split_pipe_values (bool): Whether to split pipe-delimited cell values into repeated XML elements.
+        split_commas_column (str | None): Column whose comma-separated values become separate elements.
 
     Raises:
         ValueError: If rows_per_file is non-positive or CSV has no headers.
@@ -312,6 +308,7 @@ def csv_to_xml(
                 ordered,
                 elem_tags,
                 split_pipe_values=split_pipe_values,
+                split_commas_column=split_commas_column,
             )
             rows_in_current_file += 1
             total_rows += 1
@@ -439,6 +436,9 @@ def main() -> int:
     args = parse_args()
 
     if args.person_chunking:
+        if args.split_commas_column:
+            print("Error: --split-commas-column is not supported with --person-chunking.")
+            return 1
         csv_dir = os.path.abspath(os.path.expanduser(args.input_csv))
         xml_dir = (
             os.path.abspath(os.path.expanduser(args.output_xml))
@@ -477,7 +477,13 @@ def main() -> int:
             return 0
 
     try:
-        csv_to_xml(input_path, output_path, args.rows_per_file, args.split_pipes)
+        csv_to_xml(
+            input_path,
+            output_path,
+            args.rows_per_file,
+            args.split_pipes,
+            args.split_commas_column,
+        )
     except ValueError as err:
         print(f"Error: {err}")
         return 1

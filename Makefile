@@ -157,7 +157,11 @@ data/input/place/xml/.stamp: data/input/place/csv/.stamp
 	@for f in data/input/place/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			stem=$$(basename "$$f" .csv); \
-			$(PYTHON) scripts/csv_to_xml.py --split-pipes --skip-existing "$$f" "data/input/place/xml/$${stem}.xml"; \
+			if [ "$$stem" = "places" ]; then \
+				$(PYTHON) scripts/csv_to_xml.py --split-pipes --split-commas-column ccodes --skip-existing "$$f" "data/input/place/xml/$${stem}.xml"; \
+			else \
+				$(PYTHON) scripts/csv_to_xml.py --split-pipes --skip-existing "$$f" "data/input/place/xml/$${stem}.xml"; \
+			fi; \
 		fi; \
 	done
 	@touch $@

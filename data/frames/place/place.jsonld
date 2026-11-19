@@ -60,6 +60,10 @@
     "is_topographical_subject_of": {
         "@embed": "@always",
         "_label": {},
+        "classified_as": {
+            "@embed": "@always",
+            "_label": {}
+        },
         "ascribes_topographical_relation": {
             "@embed": "@always",
             "_label": {}

@@ -97,9 +97,9 @@
                             <arg name="hierarchy_id" type="xpath">ID/text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_TwoArgumentsLabel">
-                            <arg name="premise" type="constant">Conversion of Currency</arg>
+                            <arg name="premise" type="constant">Conversion of</arg>
                             <arg name="text" type="xpath">from_unit_standard/text()</arg>
-                            <arg name="premise1" type="constant">to Currency</arg>
+                            <arg name="premise1" type="constant">to</arg>
                             <arg name="text1" type="xpath">to_unit_standard/text()</arg>
                         </label_generator>
                     </entity>
@@ -126,9 +126,9 @@
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Value Exchange of Currency</arg>
+                                <arg name="premise" type="constant">Value Exchange of</arg>
                                 <arg name="text" type="xpath">../from_unit_standard/text()</arg>
-                                <arg name="premise1" type="constant">to Currency</arg>
+                                <arg name="premise1" type="constant">to</arg>
                                 <arg name="text1" type="xpath">../to_unit_standard/text()</arg>
                             </label_generator>
                         </entity>
@@ -206,9 +206,9 @@
                                 <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Timespan for the Conversion of Currency</arg>
+                                <arg name="premise" type="constant">Timespan for the Conversion of</arg>
                                 <arg name="text" type="xpath">../from_unit_standard/text()</arg>
-                                <arg name="premise1" type="constant">to Currency</arg>
+                                <arg name="premise1" type="constant">to</arg>
                                 <arg name="text1" type="xpath">../to_unit_standard/text()</arg>
                             </label_generator>
                         </entity>
@@ -231,9 +231,9 @@
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Location Status for the Conversion of Currency</arg>
+                                <arg name="premise" type="constant">Location Status for the Conversion of</arg>
                                 <arg name="text" type="xpath">../from_unit_standard/text()</arg>
-                                <arg name="premise1" type="constant">to Currency</arg>
+                                <arg name="premise1" type="constant">to</arg>
                                 <arg name="text1" type="xpath">../to_unit_standard/text()</arg>
                             </label_generator>
                             <additional>
@@ -288,9 +288,9 @@
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Comments About Conversion of Currency</arg>
+                                <arg name="premise" type="constant">Comments About Conversion of</arg>
                                 <arg name="text" type="xpath">../from_unit_standard/text()</arg>
-                                <arg name="premise1" type="constant">to Currency</arg>
+                                <arg name="premise1" type="constant">to</arg>
                                 <arg name="text1" type="xpath">../to_unit_standard/text()</arg>
                             </label_generator>
                             <additional>

@@ -379,9 +379,9 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -419,9 +419,9 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -455,9 +455,9 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -491,9 +491,9 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -527,9 +527,9 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Built">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -681,7 +681,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -722,7 +722,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -807,7 +807,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -823,7 +823,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -934,9 +934,9 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -974,9 +974,9 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1010,9 +1010,9 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1046,9 +1046,9 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1082,9 +1082,9 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Destroyed">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1236,7 +1236,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1277,7 +1277,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1362,7 +1362,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -1378,7 +1378,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1489,9 +1489,9 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1529,9 +1529,9 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1565,9 +1565,9 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1601,9 +1601,9 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1637,9 +1637,9 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Sinking">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -1791,7 +1791,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1832,7 +1832,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1917,7 +1917,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -1933,7 +1933,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -2045,9 +2045,9 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2085,9 +2085,9 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2125,9 +2125,9 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2161,9 +2161,9 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2197,9 +2197,9 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="Wrecked">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2351,7 +2351,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -2392,7 +2392,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -2477,7 +2477,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -2493,7 +2493,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -2604,9 +2604,9 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="End">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2644,9 +2644,9 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="End">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2680,9 +2680,9 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="End">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2716,9 +2716,9 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="End">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2752,9 +2752,9 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="End">../event_type/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -2906,7 +2906,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -2947,7 +2947,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -3032,7 +3032,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -3048,7 +3048,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -3069,7 +3069,7 @@
                             <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
-                            <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                            <arg name="label" type="xpath">../source_citation/text()</arg>
                         </label_generator>
                     </entity>
                 </target_node>
@@ -3137,7 +3137,7 @@
                             <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
-                            <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                            <arg name="label" type="xpath">../source_citation/text()</arg>
                         </label_generator>
                         <additional>
                             <relationship>crm:P2_has_type</relationship>
@@ -3222,10 +3222,10 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -3253,7 +3253,7 @@
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
-                                <arg name="text" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="text" type="xpath">text()</arg>
                                 <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>

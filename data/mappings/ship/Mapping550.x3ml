@@ -212,7 +212,7 @@
                         <relation>../earliest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -251,7 +251,7 @@
                         <relation>../latest_begin</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -284,7 +284,7 @@
                         <relation>../earliest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -317,7 +317,7 @@
                         <relation>../latest_end</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -647,10 +647,10 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>

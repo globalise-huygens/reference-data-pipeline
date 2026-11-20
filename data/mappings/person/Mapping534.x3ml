@@ -123,13 +123,13 @@
                                 </if>
                             </and>
                         </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
@@ -174,13 +174,13 @@
                         <relation>location_in_reconstruction_source[text()]</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
@@ -269,13 +269,13 @@
                         <relation>location_in_reconstruction_source[text()]</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
@@ -320,17 +320,17 @@
                         <relation>otherPerson</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_ThreeArgumentsLabel">
-                                <arg name="premise" type="constant">Family Status of Person identified by</arg>
+                                <arg name="premise" type="constant">Social Relation Status of Person identified by</arg>
                                 <arg name="text" type="xpath">../URI/text()</arg>
                                 <arg name="premise1" type="constant">as</arg>
                                 <arg name="text1" type="xpath">../original_label/text()</arg>
@@ -338,7 +338,7 @@
                                 <arg name="text2" type="xpath">../otherPerson/text()</arg>
                             </label_generator>
                         </entity>
-                        <relationship>aaao:ZP30_ascribes_relative</relationship>
+                        <relationship>aaao:ZP103_ascribes_social_relation_target</relationship>
                     </target_relation>
                 </path>
                 <range>
@@ -363,17 +363,17 @@
                         <relation>relation</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
-                        <relationship>aaao:ZP31_ascribes_familial_relation</relationship>
+                        <relationship>aaao:ZP104_ascribes_social_relation</relationship>
                     </target_relation>
                 </path>
                 <range>
@@ -398,32 +398,32 @@
                         <relation>startDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -435,7 +435,7 @@
                             <instance_generator name="Custom_GenericThreeArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
@@ -484,32 +484,32 @@
                         <relation>endDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -521,7 +521,7 @@
                             <instance_generator name="Custom_GenericThreeArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">timespan</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
@@ -570,32 +570,32 @@
                         <relation>startDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -622,32 +622,32 @@
                         <relation>startDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -674,32 +674,32 @@
                         <relation>endDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -726,32 +726,32 @@
                         <relation>endDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P4_has_time-span</relationship>
-                        <entity variable="family_status_timespan">
+                        <entity variable="social_relation_status_timespan">
                             <type>crm:E52_Time-Span</type>
-                            <instance_generator name="Custom_FamilyStatusTimespanHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusTimespanHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="timespan" type="constant">timespan</arg>
                                 <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Time-span of the Family Status</arg>
+                                <arg name="premise" type="constant">Time-span of the Social Relation Status</arg>
                                 <arg name="text" type="xpath">../original_label/text()</arg>
                                 <arg name="premise1" type="constant">of Person identified by</arg>
                                 <arg name="text1" type="xpath">../URI/text()</arg>
@@ -781,24 +781,24 @@
                         <if>
                             <exists>text()</exists>
                         </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
                         <entity>
                             <type>crm:E33_Linguistic_Object</type>
-                            <instance_generator name="Custom_FamilyStatusStatementHashedURI">
+                            <instance_generator name="Custom_SocialRelationStatusStatementHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="statement" type="constant">statement</arg>
                                 <arg name="statement_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -848,14 +848,14 @@
                         <if>
                             <exists>../annotationDate/text()</exists>
                         </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -864,7 +864,7 @@
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">familly_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -925,14 +925,14 @@
                                 </if>
                             </and>
                         </if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -976,14 +976,14 @@
                         <relation>location_in_observation_source[text()]</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -1071,14 +1071,14 @@
                         <relation>location_in_observation_source[text()]</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
-                            <instance_generator name="Custom_FamilyStatusHashedURI">
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
+                            <instance_generator name="Custom_SocialRelationStatusHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="family_status" type="constant">family_status</arg>
-                                <arg name="family_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="social_relation_status" type="constant">social_relation_status</arg>
+                                <arg name="social_relation_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
                         <relationship>crm:P67i_is_referred_to_by</relationship>
@@ -1123,13 +1123,13 @@
                     </source_relation>
                     <target_relation>
                         <if><exists>text()</exists></if>
-                        <relationship>aaao:ZP29i_is_familial_subject_of</relationship>
-                        <entity variable="family_status">
-                            <type>aaao:ZE10_Family_Status</type>
+                        <relationship>aaao:ZP105i_is_social_relation_subject_of</relationship>
+                        <entity variable="social_relation_status">
+                            <type>aaao:ZE55_Social_Relation_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                             </instance_generator>
                         </entity>
@@ -1139,7 +1139,7 @@
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
                                 <arg name="hierarchy" type="constant">person</arg>
                                 <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
-                                <arg name="term_simple" type="constant">family_status</arg>
+                                <arg name="term_simple" type="constant">social_relation_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>

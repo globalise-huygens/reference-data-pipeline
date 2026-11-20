@@ -330,7 +330,7 @@
                         <relation>Begin_Year_Earliest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -377,7 +377,7 @@
                         <relation>End_Year_Latest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -416,7 +416,7 @@
                         <relation>End_Year_Earliest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -455,7 +455,7 @@
                         <relation>Begin_Year_Latest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -494,7 +494,7 @@
                         <relation>Period_Source_Page</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -585,7 +585,7 @@
                         <relation>Period_Remarks</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -657,7 +657,7 @@
                         <relation>Period_Source</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -670,7 +670,7 @@
                                     </not>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
@@ -963,7 +963,7 @@
                         <relation>Period_Source_Page</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP79i_was_population_of</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP79i_was_population_of</relationship>
                         <entity variable="population_existence">
                             <type>aaao:ZE38_Population_Existence</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">

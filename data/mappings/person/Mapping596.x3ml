@@ -244,9 +244,9 @@
                         <relation>startDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -331,7 +331,7 @@
                         <relation>endDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -340,7 +340,7 @@
                                     <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -425,9 +425,9 @@
                         <relation>startDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -478,7 +478,7 @@
                         <relation>startDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -487,7 +487,7 @@
                                     <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -538,7 +538,7 @@
                         <relation>endDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -547,7 +547,7 @@
                                     <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -598,7 +598,7 @@
                         <relation>endDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -607,7 +607,7 @@
                                     <equals value="http://www.cidoc-crm.org/cidoc-crm/e67_birth">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P98i_was_born</relationship>
                         <entity variable="birth">
                             <type>crm:E67_Birth</type>
@@ -1398,9 +1398,9 @@
                         <relation>startDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1485,7 +1485,7 @@
                         <relation>endDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -1494,7 +1494,7 @@
                                     <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1579,9 +1579,9 @@
                         <relation>startDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1632,7 +1632,7 @@
                         <relation>startDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -1641,7 +1641,7 @@
                                     <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1692,7 +1692,7 @@
                         <relation>endDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -1701,7 +1701,7 @@
                                     <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -1752,7 +1752,7 @@
                         <relation>endDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -1761,7 +1761,7 @@
                                     <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
                                 </if>
                             </and>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>

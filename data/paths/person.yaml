@@ -5,7 +5,7 @@ fields:
   id:
     - "$.id"
 
-  identifier:
+  identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
 
@@ -17,7 +17,7 @@ fields:
   related: []
 
 facets:
-  place:
+  place: # keyword
     # Follows -> place (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:index/page-1.json)
     - "$.born.took_place_at[?(@.type=='Place')].id"
     - "$.died.took_place_at[?(@.type=='Place')].id"
@@ -25,32 +25,32 @@ facets:
     - "$.is_social_status_subject_of[*].has_geographic_scope[?(@.type=='Place')].id"
     - "$.is_classificatory_subject_of[*].has_geographic_scope[?(@.type=='Place')].id"
 
-  date_begin:
+  date_begin: # date
     - "$.born.timespan.begin_of_the_begin"
     - "$.born.timespan.end_of_the_begin"
     - "$.is_social_status_subject_of[*].timespan.begin_of_the_begin"
     - "$.is_social_status_subject_of[*].timespan.end_of_the_begin"
 
-  date_end:
+  date_end: # date
     - "$.died.timespan.end_of_the_end"
     - "$.died.timespan.begin_of_the_end"
     - "$.is_social_status_subject_of[*].timespan.end_of_the_end"
     - "$.is_social_status_subject_of[*].timespan.begin_of_the_end"
 
-  person_relation:
-    - "$.is_familial_subject_of[*].ascribes_familial_relation[*].id"
+  person_relation: # keyword
+    - "$.is_social_relation_subject_of[*].ascribes_social_relation[*].id"
 
-  person_identity:
+  person_identity: # keyword
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  person_occupation:
+  person_occupation: # keyword
     # Follows $.is_social_status_subject_of[*].ascribes_social_status[*].id -> concept (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json)
     - "$.is_social_status_subject_of[*].ascribes_social_status[?(@.inScheme[*].id=='https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:225cef07-5b8e-4a8b-a141-2471a0cffce8')].id"
 
-  person_status:
+  person_status: # keyword
     # Follows $.is_social_status_subject_of[*].ascribes_social_status[*].id -> concept (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json)
     - "$.is_social_status_subject_of[*].ascribes_social_status[?(@.inScheme[*].id!='https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:225cef07-5b8e-4a8b-a141-2471a0cffce8')].id"
 
-  person_polity:
+  person_polity: # keyword
     # Follows $.is_sovereign_of[*] -> sovereign (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/sovereign:index/page-1.json) -> exercised_authority_of[*].id -> polity (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/polity:index/page-1.json)
     - "$.is_sovereign_of[*].exercised_authority_of[*].id"

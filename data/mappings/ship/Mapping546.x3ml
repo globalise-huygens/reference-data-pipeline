@@ -356,7 +356,7 @@
                         <relation>departure_date_earliest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -391,7 +391,7 @@
                         <relation>departure_date_latest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -426,7 +426,7 @@
                         <relation>arrival_date_earliest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -461,7 +461,7 @@
                         <relation>arrival_date_latest</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
@@ -496,9 +496,9 @@
                         <relation>departure_date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -529,13 +529,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>departure date original</constant>
+                                        <constant>original departure date</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">departure date original</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">https://digitaalerfgoed.poolparty.biz/globalise/908727cf-cc2e-449a-b65f-6a8d759fef2e</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">departure date original</arg>
+                                        <arg name="text" type="constant">original departure date</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -563,9 +563,9 @@
                         <relation>arrival_date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P4_has_time-span</relationship>
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
@@ -596,13 +596,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>arrival date original</constant>
+                                        <constant>original arrival date</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">arrival date original</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">https://digitaalerfgoed.poolparty.biz/globalise/5d420674-a270-4e42-aad8-0acde51c2947</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">arrival date original</arg>
+                                        <arg name="text" type="constant">original arrival date</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -736,7 +736,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(../source_citation/text(), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -817,7 +817,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(../citation/text(), ',')</arg>
+                                <arg name="label" type="xpath">../citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -963,7 +963,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(text(), ',')</arg>
+                                <arg name="label" type="xpath">text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P1_is_identified_by</relationship>
@@ -973,10 +973,10 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring-before(text(), ',')</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(text(), ',')</arg>
+                                <arg name="label" type="xpath">text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1004,7 +1004,7 @@
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
-                                <arg name="text" type="xpath">substring-before(text(), ',')</arg>
+                                <arg name="text" type="xpath">text()</arg>
                                 <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>

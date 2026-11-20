@@ -12,28 +12,6 @@
         "@embed": "@always",
         "_label": {}
     },
-    "has_exchange_value_subject": {
-        "@embed": "@always",
-        "_label": {},
-        "value": {},
-        "unit": {
-            "@embed": "@always",
-            "_label": {}
-        }
-    },
-    "ascribes_exchange_value_equivalent": {
-        "@embed": "@always",
-        "_label": {},
-        "value": {},
-        "unit": {
-            "@embed": "@always",
-            "_label": {}
-        }
-    },
-    "is_dimension_of_commodity_type": {
-        "@embed": "@always",
-        "_label": {}
-    },
     "timespan": {
         "@embed": "@always",
         "_label": {},
@@ -45,5 +23,9 @@
         "_label": {},
         "content": {},
         "note": {}
+    },
+    "intentionally_initiated": {
+        "@embed": "@always",
+        "_label": {}
     }
 }

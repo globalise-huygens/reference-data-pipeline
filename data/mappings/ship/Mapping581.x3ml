@@ -237,7 +237,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/ship_id</source_node>
+                <source_node>/data/item/ship_id[../event_type='Hired']</source_node>
                 <target_node>
                     <if>
                         <equals value="Hired">../event_type/text()</equals>
@@ -284,7 +284,7 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>(../date_original|../earliest_begin|../latest_begin|../earliest_end|../latest_end)/text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                     </target_relation>
                 </path>
                 <range>
@@ -318,7 +318,7 @@
                         <relation>../owner_uri_former</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP52_intentionally_terminated</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP52_intentionally_terminated</relationship>
                         <entity variable="former">
                             <type>aaao:ZE7_Custodial_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
@@ -375,7 +375,7 @@
                         <relation>../owner_uri_new</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP42_intentionally_initiated</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP42_intentionally_initiated</relationship>
                         <entity variable="current">
                             <type>aaao:ZE7_Custodial_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
@@ -432,7 +432,7 @@
                         <relation>../ship_id</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP52_intentionally_terminated</relationship>
+                        <if><exists>../owner_uri_former/text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP52_intentionally_terminated</relationship>
                         <entity variable="former">
                             <type>aaao:ZE7_Custodial_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
@@ -482,7 +482,7 @@
                         <relation>../ship_id</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP42_intentionally_initiated</relationship>
+                        <if><exists>../owner_uri_new/text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP42_intentionally_initiated</relationship>
                         <entity variable="current">
                             <type>aaao:ZE7_Custodial_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
@@ -669,7 +669,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -710,7 +710,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -795,7 +795,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -811,7 +811,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -820,7 +820,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/ship_id</source_node>
+                <source_node>/data/item/ship_id[../event_type='Bought' or ../event_type='ChangeOfPossession' or ../event_type='Buying']</source_node>
                 <target_node>
                     <if>
                         <or>
@@ -877,7 +877,7 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>(../date_original|../earliest_begin|../latest_begin|../earliest_end|../latest_end)/text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                     </target_relation>
                 </path>
                 <range>
@@ -911,7 +911,7 @@
                         <relation>../owner_uri_former</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP52_intentionally_terminated</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP52_intentionally_terminated</relationship>
                         <entity>
                             <type>aaao:ZE8_Ownership_Status</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -970,7 +970,7 @@
                         <relation>../owner_uri_new</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>aaao:ZP42_intentionally_initiated</relationship>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if><relationship>aaao:ZP42_intentionally_initiated</relationship>
                         <entity>
                             <type>aaao:ZE8_Ownership_Status</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
@@ -1166,7 +1166,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1207,7 +1207,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1292,7 +1292,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -1308,7 +1308,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1317,7 +1317,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/ship_id</source_node>
+                <source_node>/data/item/ship_id[../event_type='Captured']</source_node>
                 <target_node>
                     <if>
                         <equals value="Captured">../event_type/text()</equals>
@@ -1364,7 +1364,7 @@
                         <relation>../date_original</relation>
                     </source_relation>
                     <target_relation>
-                        <relationship>crm:P4_has_time-span</relationship>
+                        <if><exists>(../date_original|../earliest_begin|../latest_begin|../earliest_end|../latest_end)/text()[normalize-space(.)!='']</exists></if><relationship>crm:P4_has_time-span</relationship>
                     </target_relation>
                 </path>
                 <range>
@@ -1585,7 +1585,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1626,7 +1626,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -1711,7 +1711,7 @@
                                 <arg name="premise" type="constant">Entry</arg>
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="premise1" type="constant">of</arg>
-                                <arg name="text1" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="text1" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                         <relationship>crm:P106i_forms_part_of</relationship>
@@ -1727,7 +1727,7 @@
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">../source_citation/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -1736,7 +1736,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/date_original</source_node>
+                <source_node>/data/item/date_original[../event_type='Hired'][normalize-space(concat(.,../earliest_begin,../latest_begin,../earliest_end,../latest_end))!='']</source_node>
                 <target_node>
                     <entity variable="timespan_transfer">
                         <type>crm:E52_Time-Span</type>
@@ -1893,7 +1893,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/date_original</source_node>
+                <source_node>/data/item/date_original[../event_type='Bought' or ../event_type='ChangeOfPossession' or ../event_type='Buying'][normalize-space(concat(.,../earliest_begin,../latest_begin,../earliest_end,../latest_end))!='']</source_node>
                 <target_node>
                     <entity variable="timespan_dec_ac">
                         <type>crm:E52_Time-Span</type>
@@ -2050,7 +2050,7 @@
         </mapping>
         <mapping>
             <domain>
-                <source_node>/data/item/date_original</source_node>
+                <source_node>/data/item/date_original[../event_type='Captured'][normalize-space(concat(.,../earliest_begin,../latest_begin,../earliest_end,../latest_end))!='']</source_node>
                 <target_node>
                     <entity variable="timespan_acquisition">
                         <type>crm:E52_Time-Span</type>
@@ -2216,7 +2216,7 @@
                             <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
-                            <arg name="label" type="xpath">substring-before(concat(../source_citation/text(), ','), ',')</arg>
+                            <arg name="label" type="xpath">../source_citation/text()</arg>
                         </label_generator>
                         <additional>
                             <relationship>crm:P2_has_type</relationship>
@@ -2301,10 +2301,10 @@
                                 <arg name="hierarchy" type="constant">textualwork</arg>
                                 <arg name="hierarchy_id_HASHED_CONTENTS" type="xpath">../source/text()</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="label" type="xpath">text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -2332,7 +2332,7 @@
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
                             <instance_generator name="Literal">
-                                <arg name="text" type="xpath">substring-before(concat(text(), ','), ',')</arg>
+                                <arg name="text" type="xpath">text()</arg>
                                 <arg name="language" type="constant"/>
                             </instance_generator>
                         </entity>

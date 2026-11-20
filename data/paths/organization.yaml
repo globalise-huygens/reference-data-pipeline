@@ -5,7 +5,7 @@ fields:
   id:
     - "$.id"
 
-  identifier:
+  identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
 
@@ -22,20 +22,20 @@ fields:
     # - "$.is_social_relation_subject_of[*].ascribes_social_relation_target[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
-  place:
+  place: # keyword
     - "$.is_intentional_subject_of[*].ascribes_place[*].id"
 
-  date_begin:
+  date_begin: # date
     - "$.is_classificatory_subject_of[*].timespan.begin_of_the_begin"
     - "$.is_classificatory_subject_of[*].timespan.end_of_the_begin"
     - "$.is_intentional_subject_of[*].timespan.begin_of_the_begin"
     - "$.is_intentional_subject_of[*].timespan.end_of_the_begin"
 
-  date_end:
+  date_end: # date
     - "$.is_classificatory_subject_of[*].timespan.end_of_the_end"
     - "$.is_classificatory_subject_of[*].timespan.begin_of_the_end"
     - "$.is_intentional_subject_of[*].timespan.end_of_the_end"
     - "$.is_intentional_subject_of[*].timespan.begin_of_the_end"
 
-  organization_classification:
+  organization_classification: # keyword
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"

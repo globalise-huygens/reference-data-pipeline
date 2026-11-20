@@ -301,9 +301,9 @@
                         <relation>startDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>
@@ -387,9 +387,9 @@
                         <relation>endDate</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>
@@ -473,9 +473,9 @@
                         <relation>startDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>
@@ -525,9 +525,9 @@
                         <relation>startDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>
@@ -577,9 +577,9 @@
                         <relation>endDate_min</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>
@@ -629,9 +629,9 @@
                         <relation>endDate_max</relation>
                     </source_relation>
                     <target_relation>
-                        <if>
+                        <if><and><if>
                             <exists>text()</exists>
-                        </if>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
                         <entity variable="appellative_status">
                             <type>aaao:ZE2_Appellative_Status</type>

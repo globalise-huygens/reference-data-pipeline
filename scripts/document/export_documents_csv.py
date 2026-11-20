@@ -32,8 +32,8 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-TYPE_URI_PREFIX = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:"
-PLACE_URI_PREFIX = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:"
+TYPE_URI_PREFIX = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:"
+PLACE_URI_PREFIX = "https://id.globalise.nl/hdl:20.500.14722/place:"
 
 # Database setup
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
@@ -76,7 +76,7 @@ def get_settlement(document):
         >>> loc = SimpleNamespace(id="uuid-1", glob_id="GLOB2_1848", labels=[SimpleNamespace(label="Batavia")])
         >>> doc = SimpleNamespace(location=loc)
         >>> get_settlement(doc)
-        ('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB2_1848', 'Batavia')
+        ('https://id.globalise.nl/hdl:20.500.14722/place:GLOB2_1848', 'Batavia')
     """
     loc = getattr(document, "location", None)
     if loc:
@@ -442,10 +442,10 @@ def export_documents_csv(
         ...     export_documents_csv(out_dir, gzipped=False, s3_client=mock_s3, s3_config=mock_cfg, database_url=db_file)
         ...     print(uploaded["Key"])
         identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method,languages
-        doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,Segmentation model,""
-        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,"Batavia,Bantam,GLOB_3","https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_2,https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_3",Segmentation model,"fra,nld"
+        doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1,Segmentation model,""
+        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,"Batavia,Bantam,GLOB_3","https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_2,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_3",Segmentation model,"fra,nld"
         5
-        Bantam https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_2
+        Bantam https://id.globalise.nl/hdl:20.500.14722/place:GLOB_2
         '' ''
         True
         objects/document/documents.csv

@@ -39,10 +39,10 @@ from utils import (
 )
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DEFAULT_CONTEXT = "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json"
-PROJECT_URI_TOKEN = "data.globalise.huygens.knaw.nl"
-URI_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
-SARI_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+DEFAULT_CONTEXT = "https://id.globalise.nl/hdl:20.500.14722/contexts/globalise.json"
+PROJECT_URI_TOKEN = "id.globalise.nl"
+URI_BASE = "https://id.globalise.nl/hdl:20.500.14722/"
+SARI_BASE = "https://id.globalise.nl/hdl:20.500.14722/"
 
 OA = Namespace("http://www.w3.org/ns/oa#")
 CRM = Namespace("http://www.cidoc-crm.org/cidoc-crm/")
@@ -350,7 +350,21 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
         options={"documentLoader": DOCUMENT_LOADER},
     )
 
-    return framed
+    return omit_blank_node_ids(framed)
+
+
+def omit_blank_node_ids(value: Any) -> Any:
+    if isinstance(value, dict):
+        identifier = value.get("id", value.get("@id"))
+        if isinstance(identifier, str) and identifier.startswith("_:"):
+            value.pop("id", None)
+            value.pop("@id", None)
+        for child in value.values():
+            omit_blank_node_ids(child)
+    elif isinstance(value, list):
+        for child in value:
+            omit_blank_node_ids(child)
+    return value
 
 
 def load_corpus_annotations(
@@ -1265,7 +1279,7 @@ def extract_title(
     Examples:
         >>> from rdflib import Graph, URIRef, Literal, RDFS
         >>> g = Graph()
-        >>> r = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:0001")
+        >>> r = URIRef("https://id.globalise.nl/hdl:20.500.14722/person:0001")
         >>> _ = g.add((r, RDFS.label, Literal("John Doe")))
         >>> extract_title(g, r)
         'John Doe'

@@ -11,8 +11,8 @@ from tqdm import tqdm
 
 from models import get_document_id
 
-BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
-GLOBALISE_CONTEXT = "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json"
+BASE_URI = "https://id.globalise.nl/hdl:20.500.14722"
+GLOBALISE_CONTEXT = "https://id.globalise.nl/hdl:20.500.14722/contexts/globalise.json"
 ANNO_CONTEXT = "http://www.w3.org/ns/anno.jsonld"
 LDP_CONTEXT = "http://www.w3.org/ns/ldp.jsonld"
 DEFAULT_INVENTORY_PARQUET = os.environ.get(

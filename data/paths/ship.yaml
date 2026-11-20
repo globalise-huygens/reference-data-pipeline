@@ -1,5 +1,5 @@
 type: Ship
-catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/ship:index/page-1.json
+catalog: https://id.globalise.nl/hdl:20.500.14722/ship:index/page-1.json
 
 fields:
   id:
@@ -8,7 +8,7 @@ fields:
   identifier:
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].identified_by[?(@.type=='Identifier')].content"
 
   title:
@@ -23,14 +23,14 @@ facets:
     - "$.produced_by.took_place_at[*].id"
     - "$.taken_out_of_existence_by.took_place_at[*].id"
     - "$.is_ownership_subject_of[*].has_geographic_scope[*].id"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].moved_from.id"
     - "$.moved_by[*].moved_to.id"
 
   date_begin: # + P124i_was_transformed_by + P24i_changed_ownership_through + P30i_custody_transferred_through
     - "$.produced_by.timespan.begin_of_the_begin"
     - "$.produced_by.timespan.end_of_the_begin"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].timespan.begin_of_the_begin"
     - "$.moved_by[*].timespan.end_of_the_begin"
 
@@ -39,7 +39,7 @@ facets:
     - "$.taken_out_of_existence_by.timespan.begin_of_the_end"
     - "$.produced_by.timespan.end_of_the_end"
     - "$.produced_by.timespan.begin_of_the_end"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].timespan.end_of_the_end"
     - "$.moved_by[*].timespan.begin_of_the_end"
 
@@ -50,8 +50,8 @@ facets:
     - "$.is_ownership_subject_of[*].ascribes_owner[*].id"
     - "$.is_custodial_subject_of[*].ascribes_custodian[*].id"
 
-  ship_departure: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+  ship_departure: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].moved_from.id"
 
-  ship_arrival: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/voyage:index/page-1.json)
+  ship_arrival: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].moved_to.id"

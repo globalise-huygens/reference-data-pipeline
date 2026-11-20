@@ -61,7 +61,7 @@ from export import (
 from document_annotations import export_document_annotations
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
-BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
+BASE_URI = "https://id.globalise.nl/hdl:20.500.14722"
 
 
 @contextmanager
@@ -152,7 +152,7 @@ def build_nested_series_member(s) -> Dict[str, Any]:
     for inv in sorted(getattr(s, "inventories", None) or [], key=natural_inv_sort_key):
         members.append(
             {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inv.inventory_number}",
                 "type": "CuratedHolding",
                 "_label": f"Inventory {inv.inventory_number}",
                 "identified_by": [
@@ -283,7 +283,7 @@ def export_documents(
 
     set_data = {
         "@context": "https://linked.art/ns/v1/linked-art.json",
-        "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:set",
+        "id": "https://id.globalise.nl/hdl:20.500.14722/inventory:set",
         "type": "Set",
         "_label": "Set of the Globalise corpus",
         "identified_by": [
@@ -308,7 +308,7 @@ def export_documents(
                         "type": "DigitalObject",
                         "access_point": [
                             {
-                                "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:collection",
+                                "id": "https://id.globalise.nl/hdl:20.500.14722/inventory:collection",
                                 "type": "DigitalObject",  # Also Manifest?
                                 "_label": "IIIF Collection of all inventories in the Globalise corpus",
                             }

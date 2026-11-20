@@ -29,44 +29,44 @@ class CatalogValidationTests(unittest.TestCase):
         # Valid URIs
         self.assertTrue(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123"
+                "https://id.globalise.nl/hdl:20.500.14722/person:123"
             )
         )
         self.assertTrue(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB2_1001"
+                "https://id.globalise.nl/hdl:20.500.14722/place:GLOB2_1001"
             )
         )
         self.assertTrue(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/catalog.json"
+                "https://id.globalise.nl/hdl:20.500.14722/catalog.json"
             )
         )
         self.assertTrue(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:collection"
+                "https://id.globalise.nl/hdl:20.500.14722/inventory:collection"
             )
         )
 
         # Invalid / empty URIs
         self.assertFalse(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:"
+                "https://id.globalise.nl/hdl:20.500.14722/person:"
             )
         )
         self.assertFalse(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:"
+                "https://id.globalise.nl/hdl:20.500.14722/place:"
             )
         )
         self.assertFalse(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:"
+                "https://id.globalise.nl/hdl:20.500.14722/group:"
             )
         )
         self.assertFalse(
             is_valid_entity_uri(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+                "https://id.globalise.nl/hdl:20.500.14722/"
             )
         )
         self.assertFalse(is_valid_entity_uri(""))
@@ -84,7 +84,7 @@ class CatalogValidationTests(unittest.TestCase):
             is_empty_jsonld(
                 {
                     "@context": "https://example.org/context.json",
-                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:",
+                    "id": "https://id.globalise.nl/hdl:20.500.14722/person:",
                     "type": "Person",
                 }
             )
@@ -93,7 +93,7 @@ class CatalogValidationTests(unittest.TestCase):
             is_empty_jsonld(
                 {
                     "@context": "https://example.org/context.json",
-                    "@id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:",
+                    "@id": "https://id.globalise.nl/hdl:20.500.14722/place:",
                     "@type": "Place",
                 }
             )
@@ -104,7 +104,7 @@ class CatalogValidationTests(unittest.TestCase):
             is_empty_jsonld(
                 {
                     "@context": "https://example.org/context.json",
-                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123",
+                    "id": "https://id.globalise.nl/hdl:20.500.14722/person:123",
                     "type": "Person",
                     "label": "John Doe",
                 }
@@ -116,7 +116,7 @@ class CatalogValidationTests(unittest.TestCase):
             target_file = os.path.join(tmpdir, "person.json")
             empty_doc = {
                 "@context": "https://example.org/context.json",
-                "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:",
+                "id": "https://id.globalise.nl/hdl:20.500.14722/person:",
                 "type": "Person",
             }
             output_framed_json(empty_doc, "person.json", tmpdir, False, None, None)
@@ -124,7 +124,7 @@ class CatalogValidationTests(unittest.TestCase):
 
             valid_doc = {
                 "@context": "https://example.org/context.json",
-                "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123",
+                "id": "https://id.globalise.nl/hdl:20.500.14722/person:123",
                 "type": "Person",
                 "label": "John Doe",
             }
@@ -159,15 +159,15 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertEqual(page_doc["totalItems"], 2)
             member_ids = [m["@id"] for m in members]
             self.assertIn(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:Person_1",
+                "https://id.globalise.nl/hdl:20.500.14722/person:Person_1",
                 member_ids,
             )
             self.assertIn(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:Person_2",
+                "https://id.globalise.nl/hdl:20.500.14722/person:Person_2",
                 member_ids,
             )
             self.assertNotIn(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:",
+                "https://id.globalise.nl/hdl:20.500.14722/person:",
                 member_ids,
             )
 
@@ -175,13 +175,13 @@ class CatalogValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             g = Graph()
             r1 = URIRef(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB2_1001"
+                "https://id.globalise.nl/hdl:20.500.14722/place:GLOB2_1001"
             )
             r2 = URIRef(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:"
+                "https://id.globalise.nl/hdl:20.500.14722/place:"
             )  # Empty URI
             r3 = URIRef(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB2_1002"
+                "https://id.globalise.nl/hdl:20.500.14722/place:GLOB2_1002"
             )
             g.add((r1, RDFS.label, Literal("Batavia")))
             g.add((r3, RDFS.label, Literal("Bantam")))
@@ -200,7 +200,7 @@ class CatalogValidationTests(unittest.TestCase):
             self.assertEqual(page_doc["totalItems"], 2)
             member_ids = [m["@id"] for m in members]
             self.assertNotIn(
-                "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:",
+                "https://id.globalise.nl/hdl:20.500.14722/place:",
                 member_ids,
             )
 

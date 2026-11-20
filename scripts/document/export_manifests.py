@@ -38,7 +38,7 @@ from export import (
 )
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
-BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
+BASE_URI = "https://id.globalise.nl/hdl:20.500.14722"
 
 
 def export_all_manifests(output_dir, gzipped, s3_client, s3_config):

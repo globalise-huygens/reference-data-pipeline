@@ -1,5 +1,5 @@
 {
-    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@context": "https://id.globalise.nl/hdl:20.500.14722/contexts/globalise.json",
     "type": "Concept",
     "_label": {},
     "prefLabel": {},
@@ -9,6 +9,7 @@
     "broader": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "Concept",
         "prefLabel": {},
         "altLabel": {},
@@ -23,6 +24,7 @@
     "narrower": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "Concept",
         "prefLabel": {},
         "altLabel": {},
@@ -31,6 +33,7 @@
     "related": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "Concept",
         "prefLabel": {},
         "altLabel": {},
@@ -44,6 +47,7 @@
     "inScheme": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "ConceptScheme",
         "prefLabel": {},
         "_label": {}
@@ -51,6 +55,7 @@
     "memberOf": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "skos:Collection",
         "prefLabel": {},
         "_label": {}
@@ -58,6 +63,7 @@
     "topConceptOf": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "ConceptScheme",
         "prefLabel": {},
         "_label": {}
@@ -68,6 +74,7 @@
     "references": {},
     "subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "type": {}
     }

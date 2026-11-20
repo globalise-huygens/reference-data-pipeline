@@ -1,5 +1,5 @@
 type: Place
-catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:index/page-1.json
+catalog: https://id.globalise.nl/hdl:20.500.14722/place:index/page-1.json
 
 fields:
   id:
@@ -15,7 +15,7 @@ fields:
   description: []
 
   related: # full-text
-    # Follows $.is_topographical_subject_of[*].ascribes_place[*].id -> place (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:index/page-1.json)
+    # Follows $.is_topographical_subject_of[*].ascribes_place[*].id -> place (https://id.globalise.nl/hdl:20.500.14722/place:index/page-1.json)
     - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:

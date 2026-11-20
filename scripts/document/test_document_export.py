@@ -185,7 +185,7 @@ class DocumentExportTests(unittest.TestCase):
         identifiers = document_identified_by_jsonld(document)
         self.assertEqual([item["content"] for item in identifiers], ["179762", "42"])
         expected = {
-            "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
+            "id": "https://id.globalise.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
             "type": "Type",
             "_label": "NT Index Identifier",
         }

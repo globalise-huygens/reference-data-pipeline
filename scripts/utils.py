@@ -24,7 +24,7 @@ from rdflib import BNode, Dataset, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import DCTERMS, SKOS
 from rdflib.term import Node
 
-PROJECT_URI_TOKEN = "data.globalise.huygens.knaw.nl"
+PROJECT_URI_TOKEN = "id.globalise.nl"
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
@@ -221,13 +221,13 @@ def is_valid_entity_uri(uri: str | Node | None) -> bool:
         bool: True if URI is valid and non-empty, False otherwise.
 
     Examples:
-        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123")
+        >>> is_valid_entity_uri("https://id.globalise.nl/hdl:20.500.14722/person:123")
         True
-        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:")
+        >>> is_valid_entity_uri("https://id.globalise.nl/hdl:20.500.14722/person:")
         False
-        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:")
+        >>> is_valid_entity_uri("https://id.globalise.nl/hdl:20.500.14722/place:")
         False
-        >>> is_valid_entity_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/")
+        >>> is_valid_entity_uri("https://id.globalise.nl/hdl:20.500.14722/")
         False
         >>> is_valid_entity_uri("")
         False
@@ -239,7 +239,7 @@ def is_valid_entity_uri(uri: str | Node | None) -> bool:
     s = str(uri).strip()
     if not s:
         return False
-    if s.rstrip("/") == "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722":
+    if s.rstrip("/") == "https://id.globalise.nl/hdl:20.500.14722":
         return False
     if s.endswith(":"):
         return False
@@ -276,9 +276,9 @@ def is_empty_jsonld(framed: Any) -> bool:
         True
         >>> is_empty_jsonld({"@context": "https://example.org/context.json"})
         True
-        >>> is_empty_jsonld({"@context": "...", "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:", "type": "Person"})
+        >>> is_empty_jsonld({"@context": "...", "id": "https://id.globalise.nl/hdl:20.500.14722/person:", "type": "Person"})
         True
-        >>> is_empty_jsonld({"@context": "...", "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123", "type": "Person"})
+        >>> is_empty_jsonld({"@context": "...", "id": "https://id.globalise.nl/hdl:20.500.14722/person:123", "type": "Person"})
         False
     """
     if not framed:
@@ -304,7 +304,7 @@ def local_identifier(uri: str | Node) -> str:
         str: Trailing segment of the URI.
 
     Examples:
-        >>> local_identifier("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123")
+        >>> local_identifier("https://id.globalise.nl/hdl:20.500.14722/person:123")
         'person:123'
         >>> local_identifier("https://example.org/thesaurus/concept_42/")
         'concept_42'
@@ -345,7 +345,7 @@ def local_identifier_path(uri: str | Node) -> str:
         str: Relative directory path for the resource.
 
     Examples:
-        >>> local_identifier_path("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123")
+        >>> local_identifier_path("https://id.globalise.nl/hdl:20.500.14722/person:123")
         'person/123'
     """
     tail = local_identifier(uri)
@@ -682,7 +682,7 @@ def convert_html_literals_to_markdown(
 
 
 OLD_BASE = "https://globalise.example.com/"
-SARI_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+SARI_BASE = "https://id.globalise.nl/hdl:20.500.14722/"
 
 
 @lru_cache(maxsize=None)
@@ -697,12 +697,12 @@ def transform_sari_uri(uri: str) -> str:
         str: Transformed URI string with colon and hash fragment formatting.
 
     Examples:
-        >>> transform_sari_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person/vocop_cluster_134981")
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:vocop_cluster_134981'
-        >>> transform_sari_uri("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person/vocop_cluster_134981/social_status/HASH")
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:vocop_cluster_134981#social_status:HASH'
+        >>> transform_sari_uri("https://id.globalise.nl/hdl:20.500.14722/person/vocop_cluster_134981")
+        'https://id.globalise.nl/hdl:20.500.14722/person:vocop_cluster_134981'
+        >>> transform_sari_uri("https://id.globalise.nl/hdl:20.500.14722/person/vocop_cluster_134981/social_status/HASH")
+        'https://id.globalise.nl/hdl:20.500.14722/person:vocop_cluster_134981#social_status:HASH'
         >>> transform_sari_uri("https://globalise.example.com/person/vocop_cluster_134981")
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:vocop_cluster_134981'
+        'https://id.globalise.nl/hdl:20.500.14722/person:vocop_cluster_134981'
     """
     if uri.startswith(OLD_BASE):
         uri = SARI_BASE + uri[len(OLD_BASE) :]
@@ -756,9 +756,9 @@ def normalize_uris(graph: Graph) -> int:
         >>> normalize_uris(g)
         1
         >>> sorted(str(s) for s in g.subjects())
-        ['https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1']
+        ['https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1']
         >>> sorted(str(o) for o in g.objects())
-        ['https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1#name:1']
+        ['https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1#name:1']
     """
     replacements: list[tuple[Node, Node, Node, Node, Node, Node]] = []
 
@@ -797,10 +797,10 @@ def convert_uris_to_bnodes(graph: Graph, uri_token: str = PROJECT_URI_TOKEN) -> 
     Examples:
         >>> from rdflib import Graph, Literal, URIRef, BNode, RDFS
         >>> g = Graph()
-        >>> project_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1#declarative_place:123")
-        >>> work_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54")
+        >>> project_uri = URIRef("https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1#declarative_place:123")
+        >>> work_uri = URIRef("https://id.globalise.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54")
         >>> external_uri = URIRef("https://example.org/place#1")
-        >>> root_uri = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/place:GLOB_1")
+        >>> root_uri = URIRef("https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1")
         >>> _ = g.add((root_uri, RDFS.seeAlso, project_uri))
         >>> _ = g.add((project_uri, RDFS.seeAlso, work_uri))
         >>> _ = g.add((project_uri, RDFS.label, Literal("Declarative Place")))
@@ -830,7 +830,7 @@ def convert_uris_to_bnodes(graph: Graph, uri_token: str = PROJECT_URI_TOKEN) -> 
                 uri_to_bnode[o] = BNode()
 
         # Textualworks
-        # e.g. <https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54>
+        # e.g. <https://id.globalise.nl/hdl:20.500.14722/textualwork:E792A556-6F6C-331F-995B-1FD6CCCD0E54>
         if isinstance(s, URIRef) and "textualwork:" in str(s) and uri_token in str(s):
             if s not in uri_to_bnode:
                 uri_to_bnode[s] = BNode()
@@ -860,7 +860,7 @@ def convert_uris_to_bnodes(graph: Graph, uri_token: str = PROJECT_URI_TOKEN) -> 
 OLD_CONCEPT_BASE_PATTERN = re.compile(
     r"^https?://digitaalerfgoed\.poolparty\.biz/globalise/(.*)$"
 )
-NEW_CONCEPT_BASE = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:"
+NEW_CONCEPT_BASE = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:"
 
 
 def load_concept_uri_replacements(
@@ -952,14 +952,14 @@ def replace_concept_uris(
     Examples:
         >>> from rdflib import Graph, URIRef, Literal
         >>> g = Graph()
-        >>> old_u = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:old")
-        >>> new_u = URIRef("https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:new")
+        >>> old_u = URIRef("https://id.globalise.nl/hdl:20.500.14722/thesaurus:old")
+        >>> new_u = URIRef("https://id.globalise.nl/hdl:20.500.14722/thesaurus:new")
         >>> p = URIRef("https://example.org/property")
         >>> _ = g.add((URIRef("https://example.org/entity/1"), p, old_u))
         >>> replace_concept_uris(g, mapping={old_u: new_u})
         1
         >>> list(g.objects(URIRef("https://example.org/entity/1"), p))
-        [rdflib.term.URIRef('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:new')]
+        [rdflib.term.URIRef('https://id.globalise.nl/hdl:20.500.14722/thesaurus:new')]
     """
     if mapping is None:
         mapping = (
@@ -1015,9 +1015,9 @@ def get_canvas_uri_from_annotation_id(annotation_id: str) -> str:
 
     Examples:
         >>> get_canvas_uri_from_annotation_id(
-        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
+        ...     "https://id.globalise.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
         ... )
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:NL-HaNA_1.04.02_1053_0003'
+        'https://id.globalise.nl/hdl:20.500.14722/canvas:NL-HaNA_1.04.02_1053_0003'
     """
     canvas_id = annotation_id.split("#")[0].replace(
         "/annotations:entities:", "/canvas:"
@@ -1038,13 +1038,13 @@ def get_manifest_uri_from_annotation_id(annotation_id: str) -> str:
 
     Examples:
         >>> get_manifest_uri_from_annotation_id(
-        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
+        ...     "https://id.globalise.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0003#annotation:251"
         ... )
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:1053.manifest'
+        'https://id.globalise.nl/hdl:20.500.14722/inventory:1053.manifest'
         >>> get_manifest_uri_from_annotation_id(
-        ...     "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_10098A_0001#annotation:10"
+        ...     "https://id.globalise.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_10098A_0001#annotation:10"
         ... )
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:10098A.manifest'
+        'https://id.globalise.nl/hdl:20.500.14722/inventory:10098A.manifest'
     """
     base = annotation_id.split("#")[0]
 
@@ -1065,7 +1065,7 @@ def generate_hydra_index_pages(
     uri_prefix: str,
     emit_fn: Any,
     page_size: int = 1000,
-    base_uri: str = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722",
+    base_uri: str = "https://id.globalise.nl/hdl:20.500.14722",
 ) -> int:
     """
     Generate Hydra Collection paginated index pages for a category of resources.

@@ -1,61 +1,74 @@
 {
-    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@context": "https://id.globalise.nl/hdl:20.500.14722/contexts/globalise.json",
     "@embed": "@always",
     "type": "Polity",
     "_label": {},
     "identified_by": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "content": {},
         "classified_as": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         }
     },
     "classified_as": {
         "@embed": "@always",
+        "id": {},
         "_label": {}
     },
     "part": {
         "@embed": "@always",
+        "id": {},
         "_label": {}
     },
     "part_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {}
     },
     "had_sovereign": {
         "@embed": "@always",
+        "id": {},
         "_label": {}
     },
     "had_subject_population": {
         "@embed": "@always",
+        "id": {},
         "_label": {}
     },
     "is_appellative_subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "ascribes_appellation": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "classified_as": {
                 "@embed": "@always",
+                "id": {},
                 "_label": {}
             }
         },
         "ascribes_appellative_relation": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "timespan": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "begin_of_the_begin": {},
             "end_of_the_end": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -63,23 +76,28 @@
     },
     "is_classificatory_subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "ascribes_classification": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "ascribes_classification_relation": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "timespan": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "begin_of_the_begin": {},
             "end_of_the_end": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -87,17 +105,21 @@
     },
     "is_similarity_subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "ascribes_similarity_target": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "ascribes_similarity_relation": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -105,15 +127,18 @@
     },
     "was_population_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "timespan": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "begin_of_the_begin": {},
             "end_of_the_end": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -121,23 +146,28 @@
     },
     "is_physical_locative_subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "ascribes_place": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "ascribes_location_relation": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "timespan": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "begin_of_the_begin": {},
             "end_of_the_end": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -145,23 +175,28 @@
     },
     "is_successor_status_subject_of": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "ascribes_succeeded_sovereignty": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "ascribes_succession_relation": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "timespan": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "begin_of_the_begin": {},
             "end_of_the_end": {}
         },
         "referred_to_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {},
             "note": {}
@@ -169,19 +204,23 @@
     },
     "referred_to_by": {
         "@embed": "@always",
+        "id": {},
         "_label": {},
         "content": {},
         "note": {},
         "classified_as": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "part_of": {
             "@embed": "@always",
+            "id": {},
             "_label": {}
         },
         "identified_by": {
             "@embed": "@always",
+            "id": {},
             "_label": {},
             "content": {}
         }

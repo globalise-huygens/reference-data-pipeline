@@ -1,5 +1,5 @@
 type: Group
-catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json
+catalog: https://id.globalise.nl/hdl:20.500.14722/group:index/page-1.json
 
 fields:
   id:
@@ -16,9 +16,9 @@ fields:
     - "$.referred_to_by[*].content"
 
   related: # TODO: Labels van relations-between-organisations
-    # # Follows $.is_membership_subject_of[*].ascribes_group[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
+    # # Follows $.is_membership_subject_of[*].ascribes_group[*].id -> group (https://id.globalise.nl/hdl:20.500.14722/group:index/page-1.json)
     # - "$.is_membership_subject_of[*].ascribes_group[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
-    # # Follows $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id -> group (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/group:index/page-1.json)
+    # # Follows $.is_social_relation_subject_of[*].ascribes_social_relation_target[*].id -> group (https://id.globalise.nl/hdl:20.500.14722/group:index/page-1.json)
     # - "$.is_social_relation_subject_of[*].ascribes_social_relation_target[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:

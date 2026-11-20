@@ -1,7 +1,7 @@
 type:
   - FinancialExchange
 catalog:
-  - https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/conversion:index/page-1.json
+  - https://id.globalise.nl/hdl:20.500.14722/conversion:index/page-1.json
 
 fields:
   id:

@@ -151,7 +151,7 @@ def other_replacements(graph: Graph, category: str) -> None:
 
     Examples:
         >>> from rdflib import BNode
-        >>> base = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+        >>> base = "https://id.globalise.nl/hdl:20.500.14722/"
         >>> markers = ("DAS_ship", "gzm_ship", "monsoon_traders")
         >>> places = [URIRef(base + "place:" + marker) for marker in markers]
         >>> ships = [URIRef(base + "ship:" + marker) for marker in markers]

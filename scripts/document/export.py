@@ -97,8 +97,8 @@ def load_scan_entities_from_parquet(
         ...     parquet_path = Path(directory) / "links.parquet"
         ...     _ = duckdb.execute(
         ...         f"COPY (SELECT * FROM (VALUES "
-        ...         f"('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0001#annotation:1', 'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123', 'Person', 'Anna Bijns'), "
-        ...         f"('https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0001#annotation:2', 'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:123', 'Person', 'Anna Bijns') "
+        ...         f"('https://id.globalise.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0001#annotation:1', 'https://id.globalise.nl/hdl:20.500.14722/person:123', 'Person', 'Anna Bijns'), "
+        ...         f"('https://id.globalise.nl/hdl:20.500.14722/annotations:entities:NL-HaNA_1.04.02_1053_0001#annotation:2', 'https://id.globalise.nl/hdl:20.500.14722/person:123', 'Person', 'Anna Bijns') "
         ...         f") AS t(annotation_id, entity_uri, entity_type, entity_label)) TO '{parquet_path}' (FORMAT PARQUET)"
         ...     )
         ...     res = load_scan_entities_from_parquet(str(parquet_path))
@@ -369,7 +369,7 @@ def get_annotationcollections_for_inventory(
         if getattr(scan, "has_transcriptions", False):
             transcription_pages.append(
                 {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:transcriptions:{scan.filename}",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:transcriptions:{scan.filename}",
                     "type": "AnnotationPage",
                     "label": {"en": [f"Transcriptions of scan {scan.filename}"]},
                 }
@@ -377,7 +377,7 @@ def get_annotationcollections_for_inventory(
         if getattr(scan, "has_entities", False):
             entity_pages.append(
                 {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:{scan.filename}",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:entities:{scan.filename}",
                     "type": "AnnotationPage",
                     "label": {"en": [f"Entities identified on scan {scan.filename}"]},
                 }
@@ -385,7 +385,7 @@ def get_annotationcollections_for_inventory(
         if getattr(scan, "has_events", False):
             event_pages.append(
                 {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:events:{scan.filename}",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:events:{scan.filename}",
                     "type": "AnnotationPage",
                     "label": {"en": [f"Events identified on scan {scan.filename}"]},
                 }
@@ -397,7 +397,7 @@ def get_annotationcollections_for_inventory(
             "http://www.w3.org/ns/anno.jsonld",
             "http://www.w3.org/ns/ldp.jsonld",
         ],
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.transcriptions",
+        "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.transcriptions",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Transcriptions of the inventory",
         # "total": len(
@@ -414,7 +414,7 @@ def get_annotationcollections_for_inventory(
             "http://www.w3.org/ns/anno.jsonld",
             "http://www.w3.org/ns/ldp.jsonld",
         ],
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.entities",
+        "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.entities",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Entities in the inventory",
         # "total": len(
@@ -431,7 +431,7 @@ def get_annotationcollections_for_inventory(
             "http://www.w3.org/ns/anno.jsonld",
             "http://www.w3.org/ns/ldp.jsonld",
         ],
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.events",
+        "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations.events",
         "type": ["BasicContainer", "AnnotationCollection"],
         "label": "Events in the inventory",
         # "total": len(
@@ -455,7 +455,7 @@ def inventory_to_annotations_jsonld(inventory: Inventory) -> Dict[str, Any]:
     )
     return {
         "@context": "https://linked.art/ns/v1/linked-art.json",
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations",
+        "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations",
         "type": "Set",
         "_label": f"Annotations for Inventory {inventory.inventory_number}",
         "member": collections,
@@ -483,7 +483,7 @@ def scan_to_jsonld(scan) -> Dict[str, Any]:
             {
                 "type": "Identifier",
                 "classified_as": {
-                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:cae829ae-d2ed-4970-99f6-ceb987a4a1fb",
+                    "id": "https://id.globalise.nl/hdl:20.500.14722/thesaurus:cae829ae-d2ed-4970-99f6-ceb987a4a1fb",
                     "type": "Type",
                     "_label": "National Archives image identifier",
                 },
@@ -558,7 +558,7 @@ def settlement_to_place_jsonld(settlement) -> Dict[str, Any]:
 
     if getattr(settlement, "glob_id", None):
         place_obj["id"] = (
-            "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+            "https://id.globalise.nl/hdl:20.500.14722/"
             f"place:{settlement.glob_id}"
         )
 
@@ -695,7 +695,7 @@ def document_classifications_jsonld(document) -> List[Dict[str, Any]]:
         >>> dt = SimpleNamespace(id="uuid-1", pref_label_en="Letter", pref_label_nl="Brief")
         >>> doc = SimpleNamespace(document_types_linked=[SimpleNamespace(document_type=dt)])
         >>> document_classifications_jsonld(doc)
-        [{'id': 'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:uuid-1', 'type': 'Type', '_label': 'Letter (document type)', 'prefLabel': [{'@language': 'nl', '@value': 'Brief'}, {'@language': 'en', '@value': 'Letter'}]}]
+        [{'id': 'https://id.globalise.nl/hdl:20.500.14722/thesaurus:uuid-1', 'type': 'Type', '_label': 'Letter (document type)', 'prefLabel': [{'@language': 'nl', '@value': 'Brief'}, {'@language': 'en', '@value': 'Letter'}]}]
         >>> document_classifications_jsonld(SimpleNamespace(document_types_linked=[]))
         []
     """
@@ -713,7 +713,7 @@ def document_classifications_jsonld(document) -> List[Dict[str, Any]]:
                 pref_label.append({"@language": "en", "@value": dt.pref_label_en})
             classified.append(
                 {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:{dt.id}",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/thesaurus:{dt.id}",
                     "type": "Type",
                     "_label": f"{doc_type_str} (document type)",
                     "prefLabel": pref_label,
@@ -955,13 +955,13 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
 
         external_context = getattr(external, "context", None) or ""
         if "TANAP" in external_context:
-            identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:5874f9e1-5645-4b4c-a61b-cc17ebde93a0"
+            identifier_type = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:5874f9e1-5645-4b4c-a61b-cc17ebde93a0"
             identifier_type_label = "TANAP Identifier"
         elif "OBP_INDEX" in external_context:
-            identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:2122ddb6-c61f-4288-a592-4970bf42fc13"
+            identifier_type = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:2122ddb6-c61f-4288-a592-4970bf42fc13"
             identifier_type_label = "OBP Index Identifier"
         elif external_context == "NT":
-            identifier_type = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051"
+            identifier_type = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051"
             identifier_type_label = "NT Index Identifier"
         else:
             identifier_type = None
@@ -985,7 +985,7 @@ def document_identified_by_jsonld(document) -> List[Dict[str, Any]]:
                 "type": "Identifier",
                 "content": str(document.nt_index),
                 "classified_as": {
-                    "id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
+                    "id": "https://id.globalise.nl/hdl:20.500.14722/thesaurus:bdb0e8ac-b1d7-47b6-84d0-cf99b667d051",
                     "type": "Type",
                     "_label": "NT Index Identifier",
                 },
@@ -1219,7 +1219,7 @@ def document_entities_to_jsonld(
                 "_label": entity_label,
                 "subject_of": [
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}#annotations-{entity_id_part}",
+                        "id": f"https://id.globalise.nl/hdl:20.500.14722/document:{doc_id}#annotations-{entity_id_part}",
                         "type": ["DigitalObject", "AnnotationPage"],
                         "_label": f"All annotations of entity {entity_label} in document {doc_id}",
                         "items": annotations,
@@ -1373,9 +1373,9 @@ def document_physical_to_jsonld(
         ... )
         >>> res_scans = document_physical_to_jsonld(doc_with_scans, links_parquet={})
         >>> res_scans["id"]
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330'
+        'https://id.globalise.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330'
         >>> res_scans["carries"]["referred_to_by"][0]["id"]
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330.annotations'
+        'https://id.globalise.nl/hdl:20.500.14722/document:NL-HaNA_1.04.02_4088_0329-0330.annotations'
     """
     is_root = _root_id is None
     doc_id = get_document_id(document)
@@ -1384,7 +1384,7 @@ def document_physical_to_jsonld(
         _fragments = subdocument_fragments(document)
     assert _root_id is not None and _fragments is not None
     base_id = (
-        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{_root_id}"
+        f"https://id.globalise.nl/hdl:20.500.14722/document:{_root_id}"
     )
     if not is_root:
         base_id = f"{base_id}#{_fragments[document.id]}"
@@ -1400,7 +1400,7 @@ def document_physical_to_jsonld(
     if is_root:
         carries["referred_to_by"] = [
             {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}.annotations",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/document:{doc_id}.annotations",
                 "type": "Set",
                 "_label": f"Entity and event annotations for Document {doc_id}",
             }
@@ -1514,7 +1514,7 @@ def series_to_jsonld(series) -> Dict[str, Any]:
         parent = series.part_of
         member_of = [
             {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/series:{parent.id}",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/series:{parent.id}",
                 "type": "Set",
                 "_label": getattr(parent, "title", None) or "",
             }
@@ -1573,7 +1573,7 @@ def series_chain(series) -> Dict[str, Any]:
 
 def inventory_to_jsonld(inventory) -> Dict[str, Any]:
     """Serialize an inventory whose documents are selected segmentation roots."""
-    inv_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}"
+    inv_id = f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}"
 
     # Include all titles from inventory
     title_obj = []
@@ -1655,7 +1655,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
 
             # Get the shallow document reference (without pages) to avoid huge payloads
             doc_ref = {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{doc_id}",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/document:{doc_id}",
                 "type": "PhysicalHumanMadeThing",
                 "_label": title,
             }
@@ -1707,13 +1707,13 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
                     "access_point": [
                         # Shallow reference
                         {
-                            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest",
+                            "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest",
                             "type": ["DigitalObject", "Manifest"],
                             "_label": f"IIIF Manifest for Inventory {inventory.inventory_number}",
                         }
                         # inventory_to_manifest_jsonld(
                         #     inventory,
-                        #     manifest_uri=f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest",
+                        #     manifest_uri=f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest",
                         # )
                     ],
                     "conforms_to": [
@@ -1777,7 +1777,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
             "_label": "Textual content of the inventory",
             "digitally_carried_by": {
                 # txt file
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.txt",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.txt",
                 "type": "DigitalObject",
                 "_label": f"Plain text of Inventory {inventory.inventory_number}",
                 "classified_as": {
@@ -1789,7 +1789,7 @@ def inventory_to_jsonld(inventory) -> Dict[str, Any]:
             },
             "referred_to_by": [  # All annotations
                 {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.annotations",
                     "type": "Set",
                     "_label": f"Annotations for Inventory {inventory.inventory_number}",
                 }
@@ -1851,7 +1851,7 @@ def create_document_range(
         ... )
         >>> r = create_document_range(doc, inventory_number="3598")
         >>> r["id"]
-        'https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:3598.manifest/range/NL-HaNA_1.04.02_3598_0795-0943'
+        'https://id.globalise.nl/hdl:20.500.14722/inventory:3598.manifest/range/NL-HaNA_1.04.02_3598_0795-0943'
         >>> r["label"]["en"]
         ['Resoluties']
         >>> [m for m in r["metadata"] if m["label"]["en"] == ["Language"]]
@@ -1874,7 +1874,7 @@ def create_document_range(
         label_text = f"Document {doc_id}"
 
     doc_range: Dict[str, Any] = {
-        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{range_id}",
+        "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory_number}.manifest/range/{range_id}",
         "type": "Range",
         "label": {"en": [label_text]},
         "metadata": [],
@@ -2013,7 +2013,7 @@ def create_document_range(
     # Link to the document physical metadata (via seeAlso)
     doc_range["seeAlso"] = [
         {
-            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/document:{identifier}",
+            "id": f"https://id.globalise.nl/hdl:20.500.14722/document:{identifier}",
             "type": "PhysicalHumanMadeThing",
             "label": {"en": ["Document metadata"]},
         }
@@ -2038,7 +2038,7 @@ def create_document_range(
                 and getattr(page.scan, "filename", None)
             ):
                 # Reference the canvas by scan identifier
-                canvas_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:{page.scan.filename}"
+                canvas_id = f"https://id.globalise.nl/hdl:20.500.14722/canvas:{page.scan.filename}"
                 # Only add if not already in the list
                 if canvas_id not in seen_canvas_ids:
                     seen_canvas_ids.add(canvas_id)
@@ -2276,10 +2276,10 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             "http://iiif.io/api/presentation/3/context.json",
             {
                 "transcription-diplomatic": {
-                    "@id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:transcription-diplomatic"
+                    "@id": "https://id.globalise.nl/hdl:20.500.14722/thesaurus:transcription-diplomatic"
                 },
                 "transcription-normalized": {
-                    "@id": "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:transcription-normalized"
+                    "@id": "https://id.globalise.nl/hdl:20.500.14722/thesaurus:transcription-normalized"
                 },
             },
         ],
@@ -2319,7 +2319,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         "items": [],
         "seeAlso": [
             {
-                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}",
+                "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}",
                 "type": "CuratedHolding",
                 "label": {"en": ["Curated Holding metadata"]},
             }
@@ -2333,11 +2333,11 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         manifest["navDate"] = f"{inventory.date_end}T00:00:00"
 
     inventory_text_uri = (
-        f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+        f"https://id.globalise.nl/hdl:20.500.14722/"
         f"inventory:{inventory.inventory_number}.txt"
     )
     # inventory_htr_text_uri = (
-    #     f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/"
+    #     f"https://id.globalise.nl/hdl:20.500.14722/"
     #     f"inventory:{inventory.inventory_number}.htr.txt"
     # )
 
@@ -2347,7 +2347,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         # Sort scans by filename for consistent ordering
         sorted_scans = sorted(inventory.scans, key=lambda s: s.filename or "")
         for scan in sorted_scans:
-            canvas_id = f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/canvas:{scan.filename}"
+            canvas_id = f"https://id.globalise.nl/hdl:20.500.14722/canvas:{scan.filename}"
             # Determine recto/verso from related pages, if present
             rv_label = None
             if getattr(scan, "pages", None):
@@ -2402,11 +2402,11 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                 ],
                 "items": [
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:painting:{scan.filename}",
+                        "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:painting:{scan.filename}",
                         "type": "AnnotationPage",
                         "items": [
                             {
-                                "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:painting:{scan.filename}#annotation",
+                                "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:painting:{scan.filename}#annotation",
                                 "type": "Annotation",
                                 "motivation": "painting",
                                 "body": {
@@ -2440,7 +2440,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
 
             if has_normalized or has_diplomatic:
                 ap_text: Dict[str, Any] = {
-                    "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}",
+                    "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:text:{scan.filename}",
                     "type": "AnnotationPage",
                     "items": [],
                 }
@@ -2449,7 +2449,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                 if has_normalized:
                     ap_text["items"].append(
                         {
-                            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:text:{scan.filename}#annotation",
+                            "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:text:{scan.filename}#annotation",
                             "type": "Annotation",
                             "motivation": "describing",
                             "body": {
@@ -2478,7 +2478,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
                 if has_diplomatic:
                     ap_text["items"].append(
                         {
-                            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:htr:{scan.filename}#annotation",
+                            "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:htr:{scan.filename}#annotation",
                             "type": "Annotation",
                             "motivation": "describing",
                             "body": {
@@ -2509,7 +2509,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             if getattr(scan, "has_transcriptions", False):
                 annotations.append(
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:transcriptions:{scan.filename}",
+                        "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:transcriptions:{scan.filename}",
                         "type": "AnnotationPage",
                         "label": {"en": [f"Transcriptions of scan {scan.filename}"]},
                     }
@@ -2517,7 +2517,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             if getattr(scan, "has_entities", False):
                 annotations.append(
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:entities:{scan.filename}",
+                        "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:entities:{scan.filename}",
                         "type": "AnnotationPage",
                         "label": {
                             "en": [f"Entities identified on scan {scan.filename}"]
@@ -2527,7 +2527,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
             if getattr(scan, "has_events", False):
                 annotations.append(
                     {
-                        "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/annotations:events:{scan.filename}",
+                        "id": f"https://id.globalise.nl/hdl:20.500.14722/annotations:events:{scan.filename}",
                         "type": "AnnotationPage",
                         "label": {"en": [f"Events identified on scan {scan.filename}"]},
                     }
@@ -2610,7 +2610,7 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
     if getattr(inventory, "documents", None):
         # Create a top-level Range for table of contents
         top_range: Dict[str, Any] = {
-            "id": f"https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest/range/top",
+            "id": f"https://id.globalise.nl/hdl:20.500.14722/inventory:{inventory.inventory_number}.manifest/range/top",
             "type": "Range",
             "label": {"en": ["Table of Contents"], "nl": ["Inhoudsopgave"]},
             "items": [],

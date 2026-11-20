@@ -33,7 +33,7 @@ LINKS_PARQUET := data/input/links_data.parquet
 DOCUMENTS_DB_URL ?= sqlite:///data/input/document/globalise_documents.db
 
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
-NEW_BASE := https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:
+NEW_BASE := https://id.globalise.nl/hdl:20.500.14722/thesaurus:
 
 #------------------------------------------------------------
 

@@ -506,7 +506,7 @@
                                 <constant>certain</constant>
                             </instance_info>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:2679d175-6a27-42ed-a5f5-441fcf671152</arg>
+                                <arg name="text" type="constant">https://id.globalise.nl/hdl:20.500.14722/thesaurus:2679d175-6a27-42ed-a5f5-441fcf671152</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">certain</arg>
@@ -537,7 +537,7 @@
                                 <constant>uncertain</constant>
                             </instance_info>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:f58589a3-fe6a-4afc-96b8-862526e7d27d</arg>
+                                <arg name="text" type="constant">https://id.globalise.nl/hdl:20.500.14722/thesaurus:f58589a3-fe6a-4afc-96b8-862526e7d27d</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="constant">uncertain</arg>

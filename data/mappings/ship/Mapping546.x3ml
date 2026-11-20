@@ -273,7 +273,7 @@
                                         <constant>original name of place of departure</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:69f29243-2b19-4ac7-8f02-44e19e889b0f</arg>
+                                        <arg name="text" type="constant">https://id.globalise.nl/hdl:20.500.14722/thesaurus:69f29243-2b19-4ac7-8f02-44e19e889b0f</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">original name of place of departure</arg>
@@ -325,7 +325,7 @@
                                         <constant>original name of place of arrival</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:ace7f92c-4664-4075-a205-98adc4c88e3e</arg>
+                                        <arg name="text" type="constant">https://id.globalise.nl/hdl:20.500.14722/thesaurus:ace7f92c-4664-4075-a205-98adc4c88e3e</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">original name of place of arrival</arg>
@@ -532,7 +532,7 @@
                                         <constant>original departure date</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://digitaalerfgoed.poolparty.biz/globalise/908727cf-cc2e-449a-b65f-6a8d759fef2e</arg>
+                                        <arg name="text" type="constant">hhttps://id.globalise.nl/hdl:20.500.14722/908727cf-cc2e-449a-b65f-6a8d759fef2e</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">original departure date</arg>
@@ -599,7 +599,7 @@
                                         <constant>original arrival date</constant>
                                     </instance_info>
                                     <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">https://digitaalerfgoed.poolparty.biz/globalise/5d420674-a270-4e42-aad8-0acde51c2947</arg>
+                                        <arg name="text" type="constant">hhttps://id.globalise.nl/hdl:20.500.14722/5d420674-a270-4e42-aad8-0acde51c2947</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">original arrival date</arg>

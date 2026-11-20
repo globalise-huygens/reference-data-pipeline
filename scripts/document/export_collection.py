@@ -25,7 +25,7 @@ from utils import (
 from models import Inventory
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
-BASE_URI = "https://data.globalise.huygens.knaw.nl/hdl:20.500.14722"
+BASE_URI = "https://id.globalise.nl/hdl:20.500.14722"
 
 
 def natural_inv_sort_key(inv):

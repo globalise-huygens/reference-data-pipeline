@@ -1,5 +1,5 @@
 type: Polity
-catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/polity:index/page-1.json
+catalog: https://id.globalise.nl/hdl:20.500.14722/polity:index/page-1.json
 
 fields:
   id:
@@ -8,20 +8,20 @@ fields:
   identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
-    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://id.globalise.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[*].identified_by[?(@.type=='Identifier')].content"
-    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json)
+    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://id.globalise.nl/hdl:20.500.14722/person:index/page-1.json)
     - "$.was_subject_population_of[*].had_sovereign[*].identified_by[?(@.type=='Identifier')].content"
 
   title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
-    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://id.globalise.nl/hdl:20.500.14722/rulership:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
   description: []
 
   related: # full-text
-    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+    # Follows $.was_subject_population_of[*].had_sovereign[*].id -> person: person/*.json (https://id.globalise.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].had_sovereign[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
 
 facets:
@@ -40,12 +40,12 @@ facets:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
   polity_reign_classification: # keyword
-    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json & reign/*.json (https://id.globalise.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[*].is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  polity_ruler: # was_subject_population_of -> had_sovereign -> person (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
+  polity_ruler: # was_subject_population_of -> had_sovereign -> person (https://id.globalise.nl/hdl:20.500.14722/person:index/page-1.json) -> is_appellative_subject_of -> ascribes_appellation
     - "$.was_subject_population_of[*].had_sovereign[*].id"
 
   polity_dynasty: # keyword
-    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json (https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/rulership:index/page-1.json)
+    # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json (https://id.globalise.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300386176')].id"

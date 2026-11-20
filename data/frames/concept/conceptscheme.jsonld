@@ -1,5 +1,5 @@
 {
-    "@context": "https://objectstore.surf.nl/87435b768620494e8e911c83d1997f24:globalise-data/contexts/globalise.json",
+    "@context": "https://id.globalise.nl/hdl:20.500.14722/contexts/globalise.json",
     "type": "ConceptScheme",
     "_label": {},
     "prefLabel": {},
@@ -7,6 +7,7 @@
     "hasTopConcept": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "Concept",
         "prefLabel": {},
         "_label": {}
@@ -14,6 +15,7 @@
     "contains": {
         "@embed": "@always",
         "@explicit": true,
+        "id": {},
         "type": "Concept",
         "prefLabel": {},
         "_label": {}

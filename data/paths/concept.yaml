@@ -1,11 +1,11 @@
 type: Concept
-catalog: https://data.globalise.huygens.knaw.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json
+catalog: https://id.globalise.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json
 
 fields:
   id:
     - "$.id"
 
-  identifier:
+  identifier: # keyword
     - "$.notation[*]"
     - "$.exactMatch[*]"
     - "$.closeMatch[*]"
@@ -38,9 +38,9 @@ facets:
 
   date_end: []
 
-  concept_scheme:
+  concept_scheme: # keyword
     - "$.topConceptOf[*].id"
     - "$.broader..topConceptOf[*].id"
 
-  concept_collection:
+  concept_collection: # keyword
     - "$.memberOf[*].id"

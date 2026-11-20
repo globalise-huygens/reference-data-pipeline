@@ -1267,7 +1267,7 @@
                     </source_relation>
                     <target_relation>
                         <if>
-                            <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                            <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                         </if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
@@ -1320,7 +1320,7 @@
                     </source_relation>
                     <target_relation>
                         <if>
-                            <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                            <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                         </if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
@@ -1366,7 +1366,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if>
@@ -1414,7 +1414,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if>
@@ -1486,7 +1486,7 @@
                     </source_relation>
                     <target_relation>
                         <if><and><if>
-                            <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                            <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
@@ -1573,7 +1573,7 @@
                     </source_relation>
                     <target_relation>
                         <if><and><if>
-                            <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                            <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
@@ -1665,7 +1665,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
@@ -1754,7 +1754,7 @@
                     </source_relation>
                     <target_relation>
                         <if><and><if>
-                            <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                            <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
@@ -1812,7 +1812,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
@@ -1872,7 +1872,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
@@ -1932,7 +1932,7 @@
                                     <exists>text()</exists>
                                 </if>
                                 <if>
-                                    <equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals>
+                                    <equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals>
                                 </if>
                             </and>
                         </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
@@ -1986,7 +1986,7 @@
                         <relation>observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><and><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if><if>
+                        <if><and><if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -2054,7 +2054,7 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
+                        <if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2153,7 +2153,7 @@
                         <relation>location_in_observation_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
+                        <if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2208,7 +2208,7 @@
                         <relation>reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><and><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if><if>
+                        <if><and><if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if><if>
                             <and>
                                 <if>
                                     <exists>text()</exists>
@@ -2276,7 +2276,7 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
+                        <if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2375,7 +2375,7 @@
                         <relation>location_in_reconstruction_source</relation>
                     </source_relation>
                     <target_relation>
-                        <if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if>
+                        <if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>
@@ -2497,7 +2497,7 @@
                         <relation>original_label</relation>
                     </source_relation>
                     <target_relation>
-                        <if><and><if><exists>text()</exists></if><if><equals value="https://github.com/globalise-huygens/nlp-event-detection/wiki#beingdead">../event/text()</equals></if></and></if>
+                        <if><and><if><exists>text()</exists></if><if><equals value="https://w3id.org/globalise/ontology/events/beingdead">../event/text()</equals></if></and></if>
                         <relationship>crm:P100i_died_in</relationship>
                         <entity variable="death">
                             <type>crm:E69_Death</type>

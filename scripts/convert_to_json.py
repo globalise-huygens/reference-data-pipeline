@@ -350,7 +350,39 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
         options={"documentLoader": DOCUMENT_LOADER},
     )
 
-    return omit_blank_node_ids(framed)
+    return expand_compacted_event_ids(omit_blank_node_ids(framed))
+
+
+def expand_compacted_event_ids(value: Any) -> Any:
+    """
+    Restore full GLOBALISE event IRIs in framed JSON-LD identifiers.
+
+    Examples:
+        >>> expand_compacted_event_ids({
+        ...     "id": "glob:events/Arriving",
+        ...     "label": "glob:events/Arriving",
+        ...     "nested": {"@id": "glob:events/Departing"},
+        ... })
+        {'id': 'https://w3id.org/globalise/ontology/events/Arriving', 'label': 'glob:events/Arriving', 'nested': {'@id': 'https://w3id.org/globalise/ontology/events/Departing'}}
+    """
+    compact_prefix = "glob:events/"
+    full_prefix = "https://w3id.org/globalise/ontology/events/"
+
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if (
+                key in {"id", "@id"}
+                and isinstance(child, str)
+                and child.startswith(compact_prefix)
+            ):
+                value[key] = full_prefix + child[len(compact_prefix) :]
+            else:
+                expand_compacted_event_ids(child)
+    elif isinstance(value, list):
+        for child in value:
+            expand_compacted_event_ids(child)
+
+    return value
 
 
 def omit_blank_node_ids(value: Any) -> Any:

@@ -197,6 +197,7 @@ data/input/person/csv/.stamp: $(PERSON_ZIP)
 	@for f in data/input/person/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
+			sed -E -i 's|https://github.com/globalise-huygens/nlp-event-detection/wiki\#|https://w3id.org/globalise/ontology/events/|g' "$$f"; \
 		fi; \
 	done
 	@touch $@

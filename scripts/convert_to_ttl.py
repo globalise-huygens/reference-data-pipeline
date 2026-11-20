@@ -5,6 +5,7 @@ Merge individual turtle files into one knowledge graph for any category.
 
 import argparse
 import glob
+import json
 import logging
 import os
 import sys
@@ -13,6 +14,7 @@ from rdflib import RDF, RDFS, SKOS, Graph, Literal, Namespace, XSD, URIRef
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
+    BASE_DIR,
     convert_uris_to_bnodes,
     expand_date_literal,
     normalize_uris,
@@ -25,6 +27,7 @@ from concurrent.futures import ProcessPoolExecutor
 CRM = Namespace("http://www.cidoc-crm.org/cidoc-crm/")
 AAT = Namespace("http://vocab.getty.edu/aat/")
 AAAO = Namespace("https://ontology.swissartresearch.net/aaao/")
+PWRO = Namespace("https://ontology.swissartresearch.net/pwro/")
 
 TIMESTAMP_SUFFIXES = {
     CRM["P82a_begin_of_the_begin"]: "T00:00:00",
@@ -192,11 +195,26 @@ def other_replacements(graph: Graph, category: str) -> None:
         >>> other_replacements(g, "person")
         >>> set(g) == expected
         True
+        >>> person = URIRef(base + "person:Person_26739")
+        >>> reign = URIRef(base + "polity:Reign_0004")
+        >>> person_graph = Graph()
+        >>> _ = person_graph.add((person, RDF.type, CRM["E21_Person"]))
+        >>> import contextlib, tempfile
+        >>> with tempfile.TemporaryDirectory() as working_directory:
+        ...     with contextlib.chdir(working_directory):
+        ...         other_replacements(person_graph, "person")
+        >>> (person, PWRO["WP3i_exercised_authority_of"], reign) in person_graph
+        True
+        >>> (reign, RDF.type, PWRO["WE2_Sovereignty"]) in person_graph
+        True
+        >>> (reign, RDFS.label, Literal("Murad I, Ruler of Ottoman (1360–1389)")) in person_graph
+        True
     """
 
     if category != "person":
         return
 
+    # Convert ship-related places to ship entities
     ship_markers = ("DAS_ship", "gzm_ship", "monsoon_traders")
     for place in list(graph.subjects(RDF.type, CRM["E53_Place"])):
         if not isinstance(place, URIRef):
@@ -214,6 +232,7 @@ def other_replacements(graph: Graph, category: str) -> None:
         graph.add((AAT["300082981"], RDF.type, SKOS.Concept))
         graph.add((AAT["300082981"], RDFS.label, Literal("ship")))
 
+    # Convert polity-related places to polity entities
     for place in list(graph.subjects(RDF.type, CRM["E53_Place"])):
         if not isinstance(place, URIRef):
             continue
@@ -238,6 +257,28 @@ def other_replacements(graph: Graph, category: str) -> None:
                     polity,
                 )
             )
+
+    # Link persons to their mapped reigns.
+    rulers2reigns_path = os.path.join(BASE_DIR, "data", "input", "rulers2reigns.json")
+    with open(rulers2reigns_path, "r") as f:
+        rulers2reigns = json.load(f)
+
+    for person in list(graph.subjects(RDF.type, CRM["E21_Person"])):
+        if not isinstance(person, URIRef):
+            continue
+
+        person_id = str(person).rsplit(":", 1)[-1]
+
+        if person_id not in rulers2reigns:
+            continue
+
+        for reign in rulers2reigns[person_id]:
+            reign_uri = URIRef(
+                f"https://id.globalise.nl/hdl:20.500.14722/polity:{reign['id']}"
+            )
+            graph.add((person, PWRO["WP3i_exercised_authority_of"], reign_uri))
+            graph.add((reign_uri, RDF.type, PWRO["WE2_Sovereignty"]))
+            graph.add((reign_uri, RDFS.label, Literal(reign["label"])))
 
 
 def load_graph(rdf_dir: str, category: str) -> Graph:

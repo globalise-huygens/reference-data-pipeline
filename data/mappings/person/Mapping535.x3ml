@@ -299,6 +299,92 @@
             <link template="SRDF.400_residential_status_time-span">
                 <path>
                     <source_relation>
+                        <relation>annotationDate</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><and><if>
+                            <exists>text()</exists>
+                        </if><if><exists>text()[normalize-space(.)!='']</exists></if></and></if>
+                        <relationship>aaao:ZP26i_is_residence_subject_of</relationship>
+                        <entity variable="residential_status">
+                            <type>aaao:ZE9_Residential_Status</type>
+                            <instance_generator name="Custom_ResidentialStatusHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P4_has_time-span</relationship>
+                        <entity variable="timespan">
+                            <type>crm:E52_Time-Span</type>
+                            <instance_generator name="Custom_ResidentialStatusTimespanHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="residential_status" type="constant">residential_status</arg>
+                                <arg name="residential_status_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="timespan" type="constant">timespan</arg>
+                                <arg name="timespan_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_TwoArgumentsLabel">
+                                <arg name="premise" type="constant">Time-span of the Residential Status</arg>
+                                <arg name="text" type="xpath">../original_label/text()</arg>
+                                <arg name="premise1" type="constant">of Person identified by</arg>
+                                <arg name="text1" type="xpath">../URI/text()</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity variable="source_date_0">
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericThreeArgHashedURI">
+                                <arg name="hierarchy" type="constant">person</arg>
+                                <arg name="hierarchy_id" type="xpath">../URI/text()</arg>
+                                <arg name="term_simple" type="constant">residential_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple1" type="constant">timespan</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">concat(../URI/text(),'|',../id/text())</arg>
+                                <arg name="term_simple2" type="constant">source_date</arg>
+                                <arg name="term_simple2_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_info>
+                                        <constant>source date</constant>
+                                    </instance_info>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">https://id.globalise.nl/hdl:20.500.14722/thesaurus:f697aeb6-24f7-443a-992a-dd494b350f38</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">source date</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>annotationDate</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="SRDF.400_residential_status_time-span">
+                <path>
+                    <source_relation>
                         <relation>startDate</relation>
                     </source_relation>
                     <target_relation>

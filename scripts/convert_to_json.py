@@ -1118,6 +1118,25 @@ def convert_thesaurus(
     concepts = {
         res for res in ds.subjects(RDF.type, SKOS.Concept) if is_valid_entity_uri(res)
     }
+
+    # Link thesaurus concepts to their mapped currency occurrences.
+    currency2occurrences_path = os.path.join(
+        BASE_DIR, "data", "input", "currency2occurrences.json"
+    )
+    with open(currency2occurrences_path, "r", encoding="utf-8") as f:
+        currency2occurrences = json.load(f)
+
+    for concept in concepts:
+        concept_id = str(concept).rsplit(":", 1)[-1]
+        if concept_id not in currency2occurrences:
+            continue
+
+        for occurrence in currency2occurrences[concept_id]:
+            occurrence_uri = URIRef(f"{URI_BASE}occurrence:{occurrence['id']}")
+            ds.add((concept, CRM["P12i_was_present_at"], occurrence_uri))
+            ds.add((occurrence_uri, RDF.type, CRM["E5_Event"]))
+            ds.add((occurrence_uri, RDFS.label, Literal(occurrence["label"])))
+
     collections = {
         res
         for res in ds.subjects(RDF.type, SKOS.Collection)

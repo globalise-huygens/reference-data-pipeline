@@ -715,7 +715,7 @@
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">exchange_value</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
-                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Custom_OneArgumentLabel">
@@ -753,7 +753,7 @@
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">exchange_value</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
-                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                         </entity>
@@ -790,7 +790,7 @@
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">exchange_value</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
-                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                         </entity>
@@ -827,7 +827,7 @@
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">exchange_value</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
-                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
                         </entity>
@@ -948,6 +948,258 @@
                 </path>
                 <range>
                     <source_node>../from_amount</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>../from_unit_original_spelling</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>globalise:GR1_has_exchange_value_subject</relationship>
+                        <entity variable="from_dimension">
+                            <type>crm:E54_Dimension</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">exchange_value</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">from_original_name</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original titles</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../from_unit_original_spelling</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>../from_unit_standard</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>globalise:GR1_has_exchange_value_subject</relationship>
+                        <entity variable="from_dimension">
+                            <type>crm:E54_Dimension</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">exchange_value</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                                <arg name="term_simple1" type="constant">dimension</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">from_standard_name</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300458887</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">standard (name)</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../from_unit_standard</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>../to_unit_original_spelling</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>globalise:GR2_ascribes_exchange_value_equivalent</relationship>
+                        <entity variable="to_dimension">
+                            <type>crm:E54_Dimension</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">exchange_value</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">to_original_name</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">original titles</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../to_unit_original_spelling</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>../to_unit_standard</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>globalise:GR2_ascribes_exchange_value_equivalent</relationship>
+                        <entity variable="to_dimension">
+                            <type>crm:E54_Dimension</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">exchange_value</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                                <arg name="term_simple1" type="constant">dimension_to</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">../from_unit_uri/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">conversion</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">to_standard_name</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300458887</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">standard (name)</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../to_unit_standard</source_node>
                     <target_node>
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>

@@ -93,7 +93,7 @@
                     <entity>
                         <type>crm:E5_Event</type>
                         <instance_generator name="Custom_EntityURI">
-                            <arg name="hierarchy" type="constant">occurrences</arg>
+                            <arg name="hierarchy" type="constant">occurrence</arg>
                             <arg name="hierarchy_id" type="xpath">ID/text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_TwoArgumentsLabel">
@@ -115,7 +115,7 @@
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
-                                <arg name="hierarchy" type="constant">occurrences</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
@@ -151,7 +151,7 @@
                         <entity variable="timespan">
                             <type>crm:E52_Time-Span</type>
                             <instance_generator name="Custom_GenericUniqueEventURI">
-                                <arg name="hierarchy" type="constant">occurrences</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="type" type="constant">timespan</arg>
                             </instance_generator>
@@ -181,7 +181,7 @@
                         <entity>
                             <type>aaao:ZE60_Evental_Locative_Status</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
-                                <arg name="hierarchy" type="constant">occurrences</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">evental_locative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -238,7 +238,7 @@
                         <entity>
                             <type>crm:E33_Linguistic_Object</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
-                                <arg name="hierarchy" type="constant">occurrences</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
                                 <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                                 <arg name="term_simple" type="constant">comments</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -498,7 +498,7 @@
                         <entity>
                             <type>crm:E42_Identifier</type>
                             <instance_generator name="Custom_GenericOneArgHashedURI">
-                                <arg name="hierarchy" type="constant">occurrences</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
                                 <arg name="hierarchy_id" type="xpath">text()</arg>
                                 <arg name="term_simple" type="constant">appellation</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -547,7 +547,7 @@
                     <entity variable="timespan">
                         <type>crm:E52_Time-Span</type>
                         <instance_generator name="Custom_GenericUniqueEventURI">
-                            <arg name="hierarchy" type="constant">occurrences</arg>
+                            <arg name="hierarchy" type="constant">occurrence</arg>
                             <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
                             <arg name="type" type="constant">timespan</arg>
                         </instance_generator>

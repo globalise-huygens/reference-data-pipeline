@@ -102,66 +102,6 @@
                     </entity>
                 </target_node>
             </domain>
-            <link template="SRDC.62_appellative_status">
-                <path>
-                    <source_relation>
-                        <relation>../currency_standard</relation>
-                    </source_relation>
-                    <target_relation>
-                        <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../currency_standard</source_node>
-                    <target_node>
-                        <entity variable="standard">
-                            <type>aaao:ZE2_Appellative_Status</type>
-                            <instance_generator name="Custom_GenericOneArgHashedURI">
-                                <arg name="hierarchy" type="constant">currency</arg>
-                                <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                            </instance_generator>
-                            <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Appellative Status of Currency</arg>
-                                <arg name="text" type="xpath">../currency_original/text()</arg>
-                                <arg name="premise1" type="constant">as Standard Appellation for</arg>
-                                <arg name="text1" type="xpath">../currency_standard/text()</arg>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
-            <link template="SRDC.62_appellative_status">
-                <path>
-                    <source_relation>
-                        <relation>../currency_original</relation>
-                    </source_relation>
-                    <target_relation>
-                        <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../currency_original</source_node>
-                    <target_node>
-                        <entity variable="original">
-                            <type>aaao:ZE2_Appellative_Status</type>
-                            <instance_generator name="Custom_GenericOneArgHashedURI">
-                                <arg name="hierarchy" type="constant">currency</arg>
-                                <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                            </instance_generator>
-                            <label_generator name="Custom_TwoArgumentsLabel">
-                                <arg name="premise" type="constant">Appellative Status of Currency</arg>
-                                <arg name="text" type="xpath">text()</arg>
-                                <arg name="premise1" type="constant">as Original Appellation for</arg>
-                                <arg name="text1" type="xpath">text()</arg>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
             <link template="LAF.10_identifier_content">
                 <path>
                     <source_relation>
@@ -396,49 +336,59 @@
             </link>
         </mapping>
         <mapping>
-            <domain template="SRDC.62_appellative_status">
-                <source_node>/data/item/currency_standard</source_node>
+            <domain>
+                <source_node>/data/item</source_node>
                 <target_node>
-                    <entity variable="standard">
-                        <type>aaao:ZE2_Appellative_Status</type>
-                        <instance_generator name="Custom_GenericOneArgHashedURI">
-                            <arg name="hierarchy" type="constant">currency</arg>
-                            <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                            <arg name="term_simple" type="constant">appellative_status</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                    <entity>
+                        <type>crm:E5_Event</type>
+                        <instance_generator name="Custom_EntityURI">
+                            <arg name="hierarchy" type="constant">occurrence</arg>
+                            <arg name="hierarchy_id" type="xpath">ID/text()</arg>
                         </instance_generator>
-                        <additional>
-                            <relationship>aaao:ZP7_ascribes_appellative_relation</relationship>
-                            <entity>
-                                <type>crm:E55_Type</type>
-                                <instance_info>
-                                    <constant>P1 is identified by</constant>
-                                </instance_info>
-                                <instance_generator name="Custom_URIorUUID">
-                                    <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by</arg>
-                                </instance_generator>
-                                <label_generator name="Literal">
-                                    <arg name="text" type="constant">P1 is identified by</arg>
-                                    <arg name="language" type="constant"/>
-                                </label_generator>
-                            </entity>
-                        </additional>
                     </entity>
                 </target_node>
             </domain>
-            <link template="LAF.6_name_content">
+            <link template="SRDC.62_appellative_status">
                 <path>
                     <source_relation>
-                        <relation>.</relation>
+                        <relation>currency_original</relation>
                     </source_relation>
                     <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
+                        <entity>
+                            <type>aaao:ZE2_Appellative_Status</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">occurrence</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">currency_original_appellative_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Appellative Status</arg>
+                                <arg name="text" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>aaao:ZP7_ascribes_appellative_relation</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">P1 is identified by</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
                         <relationship>aaao:ZP6_ascribes_appellation</relationship>
                         <entity>
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
-                                <arg name="hierarchy" type="constant">currency</arg>
-                                <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">currency_original_appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -450,14 +400,11 @@
                                 <relationship>crm:P2_has_type</relationship>
                                 <entity>
                                     <type>crm:E55_Type</type>
-                                    <instance_info>
-                                        <constant>standard name</constant>
-                                    </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">standard_name</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">standard name</arg>
+                                        <arg name="text" type="constant">original titles</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -467,7 +414,7 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>.</source_node>
+                    <source_node>currency_original</source_node>
                     <target_node>
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
@@ -479,51 +426,47 @@
                     </target_node>
                 </range>
             </link>
-        </mapping>
-        <mapping>
-            <domain template="SRDC.62_appellative_status">
-                <source_node>/data/item/currency_original</source_node>
-                <target_node>
-                    <entity variable="original">
-                        <type>aaao:ZE2_Appellative_Status</type>
-                        <instance_generator name="Custom_GenericOneArgHashedURI">
-                            <arg name="hierarchy" type="constant">currency</arg>
-                            <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                            <arg name="term_simple" type="constant">appellative_status</arg>
-                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                        </instance_generator>
-                        <additional>
-                            <relationship>aaao:ZP7_ascribes_appellative_relation</relationship>
-                            <entity>
-                                <type>crm:E55_Type</type>
-                                <instance_info>
-                                    <constant>P1 is identified by</constant>
-                                </instance_info>
-                                <instance_generator name="Custom_URIorUUID">
-                                    <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by</arg>
-                                </instance_generator>
-                                <label_generator name="Literal">
-                                    <arg name="text" type="constant">P1 is identified by</arg>
-                                    <arg name="language" type="constant"/>
-                                </label_generator>
-                            </entity>
-                        </additional>
-                    </entity>
-                </target_node>
-            </domain>
-            <link template="LAF.6_name_content">
+            <link template="SRDC.62_appellative_status">
                 <path>
                     <source_relation>
-                        <relation>.</relation>
+                        <relation>currency_standard</relation>
                     </source_relation>
                     <target_relation>
+                        <if><exists>text()[normalize-space(.)!='']</exists></if>
+                        <relationship>aaao:ZP5i_is_appellative_subject_of</relationship>
+                        <entity>
+                            <type>aaao:ZE2_Appellative_Status</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">occurrence</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">currency_standard_appellative_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_OneArgumentLabel">
+                                <arg name="premise" type="constant">Appellative Status</arg>
+                                <arg name="text" type="xpath">text()</arg>
+                            </label_generator>
+                            <additional>
+                                <relationship>aaao:ZP7_ascribes_appellative_relation</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P1_is_identified_by</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">P1 is identified by</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
+                        </entity>
                         <relationship>aaao:ZP6_ascribes_appellation</relationship>
                         <entity>
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
-                                <arg name="hierarchy" type="constant">currency</arg>
-                                <arg name="hierarchy_id" type="xpath">../currency_uri/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
+                                <arg name="hierarchy" type="constant">occurrence</arg>
+                                <arg name="hierarchy_id" type="xpath">../ID/text()</arg>
+                                <arg name="term_simple" type="constant">currency_standard_appellative_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
@@ -535,14 +478,11 @@
                                 <relationship>crm:P2_has_type</relationship>
                                 <entity>
                                     <type>crm:E55_Type</type>
-                                    <instance_info>
-                                        <constant>original name</constant>
-                                    </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">original_name</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300458887</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">original name</arg>
+                                        <arg name="text" type="constant">standard (name)</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -552,7 +492,7 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>.</source_node>
+                    <source_node>currency_standard</source_node>
                     <target_node>
                         <entity>
                             <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>

@@ -334,11 +334,11 @@ $(S3_DIR)/.ship.stamp: data/output/ship/ship.ttl
 #------------------------------------------------------------
 # 6. Measurement Pipeline
 #------------------------------------------------------------
-MEAS_XLSX := $(wildcard data/input/measurement/*.xlsx)
+MEAS_ZIP := $(wildcard data/input/measurement/*.zip)
 
-data/input/measurement/csv/.stamp: $(MEAS_XLSX)
+data/input/measurement/csv/.stamp: $(MEAS_ZIP)
 	@mkdir -p data/input/measurement/csv
-	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/measurement/csv
+	unzip -o -q -j "$<" "*.csv" -x "*/._*" -d data/input/measurement/csv
 	@for f in data/input/measurement/csv/*.csv; do \
 		if [ -f "$$f" ]; then \
 			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
@@ -358,9 +358,9 @@ data/input/measurement/xml/.stamp: data/input/measurement/csv/.stamp
 
 data/output/measurement/rdf/.stamp: data/input/measurement/xml/.stamp
 	@mkdir -p data/output/measurement/rdf
-	$(RUN_X3ML) data/input/measurement/xml unit_conversion_sample.xml data/mappings/measurement/Mapping618.x3ml data/output/measurement/rdf 618_conversion
-	$(RUN_X3ML) data/input/measurement/xml currency_occurrences.xml data/mappings/measurement/Mapping619.x3ml data/output/measurement/rdf 619_currencies
-	$(RUN_X3ML) data/input/measurement/xml currency_occurrences.xml data/mappings/measurement/Mapping620.x3ml data/output/measurement/rdf 620_occurrences
+	$(RUN_X3ML) data/input/measurement/xml units-v2.xml data/mappings/measurement/Mapping618.x3ml data/output/measurement/rdf 618_conversion
+	$(RUN_X3ML) data/input/measurement/xml occurrences-v1.xml data/mappings/measurement/Mapping619.x3ml data/output/measurement/rdf 619_currencies
+	$(RUN_X3ML) data/input/measurement/xml occurrences-v1.xml data/mappings/measurement/Mapping620.x3ml data/output/measurement/rdf 620_occurrences
 	@touch $@
 
 data/output/measurement/measurement.ttl: data/output/measurement/rdf/.stamp

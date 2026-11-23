@@ -355,7 +355,7 @@ def frame_graph(graph: Graph, frame_doc: dict[str, Any], root_id: str) -> Any:
 
 def expand_compacted_event_ids(value: Any) -> Any:
     """
-    Restore full GLOBALISE event IRIs in framed JSON-LD identifiers.
+    Restore full GLOBALISE event IRIs in identifiers and SKOS match values.
 
     Examples:
         >>> expand_compacted_event_ids({
@@ -367,15 +367,27 @@ def expand_compacted_event_ids(value: Any) -> Any:
     """
     compact_prefix = "glob:events/"
     full_prefix = "https://w3id.org/globalise/ontology/events/"
+    identifier_keys = {
+        "id",
+        "@id",
+        "exactMatch",
+        "closeMatch",
+        "broadMatch",
+        "narrowMatch",
+        "relatedMatch",
+    }
 
     if isinstance(value, dict):
         for key, child in value.items():
-            if (
-                key in {"id", "@id"}
-                and isinstance(child, str)
-                and child.startswith(compact_prefix)
-            ):
-                value[key] = full_prefix + child[len(compact_prefix) :]
+            if key in identifier_keys and isinstance(child, str):
+                if child.startswith(compact_prefix):
+                    value[key] = full_prefix + child[len(compact_prefix) :]
+            elif key in identifier_keys and isinstance(child, list):
+                for index, item in enumerate(child):
+                    if isinstance(item, str) and item.startswith(compact_prefix):
+                        child[index] = full_prefix + item[len(compact_prefix) :]
+                    else:
+                        expand_compacted_event_ids(item)
             else:
                 expand_compacted_event_ids(child)
     elif isinstance(value, list):

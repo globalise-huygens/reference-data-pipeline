@@ -172,6 +172,25 @@
             "note": {}
         }
     },
+    "was_transformed_by": {
+        "@embed": "@always",
+        "id": {},
+        "_label": {},
+        "timespan": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_begin": {},
+            "begin_of_the_end": {},
+            "end_of_the_end": {}
+        },
+        "took_place_at": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {}
+        }
+    },
     "changed_ownership_through": {
         "@embed": "@always",
         "id": {},
@@ -191,7 +210,14 @@
             "id": {},
             "_label": {},
             "begin_of_the_begin": {},
+            "end_of_the_begin": {},
+            "begin_of_the_end": {},
             "end_of_the_end": {}
+        },
+        "took_place_at": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {}
         },
         "referred_to_by": {
             "@embed": "@always",
@@ -199,6 +225,34 @@
             "_label": {},
             "content": {},
             "note": {}
+        }
+    },
+    "custody_transferred_through": {
+        "@embed": "@always",
+        "id": {},
+        "_label": {},
+        "intentionally_initiated": {
+            "@embed": "@always",
+            "id": {},
+            "ascribes_custodian": {
+                "@embed": "@always",
+                "id": {},
+                "_label": {}
+            }
+        },
+        "timespan": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {},
+            "begin_of_the_begin": {},
+            "end_of_the_begin": {},
+            "begin_of_the_end": {},
+            "end_of_the_end": {}
+        },
+        "took_place_at": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {}
         }
     },
     "moved_by": {

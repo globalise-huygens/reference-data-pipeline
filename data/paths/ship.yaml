@@ -5,13 +5,12 @@ fields:
   id:
     - "$.id"
 
-  identifier:
+  identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
     - "$.moved_by[*].identified_by[?(@.type=='Identifier')].content"
 
-  title:
+  title: # full-text, boost
     - "$.is_appellative_subject_of[*].ascribes_appellation[*].content"
 
   description: []
@@ -19,39 +18,54 @@ fields:
   related: []
 
 facets:
-  place: # + P124i_was_transformed_by etc.
+  place: # keyword
     - "$.produced_by.took_place_at[*].id"
     - "$.taken_out_of_existence_by.took_place_at[*].id"
     - "$.is_ownership_subject_of[*].has_geographic_scope[*].id"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    - "$.was_transformed_by[*].took_place_at[*].id"
+    - "$.changed_ownership_through[*].took_place_at[*].id"
+    - "$.custody_transferred_through[*].took_place_at[*].id"
     - "$.moved_by[*].moved_from.id"
     - "$.moved_by[*].moved_to.id"
 
-  date_begin: # + P124i_was_transformed_by + P24i_changed_ownership_through + P30i_custody_transferred_through
+  date_begin: # date
     - "$.produced_by.timespan.begin_of_the_begin"
     - "$.produced_by.timespan.end_of_the_begin"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    - "$.was_transformed_by[*].timespan.begin_of_the_begin"
+    - "$.was_transformed_by[*].timespan.end_of_the_begin"
+    - "$.changed_ownership_through[*].timespan.begin_of_the_begin"
+    - "$.changed_ownership_through[*].timespan.end_of_the_begin"
+    - "$.custody_transferred_through[*].timespan.begin_of_the_begin"
+    - "$.custody_transferred_through[*].timespan.end_of_the_begin"
     - "$.moved_by[*].timespan.begin_of_the_begin"
     - "$.moved_by[*].timespan.end_of_the_begin"
 
-  date_end: # + P124i_was_transformed_by + P24i_changed_ownership_through + P30i_custody_transferred_through
+  date_end: # date
     - "$.taken_out_of_existence_by.timespan.end_of_the_end"
     - "$.taken_out_of_existence_by.timespan.begin_of_the_end"
     - "$.produced_by.timespan.end_of_the_end"
     - "$.produced_by.timespan.begin_of_the_end"
-    # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
+    - "$.was_transformed_by[*].timespan.end_of_the_end"
+    - "$.was_transformed_by[*].timespan.begin_of_the_end"
+    - "$.changed_ownership_through[*].timespan.end_of_the_end"
+    - "$.changed_ownership_through[*].timespan.begin_of_the_end"
+    - "$.custody_transferred_through[*].timespan.end_of_the_end"
+    - "$.custody_transferred_through[*].timespan.begin_of_the_end"
     - "$.moved_by[*].timespan.end_of_the_end"
     - "$.moved_by[*].timespan.begin_of_the_end"
 
-  ship_classification:
+  ship_classification: # keyword
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
-  ship_owner: # + P24i_changed_ownership_through + P30i_custody_transferred_through
+  ship_owner: # keyword
     - "$.is_ownership_subject_of[*].ascribes_owner[*].id"
     - "$.is_custodial_subject_of[*].ascribes_custodian[*].id"
+    - "$.changed_ownership_through[*].transferred_title_to[*].id"
+    - "$.changed_ownership_through[*].transferred_title_from[*].id"
+    - "$.custody_transferred_through[*].intentionally_initiated[*].ascribes_custodian[*].id"
 
-  ship_departure: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
+  ship_departure: # keyword
     - "$.moved_by[*].moved_from.id"
 
-  ship_arrival: # Follows $.moved_by[*].id -> voyage: voyage/*.json (https://id.globalise.nl/hdl:20.500.14722/voyage:index/page-1.json)
+  ship_arrival: # keyword
     - "$.moved_by[*].moved_to.id"

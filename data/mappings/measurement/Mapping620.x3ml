@@ -105,6 +105,42 @@
                     </entity>
                 </target_node>
             </domain>
+            <link template="LAF.6_name_content">
+                <path>
+                    <source_relation>
+                        <relation>ID</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if><exists>../currency_original[normalize-space(.)!=''] | ../location_original[normalize-space(.)!=''] | ../date[normalize-space(.)!='']</exists></if>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">occurrence</arg>
+                                <arg name="hierarchy_id" type="xpath">text()</arg>
+                                <arg name="term_simple" type="constant">event_name</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">normalize-space(concat(normalize-space(../currency_original), if (normalize-space(../currency_original) != '' and normalize-space(../location_original) != '') then ' in ' else '', normalize-space(../location_original), if (normalize-space(../date) != '') then concat(' (', normalize-space(../date), ')') else ''))</arg>
+                            </label_generator>
+                        </entity>
+                        <relationship>crm:P190_has_symbolic_content</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>ID</source_node>
+                    <target_node>
+                        <entity>
+                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                            <instance_generator name="Literal">
+                                <arg name="text" type="xpath">normalize-space(concat(normalize-space(../currency_original), if (normalize-space(../currency_original) != '' and normalize-space(../location_original) != '') then ' in ' else '', normalize-space(../location_original), if (normalize-space(../date) != '') then concat(' (', normalize-space(../date), ')') else ''))</arg>
+                                <arg name="language" type="constant"/>
+                            </instance_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
             <link template="LAF.26_timespan_end_of_the_end">
                 <path>
                     <source_relation>

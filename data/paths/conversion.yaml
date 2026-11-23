@@ -32,3 +32,7 @@ facets:
   conversion_unit: # keyword
     - "$.intentionally_initiated[*].has_exchange_value_subject[*].unit.id"
     - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].unit.id"
+
+  conversion_commodity: # keyword
+    - "$.intentionally_initiated[*].has_exchange_value_subject[*].is_dimension_of_commodity_type[*].id"
+    - "$.intentionally_initiated[*].ascribes_exchange_value_equivalent[*].is_dimension_of_commodity_type[*].id"

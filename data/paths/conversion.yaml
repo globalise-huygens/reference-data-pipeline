@@ -1,7 +1,5 @@
-type:
-  - FinancialExchange
-catalog:
-  - https://id.globalise.nl/hdl:20.500.14722/conversion:index/page-1.json
+type: FinancialExchange
+catalog: https://id.globalise.nl/hdl:20.500.14722/conversion:index/page-1.json
 
 fields:
   id:

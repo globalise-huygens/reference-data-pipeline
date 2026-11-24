@@ -404,7 +404,7 @@
                                         <arg name="text" type="constant">http://vocab.getty.edu/aat/300417204</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">original titles</arg>
+                                        <arg name="text" type="constant">original title</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>

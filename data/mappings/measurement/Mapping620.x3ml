@@ -124,6 +124,19 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">normalize-space(concat(normalize-space(../currency_original), if (normalize-space(../currency_original) != '' and normalize-space(../location_original) != '') then ' in ' else '', normalize-space(../location_original), if (normalize-space(../date) != '') then concat(' (', normalize-space(../date), ')') else ''))</arg>
                             </label_generator>
+                            <additional>
+                                <relationship>crm:P2_has_type</relationship>
+                                <entity>
+                                    <type>crm:E55_Type</type>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417205</arg>
+                                    </instance_generator>
+                                    <label_generator name="Literal">
+                                        <arg name="text" type="constant">constructed title</arg>
+                                        <arg name="language" type="constant"/>
+                                    </label_generator>
+                                </entity>
+                            </additional>
                         </entity>
                         <relationship>crm:P190_has_symbolic_content</relationship>
                     </target_relation>

@@ -1,6 +1,7 @@
 """
 Export top-level segmentation-model documents to CSV with identifier, inventory number, scan filenames,
-title, date, settlement, method, start/end scan types, and languages.
+title, date, settlement, method, start/end scan types, languages, and translation
+(per-scan translations joined with the unit separator, ``\x1f``).
 
 Output paths:
   Local disk: <output_dir>/document/documents.csv (default: data/output/s3/document/documents.csv)
@@ -8,6 +9,9 @@ Output paths:
 """
 
 import argparse
+import csv
+import gzip
+import itertools
 import logging
 import os
 import shutil
@@ -23,7 +27,6 @@ from utils import (
     add_s3_arguments,
     build_s3_upload_config,
     create_s3_client,
-    output_bytes,
 )
 
 # Configure logging
@@ -34,6 +37,12 @@ logger = logging.getLogger(__name__)
 
 TYPE_URI_PREFIX = "https://id.globalise.nl/hdl:20.500.14722/thesaurus:"
 PLACE_URI_PREFIX = "https://id.globalise.nl/hdl:20.500.14722/place:"
+
+ROOT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+DEFAULT_TRANSLATIONS_PARQUET = os.environ.get(
+    "TRANSLATIONS_PARQUET",
+    os.path.join(ROOT_DIR, "data", "input", "document", "translations.parquet"),
+)
 
 # Database setup
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///globalise_documents.db")
@@ -365,12 +374,15 @@ def export_documents_csv(
     s3_client=None,
     s3_config=None,
     database_url: str = DATABASE_URL,
+    translations_parquet: str = DEFAULT_TRANSLATIONS_PARQUET,
 ):
     """Export segmentation-model root documents to CSV, locally or to S3.
 
-    Uses DuckDB to query the SQLite database directly and stream the CSV export,
-    avoiding slow iterative ORM queries. Settlement labels and URIs are
-    comma-separated in matching order, with the primary settlement first.
+    Uses DuckDB with a 6 GB memory limit and one thread, spilling to temporary
+    disk space as needed. Translations are written one document at a time.
+    Temporary disk space is also required for the output file; set TMPDIR to
+    use another location. Settlement labels and URIs are comma-separated in
+    matching order, with the primary settlement first.
 
     Args:
         output_dir: Base local output directory (or S3 key prefix root).
@@ -378,6 +390,12 @@ def export_documents_csv(
         s3_client: Initialized Boto3 S3 client, or None to write to disk.
         s3_config: S3UploadConfig instance, or None to write to disk.
         database_url: Connection URL or filesystem path to the SQLite database.
+        translations_parquet: Parquet file with ``filename`` and ``translation``
+            columns. The translations of a document's scans are joined with
+            the unit separator (``\x1f``) in scan filename order into the
+            ``translation`` column. Every scan contributes an entry; scans
+            without a translation contribute an empty string.
+            When the file does not exist, all scan entries are empty.
 
     Examples:
         >>> import sqlite3
@@ -420,35 +438,53 @@ def export_documents_csv(
         ...     conn.commit()
         ...     conn.close()
         ...     out_dir = os.path.join(tmp_dir, "out")
-        ...     export_documents_csv(out_dir, gzipped=False, database_url=db_file)
-        ...     with open(os.path.join(out_dir, "document", "documents.csv"), "r") as f:
-        ...         lines = [line.strip() for line in f.readlines()]
-        ...     print(lines[0])
-        ...     print(lines[1])
-        ...     print(lines[2])
-        ...     print(len(lines))
+        ...     missing = os.path.join(tmp_dir, "missing.parquet")
+        ...     export_documents_csv(out_dir, gzipped=False, database_url=db_file, translations_parquet=missing)
         ...     import csv
         ...     with open(os.path.join(out_dir, "document", "documents.csv"), newline="") as f:
         ...         rows = list(csv.DictReader(f))
+        ...     print(",".join(rows[0]))
+        ...     print(rows[0]["identifier"], repr(rows[0]["translation"]))
+        ...     print(rows[1]["identifier"], repr(rows[1]["translation"]))
+        ...     print(len(rows))
         ...     print(rows[2]["settlement"], rows[2]["settlement_id"])
         ...     print(repr(rows[3]["settlement"]), repr(rows[3]["settlement_id"]))
+        ...     tr = os.path.join(tmp_dir, "translations.parquet")
+        ...     _ = duckdb.execute(f"COPY (SELECT 'NL-HaNA_1.04.02_4088_0330' AS filename, 'second' AS translation UNION ALL SELECT 'NL-HaNA_1.04.02_4088_0329', 'first') TO '{tr}' (FORMAT PARQUET)")
+        ...     export_documents_csv(out_dir, gzipped=False, database_url=db_file, translations_parquet=tr)
+        ...     with open(os.path.join(out_dir, "document", "documents.csv"), newline="") as f:
+        ...         print(repr(list(csv.DictReader(f))[1]["translation"]))
+        ...     tr_partial = os.path.join(tmp_dir, "partial.parquet")
+        ...     _ = duckdb.execute(f"COPY (SELECT 'NL-HaNA_1.04.02_4088_0330' AS filename, 'second' || chr(13) || 'part' AS translation) TO '{tr_partial}' (FORMAT PARQUET)")
+        ...     export_documents_csv(out_dir, gzipped=False, database_url=db_file, translations_parquet=tr_partial)
+        ...     with open(os.path.join(out_dir, "document", "documents.csv"), newline="") as f:
+        ...         print(repr(list(csv.DictReader(f))[1]["translation"]))
+        ...     _ = duckdb.execute(f"COPY (SELECT 'NL-HaNA_1.04.02_4088_0329' AS filename, 'first' AS translation) TO '{tr_partial}' (FORMAT PARQUET, OVERWRITE true)")
+        ...     export_documents_csv(out_dir, gzipped=True, database_url=db_file, translations_parquet=tr_partial)
+        ...     with gzip.open(os.path.join(out_dir, "document", "documents.csv"), "rt", newline="") as f:
+        ...         print(repr(list(csv.DictReader(f))[1]["translation"]))
         ...     out_doc_dir = os.path.join(tmp_dir, "out_doc", "document")
-        ...     export_documents_csv(out_doc_dir, gzipped=False, database_url=db_file)
+        ...     export_documents_csv(out_doc_dir, gzipped=False, database_url=db_file, translations_parquet=missing)
         ...     print(os.path.exists(os.path.join(out_doc_dir, "documents.csv")))
         ...     from types import SimpleNamespace
         ...     uploaded = {}
-        ...     mock_s3 = SimpleNamespace(put_object=lambda **kwargs: uploaded.update(kwargs))
-        ...     mock_cfg = SimpleNamespace(bucket="test-bucket", prefix="objects/", acl=None)
-        ...     export_documents_csv(out_dir, gzipped=False, s3_client=mock_s3, s3_config=mock_cfg, database_url=db_file)
-        ...     print(uploaded["Key"])
-        identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method,languages
-        doc-1,1234,"","","","","",Test Title,1650-01-01,1650-01-01,1650-01-02,1650-01-02,Batavia,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1,Segmentation model,""
-        NL-HaNA_1.04.02_4088_0329-0330,1234,"",NL-HaNA_1.04.02_4088_0329,NL-HaNA_1.04.02_4088_0330,Text,Text,Doc with Scans,1650-01-01,1650-01-01,1650-01-02,1650-01-02,"Batavia,Bantam,GLOB_3","https://id.globalise.nl/hdl:20.500.14722/place:GLOB_1,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_2,https://id.globalise.nl/hdl:20.500.14722/place:GLOB_3",Segmentation model,"fra,nld"
-        5
+        ...     mock_s3 = SimpleNamespace(upload_file=lambda filename, bucket, key, ExtraArgs: uploaded.update(Key=key, Bucket=bucket, ExtraArgs=ExtraArgs, Content=open(filename, "rb").read()))
+        ...     mock_cfg = SimpleNamespace(bucket="test-bucket", prefix="objects/", acl="public-read")
+        ...     export_documents_csv(out_dir, gzipped=True, s3_client=mock_s3, s3_config=mock_cfg, database_url=db_file, translations_parquet=tr_partial)
+        ...     print(uploaded["Key"], uploaded["Bucket"], uploaded["ExtraArgs"])
+        ...     print("first" in gzip.decompress(uploaded["Content"]).decode())
+        identifier,inventory_number,type_uuids,start_scan_filename,end_scan_filename,start_scan_type,end_scan_type,title,date_earliest_begin,date_latest_begin,date_earliest_end,date_latest_end,settlement,settlement_id,method,languages,translation
+        doc-1 ''
+        NL-HaNA_1.04.02_4088_0329-0330 '\\x1f'
+        4
         Bantam https://id.globalise.nl/hdl:20.500.14722/place:GLOB_2
         '' ''
+        'first\\x1fsecond'
+        '\\x1fsecond\\rpart'
+        'first\\x1f'
         True
-        objects/document/documents.csv
+        objects/document/documents.csv test-bucket {'ContentType': 'text/csv; charset=utf-8', 'ContentEncoding': 'gzip', 'ACL': 'public-read'}
+        True
     """
     db_path = get_sqlite_path(database_url)
     if not os.path.exists(db_path):
@@ -457,22 +493,36 @@ def export_documents_csv(
     logger.info(f"Exporting documents CSV from {db_path} using DuckDB...")
     con = duckdb.connect()
     try:
+        con.execute(
+            "SET memory_limit = '6GB'; SET threads = 1; "
+            "SET preserve_insertion_order = false;"
+        )
         con.execute("INSTALL sqlite; LOAD sqlite;")
         escaped_db_path = db_path.replace("'", "''")
         con.execute(f"ATTACH '{escaped_db_path}' AS db (TYPE SQLITE, READ_ONLY);")
         con.execute("USE db;")
 
-        compression_clause = " (HEADER, COMPRESSION GZIP)" if gzipped else " (HEADER)"
-
         with tempfile.TemporaryDirectory() as tmpdir:
             temp_output = os.path.join(
                 tmpdir, "documents.csv.gz" if gzipped else "documents.csv"
             )
-            escaped_temp_output = temp_output.replace("'", "''")
+            con.execute("SET temp_directory = ?", [os.path.join(tmpdir, "duckdb")])
+
+            if translations_parquet and os.path.isfile(translations_parquet):
+                escaped_parquet = translations_parquet.replace("'", "''")
+                translations_source = f"SELECT filename, translation FROM read_parquet('{escaped_parquet}')"
+            else:
+                logger.warning(
+                    f"Translations parquet not found: {translations_parquet}; "
+                    "translation column will be empty"
+                )
+                translations_source = "SELECT NULL::VARCHAR AS filename, NULL::VARCHAR AS translation WHERE false"
 
             query = f"""
-            COPY (
-                WITH doc_scans AS (
+                WITH translations AS (
+                    {translations_source}
+                ),
+                doc_scans AS (
                     SELECT
                         p2d.document_id,
                         arg_min(s.filename, s.filename) AS start_scan_filename,
@@ -549,6 +599,7 @@ def export_documents_csv(
                     GROUP BY ds.document_id
                 )
                 SELECT
+                    d.id AS document_id,
                     CASE
                         WHEN ds.start_scan_filename IS NOT NULL AND ds.end_scan_filename IS NOT NULL
                              AND regexp_matches(ds.start_scan_filename, '_[0-9A-Za-z]+$')
@@ -570,7 +621,9 @@ def export_documents_csv(
                     COALESCE(s.settlement_labels, '') AS settlement,
                     COALESCE(s.settlement_ids, '') AS settlement_id,
                     COALESCE(m.name, '') AS method,
-                    COALESCE(dl.languages, '') AS languages
+                    COALESCE(dl.languages, '') AS languages,
+                    scan.id AS translation_scan_id,
+                    COALESCE(t.translation, '') AS translation
                 FROM document d
                 LEFT JOIN inventory i ON i.id = d.inventory_id
                 LEFT JOIN doc_types dt ON dt.document_id = d.id
@@ -578,31 +631,45 @@ def export_documents_csv(
                 LEFT JOIN doc_languages dl ON dl.document_id = d.id
                 LEFT JOIN document_settlements s ON s.document_id = d.id
                 JOIN document_identification_method m ON m.id = d.method_id
+                LEFT JOIN page2document p2d ON p2d.document_id = d.id
+                LEFT JOIN page p ON p.id = p2d.page_id
+                LEFT JOIN scan ON scan.id = p.scan_id
+                LEFT JOIN translations t ON t.filename = scan.filename
                 WHERE d.part_of_id IS NULL AND m.name = 'Segmentation model'
-                ORDER BY d.id
-            ) TO '{escaped_temp_output}'{compression_clause};
+                ORDER BY d.id, scan.filename
             """
-            con.execute(query)
+            result = con.execute(query)
+            columns = [column[0] for column in result.description]
+            open_output = gzip.open if gzipped else open
+            with open_output(temp_output, "wt", encoding="utf-8", newline="") as f:
+                writer = csv.writer(f)
+                writer.writerow(columns[1:-2] + ["translation"])
+                rows = iter(result.fetchone, None)
+                for _, document_rows in itertools.groupby(rows, key=lambda row: row[0]):
+                    first = next(document_rows)
+                    translations = (
+                        row[-1]
+                        for row in itertools.chain((first,), document_rows)
+                        if row[-2] is not None
+                    )
+                    writer.writerow((*first[1:-2], "\x1f".join(translations)))
 
             if s3_client and s3_config:
-                with open(temp_output, "rb") as f:
-                    payload = f.read()
                 prefix = getattr(s3_config, "prefix", "") or ""
                 if prefix.rstrip("/").endswith("document"):
                     s3_relative_path = "documents.csv"
                 else:
                     s3_relative_path = "document/documents.csv"
 
-                output_bytes(
-                    payload,
-                    s3_relative_path,
-                    output_dir,
-                    gzipped,
-                    s3_client,
-                    s3_config,
-                    content_type="text/csv; charset=utf-8",
-                )
                 dest = f"{prefix}{s3_relative_path}"
+                extra_args = {"ContentType": "text/csv; charset=utf-8"}
+                if gzipped:
+                    extra_args["ContentEncoding"] = "gzip"
+                if getattr(s3_config, "acl", None):
+                    extra_args["ACL"] = s3_config.acl
+                s3_client.upload_file(
+                    temp_output, s3_config.bucket, dest, ExtraArgs=extra_args
+                )
             else:
                 if os.path.basename(os.path.normpath(output_dir)) == "document":
                     target_path = os.path.join(output_dir, "documents.csv")

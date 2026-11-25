@@ -135,19 +135,6 @@
                                 <arg name="text1" type="xpath">text()</arg>
                             </label_generator>
                             <additional>
-                                <relationship>crm:P2_has_type</relationship>
-                                <entity>
-                                    <type>crm:E55_Type</type>
-                                    <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300387506</arg>
-                                    </instance_generator>
-                                    <label_generator name="Literal">
-                                        <arg name="text" type="constant">country</arg>
-                                        <arg name="language" type="constant"/>
-                                    </label_generator>
-                                </entity>
-                            </additional>
-                            <additional>
                                 <relationship>aaao:ZP88_ascribes_topographical_relation</relationship>
                                 <entity>
                                     <type>crm:E55_Type</type>
@@ -169,6 +156,19 @@
                                     <label_generator name="Custom_SimpleLabel">
                                         <arg name="label" type="xpath">text()</arg>
                                     </label_generator>
+                                    <additional>
+                                        <relationship>crm:P2_has_type</relationship>
+                                        <entity>
+                                            <type>crm:E55_Type</type>
+                                            <instance_generator name="Custom_URIorUUID">
+                                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300387506</arg>
+                                            </instance_generator>
+                                            <label_generator name="Literal">
+                                                <arg name="text" type="constant">country</arg>
+                                                <arg name="language" type="constant"/>
+                                            </label_generator>
+                                        </entity>
+                                    </additional>
                                     <additional>
                                         <relationship>crm:P1_is_identified_by</relationship>
                                         <entity>

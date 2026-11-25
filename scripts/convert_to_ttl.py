@@ -10,7 +10,8 @@ import logging
 import os
 import sys
 
-from rdflib import RDF, RDFS, SKOS, Graph, Literal, Namespace, XSD, URIRef
+import pycountry
+from rdflib import BNode, RDF, RDFS, SKOS, Graph, Literal, Namespace, XSD, URIRef
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from utils import (
@@ -144,13 +145,50 @@ def _replace_uri(graph: Graph, old: URIRef, new: URIRef) -> None:
         )
 
 
+def add_country_names(graph: Graph) -> None:
+    """
+    Add country names from ISO 3166-1 alpha-2 identifiers.
+    """
+
+    for place in graph.subjects(RDF.type, CRM["E53_Place"]):
+        if (place, CRM["P2_has_type"], AAT["300387506"]) not in graph:
+            continue
+
+        for identifier in graph.objects(place, CRM["P1_is_identified_by"]):
+            if (identifier, RDF.type, CRM["E42_Identifier"]) not in graph or (
+                identifier,
+                CRM["P2_has_type"],
+                AAT["300458903"],
+            ) not in graph:
+                continue
+            for content in graph.objects(identifier, CRM["P190_has_symbolic_content"]):
+                code = (
+                    str(content).strip().upper() if isinstance(content, Literal) else ""
+                )
+                country = pycountry.countries.get(alpha_2=code)
+                if country is None:
+                    logging.warning(
+                        "Unknown ISO country code %r for place %s", content, place
+                    )
+                    continue
+
+                name = Literal(country.name)
+                appellation = BNode()
+                graph.add((place, CRM["P1_is_identified_by"], appellation))
+                graph.add(
+                    (appellation, RDF.type, CRM["E33_E41_Linguistic_Appellation"])
+                )
+                graph.add((appellation, RDFS.label, name))
+                graph.add((appellation, CRM["P190_has_symbolic_content"], name))
+
+
 def other_replacements(graph: Graph, category: str) -> None:
     """
-    Convert ship- and polity-related places in person graphs to their entity types.
+    Apply category-specific graph enrichments and replacements.
 
     Args:
         graph (Graph): The RDF graph to modify in place.
-        category (str): Entity category; only person graphs are changed.
+        category (str): Entity category.
 
     Examples:
         >>> from rdflib import BNode
@@ -211,6 +249,9 @@ def other_replacements(graph: Graph, category: str) -> None:
         True
     """
 
+    if category == "place":
+        add_country_names(graph)
+        return
     if category != "person":
         return
 

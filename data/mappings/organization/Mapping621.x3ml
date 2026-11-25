@@ -97,7 +97,7 @@
                             <arg name="hierarchy_id" type="xpath">ORG_ID/text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
-                            <arg name="label" type="xpath">ID/text()</arg>
+                            <arg name="label" type="xpath">organisation_label/text()</arg>
                         </label_generator>
                     </entity>
                 </target_node>
@@ -126,7 +126,7 @@
                                 <arg name="premise" type="constant">Membership Status of Position</arg>
                                 <arg name="text" type="xpath">../leading_position_label/text()</arg>
                                 <arg name="premise1" type="constant">in Organization</arg>
-                                <arg name="text1" type="xpath">../ID/text()</arg>
+                                <arg name="text1" type="xpath">../organisation_label/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -188,9 +188,9 @@
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">TimeSpan for the Membership of Position</arg>
-                                <arg name="text" type="xpath">text()</arg>
+                                <arg name="text" type="xpath">../leading_position_label/text()</arg>
                                 <arg name="premise1" type="constant">in Organization</arg>
-                                <arg name="text1" type="xpath">../ID/text()</arg>
+                                <arg name="text1" type="xpath">../organisation_label/text()</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -334,7 +334,7 @@
                                 <arg name="premise" type="constant">Position of</arg>
                                 <arg name="text" type="xpath">../leading_position_label/text()</arg>
                                 <arg name="premise1" type="constant">in Organization</arg>
-                                <arg name="text1" type="xpath">../ID/text()</arg>
+                                <arg name="text1" type="xpath">../organisation_label/text()</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>

@@ -97,7 +97,7 @@
                             <arg name="hierarchy_id" type="xpath">ORG_ID/text()</arg>
                         </instance_generator>
                         <label_generator name="Custom_SimpleLabel">
-                            <arg name="label" type="xpath">ID/text()</arg>
+                            <arg name="label" type="xpath">organisation_label/text()</arg>
                         </label_generator>
                     </entity>
                 </target_node>
@@ -124,7 +124,7 @@
                             </instance_generator>
                             <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Similarity Status of Organization</arg>
-                                <arg name="text" type="xpath">../ID/text()</arg>
+                                <arg name="text" type="xpath">../organisation_label/text()</arg>
                                 <arg name="premise1" type="constant">With Organization</arg>
                                 <arg name="text1" type="xpath">../external_label/text()</arg>
                             </label_generator>

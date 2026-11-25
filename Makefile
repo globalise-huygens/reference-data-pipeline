@@ -33,6 +33,7 @@ LINKS_PARQUET := data/input/links_data.parquet
 DOCUMENTS_DB_URL ?= sqlite:///data/input/document/globalise_documents.db
 
 OLD_BASE := https?://digitaalerfgoed.poolparty.biz/globalise/
+OLD_BASE2 := https://data\.globalise\.huygens\.knaw\.nl/hdl:20.500.14722/thesaurus:
 NEW_BASE := https://id.globalise.nl/hdl:20.500.14722/thesaurus:
 
 #------------------------------------------------------------
@@ -102,11 +103,7 @@ ORG_XLSX := $(wildcard data/input/organization/*.xlsx)
 data/input/organization/csv/.stamp: $(ORG_XLSX)
 	@mkdir -p data/input/organization/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/organization/csv
-	@for f in data/input/organization/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-		fi; \
-	done
+	@find data/input/organization/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
 	@touch $@
 
 data/input/organization/xml/.stamp: data/input/organization/csv/.stamp
@@ -145,11 +142,7 @@ PLACE_XLSX := $(wildcard data/input/place/*.xlsx)
 data/input/place/csv/.stamp: $(PLACE_XLSX)
 	@mkdir -p data/input/place/csv
 	$(PYTHON) scripts/xlsx_to_csv.py "$<" data/input/place/csv
-	@for f in data/input/place/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-		fi; \
-	done
+	@find data/input/place/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
 	@touch $@
 
 data/input/place/xml/.stamp: data/input/place/csv/.stamp
@@ -194,12 +187,8 @@ PERSON_ZIP := $(wildcard data/input/person/*.zip)
 data/input/person/csv/.stamp: $(PERSON_ZIP)
 	@mkdir -p data/input/person/csv
 	unzip -o -q "$<" "*.csv" -d data/input/person/csv
-	@for f in data/input/person/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-			sed -E -i 's|https://github.com/globalise-huygens/nlp-event-detection/wiki\#|https://w3id.org/globalise/ontology/events/|g' "$$f"; \
-		fi; \
-	done
+	@find data/input/person/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
+	@find data/input/person/csv -type f -name '*.csv' -exec sed -E -i 's|https://github.com/globalise-huygens/nlp-event-detection/wiki\#|https://w3id.org/globalise/ontology/events/|g' {} +
 	@touch $@
 
 data/input/person/xml/.stamp: data/input/person/csv/.stamp
@@ -238,11 +227,7 @@ POLITY_ZIP := $(wildcard data/input/polity/*.zip)
 data/input/polity/csv/.stamp: $(POLITY_ZIP)
 	@mkdir -p data/input/polity/csv
 	unzip -o -q -j "$<" "*.csv" -x "*/._*" -d data/input/polity/csv
-	@for f in data/input/polity/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-		fi; \
-	done
+	@find data/input/polity/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
 	@touch $@
 
 data/input/polity/xml/.stamp: data/input/polity/csv/.stamp
@@ -293,11 +278,7 @@ SHIP_ZIP := $(wildcard data/input/ship/*.zip)
 data/input/ship/csv/.stamp: $(SHIP_ZIP)
 	@mkdir -p data/input/ship/csv
 	unzip -o -q "$<" "*.csv" -d data/input/ship/csv
-	@for f in data/input/ship/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-		fi; \
-	done
+	@find data/input/ship/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
 	@touch $@
 
 data/input/ship/xml/.stamp: data/input/ship/csv/.stamp
@@ -339,11 +320,7 @@ MEAS_ZIP := $(wildcard data/input/measurement/*.zip)
 data/input/measurement/csv/.stamp: $(MEAS_ZIP)
 	@mkdir -p data/input/measurement/csv
 	unzip -o -q -j "$<" "*.csv" -x "*/._*" -d data/input/measurement/csv
-	@for f in data/input/measurement/csv/*.csv; do \
-		if [ -f "$$f" ]; then \
-			sed -E -i "s|$(OLD_BASE)|$(NEW_BASE)|g" "$$f"; \
-		fi; \
-	done
+	@find data/input/measurement/csv -type f -name '*.csv' -exec sed -E -i -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" {} +
 	@touch $@
 
 data/input/measurement/xml/.stamp: data/input/measurement/csv/.stamp
@@ -379,7 +356,7 @@ THESAURUS_TRIG := data/input/concept/thesaurus.trig
 
 $(S3_DIR)/.thesaurus.stamp: $(THESAURUS_TRIG) $(LINKS_PARQUET)
 	@mkdir -p $(S3_DIR) data/output/concept
-	sed -E "s|$(OLD_BASE)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
+	sed -E -e "s|$(OLD_BASE)|$(NEW_BASE)|g" -e "s|$(OLD_BASE2)|$(NEW_BASE)|g" "$<" > data/output/concept/thesaurus.trig
 	$(PYTHON) scripts/convert_to_json.py thesaurus data/output/concept/thesaurus.trig $(S3_DIR) $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 

@@ -20,4 +20,5 @@ dependencies = [
     "sqlalchemy>=2.0.45",
     "jsonpath-ng>=1.10.1",
     "pyyaml>=6.0.3",
+    "pycountry>=26.2.16",
 ]

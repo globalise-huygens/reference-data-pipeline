@@ -566,8 +566,11 @@
                                     <instance_info>
                                         <constant>period source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">period_source</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">period_source</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">period_source</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">period source</arg>
@@ -711,8 +714,11 @@
                                     <instance_info>
                                         <constant>period source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">period_source</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">period_source</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">period_source</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">period source</arg>

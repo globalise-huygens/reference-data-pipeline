@@ -598,8 +598,11 @@
                                     <instance_info>
                                         <constant>conversion source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">conversion_source</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">conversion_source</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">conversion_source</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">conversion source</arg>
@@ -1515,8 +1518,11 @@
                                 <instance_info>
                                     <constant>conversion source</constant>
                                 </instance_info>
-                                <instance_generator name="Custom_TypeURI">
-                                    <arg name="type_id" type="constant">conversion_source</arg>
+                                <instance_generator name="Custom_GenericOneArgHashedURI">
+                                    <arg name="hierarchy" type="constant">type</arg>
+                                    <arg name="hierarchy_id" type="constant">conversion_source</arg>
+                                    <arg name="term_simple" type="constant">type</arg>
+                                    <arg name="term_simple_HASHED_CONTENTS" type="constant">conversion_source</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
                                     <arg name="text" type="constant">conversion source</arg>

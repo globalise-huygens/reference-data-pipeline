@@ -565,8 +565,11 @@
                                     <instance_info>
                                         <constant>date original</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">date original</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">date_original</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">date original</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
@@ -1120,8 +1123,11 @@
                                     <instance_info>
                                         <constant>date original</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">date original</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">date_original</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">date original</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
@@ -1675,8 +1681,11 @@
                                     <instance_info>
                                         <constant>date original</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">date original</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">date_original</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">date original</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
@@ -2235,8 +2244,11 @@
                                     <instance_info>
                                         <constant>date original</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">date original</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">date_original</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">date original</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>
@@ -2790,8 +2802,11 @@
                                     <instance_info>
                                         <constant>date original</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">date original</arg>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="constant">date_original</arg>
+                                        <arg name="term_simple" type="constant">type</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="constant">date original</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">date original</arg>

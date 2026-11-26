@@ -217,10 +217,26 @@
         "@embed": "@always",
         "id": {},
         "_label": {},
-        "ascribes_similarity_target": {
+        "classified_as": {
             "@embed": "@always",
             "id": {},
             "_label": {}
+        },
+        "ascribes_similarity_target": {
+            "@embed": "@always",
+            "id": {},
+            "_label": {},
+            "identified_by": {
+                "@embed": "@always",
+                "id": {},
+                "_label": {},
+                "content": {},
+                "classified_as": {
+                    "@embed": "@always",
+                    "id": {},
+                    "_label": {}
+                }
+            }
         },
         "ascribes_similarity_relation": {
             "@embed": "@always",

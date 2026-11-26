@@ -30,6 +30,14 @@ AAT = Namespace("http://vocab.getty.edu/aat/")
 AAAO = Namespace("https://ontology.swissartresearch.net/aaao/")
 PWRO = Namespace("https://ontology.swissartresearch.net/pwro/")
 
+ORGANIZATION_LANGUAGE_URIS = {
+    "DA": (AAT["300388204"], "Danish"),
+    "EN": (AAT["300388277"], "English"),
+    "NL": (AAT["300388256"], "Dutch"),
+    "FR": (AAT["300388306"], "French"),
+    "PT": (AAT["300389115"], "Portuguese"),
+}
+
 TIMESTAMP_SUFFIXES = {
     CRM["P82a_begin_of_the_begin"]: "T00:00:00",
     CRM["P81b_begin_of_the_end"]: "T00:00:00",
@@ -249,6 +257,22 @@ def other_replacements(graph: Graph, category: str) -> None:
         True
     """
 
+    if category == "organization":
+        for language_uri in list(graph.subjects(RDF.type, CRM["E56_Language"])):
+            if not isinstance(language_uri, URIRef):
+                continue
+            print(language_uri)
+            code = str(language_uri).rsplit(
+                "https://id.globalise.nl/hdl:20.500.14722/type:", 1
+            )[-1]
+            if code in ORGANIZATION_LANGUAGE_URIS:
+                uri, label = ORGANIZATION_LANGUAGE_URIS[code]
+                _replace_uri(graph, language_uri, uri)
+                graph.remove((uri, RDFS.label, None))
+                graph.add((uri, RDFS.label, Literal(label)))
+
+                print(f"Replaced {language_uri} with {uri} and label {label}")
+        return
     if category == "place":
         add_country_names(graph)
         return

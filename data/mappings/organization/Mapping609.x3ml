@@ -145,41 +145,25 @@
                             <arg name="term_simple" type="constant">similarity_status</arg>
                             <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ExternalID/text()</arg>
                         </instance_generator>
-                        <additional>
-                            <relationship>aaao:ZP45_ascribes_similarity_relation</relationship>
-                            <entity>
-                                <type>crm:E55_Type</type>
-                                <instance_info>
-                                    <constant>equivalent</constant>
-                                </instance_info>
-                                <instance_generator name="Custom_URIorUUID">
-                                    <arg name="text" type="constant">https://linked.art/ns/terms/equivalent</arg>
-                                </instance_generator>
-                                <label_generator name="Literal">
-                                    <arg name="text" type="constant">equivalent</arg>
-                                    <arg name="language" type="constant"/>
-                                </label_generator>
-                            </entity>
-                        </additional>
                     </entity>
                 </target_node>
             </domain>
             <link template="SRDF.441_similarity_status_similar_to">
                 <path>
                     <source_relation>
-                        <relation>../ExternalID</relation>
+                        <relation>../ExternalID[../ID_Type='URI']</relation>
                     </source_relation>
                     <target_relation>
                         <relationship>aaao:ZP44_ascribes_similarity_target</relationship>
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../ExternalID</source_node>
+                    <source_node>../ExternalID[../ID_Type='URI']</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E74_Group</type>
-                            <instance_generator name="Custom_TypeURI">
-                                <arg name="type_id" type="xpath">text()</arg>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="xpath">text()</arg>
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">../external_label/text()</arg>
@@ -189,10 +173,63 @@
                     </target_node>
                 </range>
             </link>
+            <link template="SRDF.441_similarity_status_similar_to">
+                <path>
+                    <source_relation>
+                        <relation>../ExternalID[../ID_Type='id_number']</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>aaao:ZP44_ascribes_similarity_target</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../ExternalID[../ID_Type='id_number']</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E74_Group</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">type</arg>
+                                <arg name="hierarchy_id" type="constant">external_reference</arg>
+                                <arg name="term_simple" type="constant">group</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="xpath">../external_label/text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                            <additional>
+                                <relationship>crm:P1_is_identified_by</relationship>
+                                <entity>
+                                    <type>crm:E42_Identifier</type>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">type</arg>
+                                        <arg name="hierarchy_id" type="xpath">text()</arg>
+                                        <arg name="term_simple" type="constant">appellation</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                    </instance_generator>
+                                    <label_generator name="Custom_SimpleLabel">
+                                        <arg name="label" type="xpath">text()</arg>
+                                    </label_generator>
+                                    <additional>
+                                        <relationship>crm:P190_has_symbolic_content</relationship>
+                                        <entity>
+                                            <type>http://www.w3.org/2000/01/rdf-schema#Literal</type>
+                                            <instance_generator name="Literal">
+                                                <arg name="text" type="xpath">text()</arg>
+                                                <arg name="language" type="constant"/>
+                                            </instance_generator>
+                                        </entity>
+                                    </additional>
+                                </entity>
+                            </additional>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
             <link template="SRDF.442_similarity_status_ascribed_similarity_relation">
                 <path>
                     <source_relation>
-                        <relation>../skosmatch</relation>
+                        <relation>../skos_match</relation>
                     </source_relation>
                     <target_relation>
                         <if>
@@ -202,7 +239,7 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../skosmatch</source_node>
+                    <source_node>../skos_match</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E55_Type</type>
@@ -219,7 +256,7 @@
             <link template="SRDF.442_similarity_status_ascribed_similarity_relation">
                 <path>
                     <source_relation>
-                        <relation>../skosmatch</relation>
+                        <relation>../skos_match</relation>
                     </source_relation>
                     <target_relation>
                         <if>
@@ -229,15 +266,15 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../skosmatch</source_node>
+                    <source_node>../skos_match</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://www.w3.org/2004/02/skos/core#broader</arg>
+                                <arg name="text" type="constant">http://www.w3.org/2004/02/skos/core#broadMatch</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="constant">has broader</arg>
+                                <arg name="label" type="constant">has broader match</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -246,7 +283,7 @@
             <link template="SRDF.442_similarity_status_ascribed_similarity_relation">
                 <path>
                     <source_relation>
-                        <relation>../skosmatch</relation>
+                        <relation>../skos_match</relation>
                     </source_relation>
                     <target_relation>
                         <if>
@@ -256,15 +293,42 @@
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../skosmatch</source_node>
+                    <source_node>../skos_match</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E55_Type</type>
                             <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://www.w3.org/2004/02/skos/core#narrower</arg>
+                                <arg name="text" type="constant">http://www.w3.org/2004/02/skos/core#narrowMatch</arg>
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="constant">has narrower</arg>
+                                <arg name="label" type="constant">has narrower match</arg>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="SRDF.442_similarity_status_ascribed_similarity_relation">
+                <path>
+                    <source_relation>
+                        <relation>../skos_match</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="close">text()</equals>
+                        </if>
+                        <relationship>aaao:ZP45_ascribes_similarity_relation</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../skos_match</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://www.w3.org/2004/02/skos/core#closeMatch</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="constant">has close match</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -273,14 +337,14 @@
             <link template="SRDF.440_similarity_status_type">
                 <path>
                     <source_relation>
-                        <relation>../ExternalDatabase</relation>
+                        <relation>../ExternalDatabase[../ID_Type='id_number' and text() != 'AMH']</relation>
                     </source_relation>
                     <target_relation>
                         <relationship>crm:P2_has_type</relationship>
                     </target_relation>
                 </path>
                 <range>
-                    <source_node>../ExternalDatabase</source_node>
+                    <source_node>../ExternalDatabase[../ID_Type='id_number' and text() != 'AMH']</source_node>
                     <target_node>
                         <entity>
                             <type>crm:E55_Type</type>
@@ -289,6 +353,51 @@
                             </instance_generator>
                             <label_generator name="Literal">
                                 <arg name="text" type="xpath">text()</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link>
+                <path>
+                    <source_relation>
+                        <relation>../ExternalDatabase[../ID_Type='id_number' and text()='AMH']</relation>
+                    </source_relation>
+                    <target_relation>
+                        <relationship>aaao:ZP44_ascribes_similarity_target</relationship>
+                        <entity>
+                            <type>crm:E74_Group</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">type</arg>
+                                <arg name="hierarchy_id" type="constant">external_reference</arg>
+                                <arg name="term_simple" type="constant">group</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ExternalID/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P1_is_identified_by</relationship>
+                        <entity>
+                            <type>crm:E42_Identifier</type>
+                            <instance_generator name="Custom_GenericOneArgHashedURI">
+                                <arg name="hierarchy" type="constant">type</arg>
+                                <arg name="hierarchy_id" type="xpath">../ExternalID/text()</arg>
+                                <arg name="term_simple" type="constant">appellation</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../ExternalID/text()</arg>
+                            </instance_generator>
+                        </entity>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../ExternalDatabase[../ID_Type='id_number' and text()='AMH']</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">https://id.globalise.nl/thesaurus:2991666b-95b4-4539-ac4d-7fea9848093f</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">Atlas of Mutual Heritage Identifier</arg>
                                 <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>

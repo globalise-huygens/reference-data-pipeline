@@ -16,27 +16,15 @@ fields:
 
   related: # full-text
     # Follows $.is_topographical_subject_of[*].ascribes_place[*].id -> place (https://id.globalise.nl/hdl:20.500.14722/place:index/page-1.json)
-    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[*].is_appellative_subject_of[*].ascribes_appellation[*].content"
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[*].is_appellative_subject_of[*].ascribes_appellation[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300404670')].content"
 
 facets:
   place: # keyword
     - "$.is_topographical_subject_of[*].ascribes_place[*].id"
 
-  date_begin: # date
-    - "$.is_appellative_subject_of[*].timespan.begin_of_the_begin"
-    - "$.is_appellative_subject_of[*].timespan.end_of_the_begin"
-    - "$.is_topographical_subject_of[*].timespan.begin_of_the_begin"
-    - "$.is_topographical_subject_of[*].timespan.end_of_the_begin"
-    - "$.is_classificatory_subject_of[*].timespan.begin_of_the_begin"
-    - "$.is_classificatory_subject_of[*].timespan.end_of_the_begin"
+  date_begin: []
 
-  date_end: # date
-    - "$.is_appellative_subject_of[*].timespan.end_of_the_end"
-    - "$.is_appellative_subject_of[*].timespan.begin_of_the_end"
-    - "$.is_topographical_subject_of[*].timespan.end_of_the_end"
-    - "$.is_topographical_subject_of[*].timespan.begin_of_the_end"
-    - "$.is_classificatory_subject_of[*].timespan.end_of_the_end"
-    - "$.is_classificatory_subject_of[*].timespan.begin_of_the_end"
+  date_end: []
 
   place_classification: # keyword
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
@@ -51,4 +39,4 @@ facets:
     - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387567')].content"
 
   place_country: # keyword
-    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with' && @.classified_as[*].id=='http://vocab.getty.edu/aat/300387506')].ascribes_place[*].id"
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387506')].identified_by[?(@.type=='Name')].content"

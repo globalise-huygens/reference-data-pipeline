@@ -122,13 +122,11 @@
                                 <arg name="term_simple" type="constant">topographical_status</arg>
                                 <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(text(),'|',../relation/text(),'|',../parent_region/text())</arg>
                             </instance_generator>
-                            <label_generator name="Custom_ThreeArgumentsLabel">
+                            <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Topographical Status of</arg>
                                 <arg name="text" type="xpath">../pref_label/text()</arg>
                                 <arg name="premise1" type="constant">as</arg>
-                                <arg name="text1" type="xpath">../relation/text()</arg>
-                                <arg name="premise2" type="constant"/>
-                                <arg name="text2" type="xpath">../parent_region_pref_label/text()</arg>
+                                <arg name="text1" type="xpath">concat(../relation/text(),' ',../parent_region_pref_label/text())</arg>
                             </label_generator>
                         </entity>
                     </target_node>
@@ -150,31 +148,6 @@
                         </entity>
                 </target_node>
             </domain>
-            <link template="SRDF.756_topographical_status_type">
-                <path>
-                    <source_relation>
-                        <relation>../relation</relation>
-                    </source_relation>
-                    <target_relation>
-                        <relationship>crm:P2_has_type</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../relation</source_node>
-                    <target_node>
-                        <entity>
-                            <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_TypeShortURI">
-                                <arg name="type_id" type="xpath">text()</arg>
-                            </instance_generator>
-                            <label_generator name="Literal">
-                                <arg name="text" type="xpath">text()</arg>
-                                <arg name="language" type="constant"/>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
             <link>
                 <path>
                     <source_relation>
@@ -281,13 +254,11 @@
                                 <arg name="term_simple1" type="constant">comment</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
-                            <label_generator name="Custom_ThreeArgumentsLabel">
+                            <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Comments About Topographical Status of</arg>
                                 <arg name="text" type="xpath">../pref_label/text()</arg>
                                 <arg name="premise1" type="constant">as</arg>
-                                <arg name="text1" type="xpath">../relation/text()</arg>
-                                <arg name="premise2" type="constant"/>
-                                <arg name="text2" type="xpath">../parent_region_pref_label/text()</arg>
+                                <arg name="text1" type="xpath">concat(../relation/text(),' ',../parent_region_pref_label/text())</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -362,13 +333,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>overall source</constant>
+                                        <constant>reference source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">overall_source</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">overall source</arg>
+                                        <arg name="text" type="constant">reference source</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -512,7 +483,7 @@
                         <type>aaao:ZE44_Topographical_Status</type>
                         <instance_generator name="Custom_GenericOneArgHashedURI">
                             <arg name="hierarchy" type="constant">place</arg>
-                            <arg name="hierarchy_id" type="xpath">text()</arg>
+                            <arg name="hierarchy_id" type="xpath">../glob_id/text()</arg>
                             <arg name="term_simple" type="constant">topographical_status</arg>
                             <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../glob_id/text(),'|',../relation/text(),'|',text(),'|inverse')</arg>
                         </instance_generator>
@@ -548,6 +519,26 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">../parent_region_pref_label/text()</arg>
                             </label_generator>
+                            <additional>
+                                <relationship>aaao:ZP85i_is_topographical_subject_of</relationship>
+                                <entity variable="inverse_topographical_status">
+                                    <type>aaao:ZE44_Topographical_Status</type>
+                                    <instance_generator name="Custom_GenericOneArgHashedURI">
+                                        <arg name="hierarchy" type="constant">place</arg>
+                                        <arg name="hierarchy_id" type="xpath">../glob_id/text()</arg>
+                                        <arg name="term_simple" type="constant">topographical_status</arg>
+                                        <arg name="term_simple_HASHED_CONTENTS" type="xpath">concat(../glob_id/text(),'|',../relation/text(),'|',text(),'|inverse')</arg>
+                                    </instance_generator>
+                                    <label_generator name="Custom_ThreeArgumentsLabel">
+                                        <arg name="premise" type="constant">Inverse Topographical Status of</arg>
+                                        <arg name="text" type="xpath">../parent_region_pref_label/text()</arg>
+                                        <arg name="premise1" type="constant">relative to</arg>
+                                        <arg name="text1" type="xpath">../pref_label/text()</arg>
+                                        <arg name="premise2" type="constant">for relation</arg>
+                                        <arg name="text2" type="xpath">../relation/text()</arg>
+                                    </label_generator>
+                                </entity>
+                            </additional>
                         </entity>
                     </target_node>
                 </range>
@@ -660,13 +651,11 @@
                                 <arg name="term_simple1" type="constant">comment</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
-                            <label_generator name="Custom_ThreeArgumentsLabel">
+                            <label_generator name="Custom_TwoArgumentsLabel">
                                 <arg name="premise" type="constant">Comments About Topographical Status of</arg>
                                 <arg name="text" type="xpath">../pref_label/text()</arg>
                                 <arg name="premise1" type="constant">as</arg>
-                                <arg name="text1" type="xpath">../relation/text()</arg>
-                                <arg name="premise2" type="constant"/>
-                                <arg name="text2" type="xpath">../parent_region_pref_label/text()</arg>
+                                <arg name="text1" type="xpath">concat(../relation/text(),' ',../parent_region_pref_label/text())</arg>
                             </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
@@ -741,13 +730,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>overall source</constant>
+                                        <constant>reference source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">overall_source</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">overall source</arg>
+                                        <arg name="text" type="constant">reference source</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -901,13 +890,13 @@
                             <entity>
                                 <type>crm:E55_Type</type>
                                 <instance_info>
-                                    <constant>overall source</constant>
+                                    <constant>reference source</constant>
                                 </instance_info>
-                                <instance_generator name="Custom_TypeURI">
-                                    <arg name="type_id" type="constant">overall_source</arg>
+                                <instance_generator name="Custom_URIorUUID">
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
-                                    <arg name="text" type="constant">overall source</arg>
+                                    <arg name="text" type="constant">reference source</arg>
                                     <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>

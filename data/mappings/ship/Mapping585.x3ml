@@ -204,11 +204,11 @@
                     <target_node>
                         <entity variable="link">
                             <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_TypeURI">
-                                <arg name="type_id" type="constant">external_link</arg>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404629</arg>
                             </instance_generator>
                             <label_generator name="Literal">
-                                <arg name="text" type="constant">external link</arg>
+                                <arg name="text" type="constant">URI (external)</arg>
                                 <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>

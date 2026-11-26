@@ -196,8 +196,8 @@
                                     <instance_info>
                                         <constant>ship</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">ship</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300082981</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">ship</arg>
@@ -240,8 +240,8 @@
                                     <instance_info>
                                         <constant>profession</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">profession</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300393201</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">profession</arg>
@@ -273,8 +273,8 @@
                                     <instance_info>
                                         <constant>employer</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeShortURI">
-                                        <arg name="type_id" type="constant">employer</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.wikidata.org/entity/Q3053337</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">employer</arg>
@@ -336,13 +336,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>overall source</constant>
+                                        <constant>reference source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">overall_source</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">overall source</arg>
+                                        <arg name="text" type="constant">reference source</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -712,8 +712,8 @@
                                     <instance_info>
                                         <constant>start date</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">start_date</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P82a_begin_of_the_begin</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">start date</arg>
@@ -798,8 +798,8 @@
                                     <instance_info>
                                         <constant>end date</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">end_date</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://www.cidoc-crm.org/cidoc-crm/P82b_end_of_the_end</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
                                         <arg name="text" type="constant">end date</arg>
@@ -1132,13 +1132,13 @@
                                 <entity>
                                     <type>crm:E55_Type</type>
                                     <instance_info>
-                                        <constant>overall source</constant>
+                                        <constant>reference source</constant>
                                     </instance_info>
-                                    <instance_generator name="Custom_TypeURI">
-                                        <arg name="type_id" type="constant">overall_source</arg>
+                                    <instance_generator name="Custom_URIorUUID">
+                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                     </instance_generator>
                                     <label_generator name="Literal">
-                                        <arg name="text" type="constant">overall source</arg>
+                                        <arg name="text" type="constant">reference source</arg>
                                         <arg name="language" type="constant"/>
                                     </label_generator>
                                 </entity>
@@ -1436,13 +1436,13 @@
                             <entity>
                                 <type>crm:E55_Type</type>
                                 <instance_info>
-                                    <constant>overall source</constant>
+                                    <constant>reference source</constant>
                                 </instance_info>
-                                <instance_generator name="Custom_TypeURI">
-                                    <arg name="type_id" type="constant">overall_source</arg>
+                                <instance_generator name="Custom_URIorUUID">
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
-                                    <arg name="text" type="constant">overall source</arg>
+                                    <arg name="text" type="constant">reference source</arg>
                                     <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>
@@ -1574,13 +1574,13 @@
                             <entity>
                                 <type>crm:E55_Type</type>
                                 <instance_info>
-                                    <constant>overall source</constant>
+                                    <constant>reference source</constant>
                                 </instance_info>
-                                <instance_generator name="Custom_TypeURI">
-                                    <arg name="type_id" type="constant">overall_source</arg>
+                                <instance_generator name="Custom_URIorUUID">
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300163404</arg>
                                 </instance_generator>
                                 <label_generator name="Literal">
-                                    <arg name="text" type="constant">overall source</arg>
+                                    <arg name="text" type="constant">reference source</arg>
                                     <arg name="language" type="constant"/>
                                 </label_generator>
                             </entity>

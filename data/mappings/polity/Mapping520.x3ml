@@ -261,21 +261,6 @@
                                     </label_generator>
                                 </entity>
                             </additional>
-                        </entity>
-                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
-                        <entity>
-                            <type>crm:E33_E41_Linguistic_Appellation</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
-                                <arg name="hierarchy" type="constant">dynasty</arg>
-                                <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                                <arg name="term_simple1" type="constant">appellation</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
-                            </instance_generator>
-                            <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">text()</arg>
-                            </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
                                 <entity>
@@ -292,6 +277,21 @@
                                     </label_generator>
                                 </entity>
                             </additional>
+                        </entity>
+                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">dynasty</arg>
+                                <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
+                                <arg name="term_simple" type="constant">appellative_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
                         </entity>
                         <relationship>crm:P190_has_symbolic_content</relationship>
                     </target_relation>
@@ -346,21 +346,6 @@
                                     </label_generator>
                                 </entity>
                             </additional>
-                        </entity>
-                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
-                        <entity>
-                            <type>crm:E33_E41_Linguistic_Appellation</type>
-                            <instance_generator name="Custom_GenericTwoArgHashedURI">
-                                <arg name="hierarchy" type="constant">dynasty</arg>
-                                <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
-                                <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
-                                <arg name="term_simple1" type="constant">appellation</arg>
-                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
-                            </instance_generator>
-                            <label_generator name="Custom_SimpleLabel">
-                                <arg name="label" type="xpath">text()</arg>
-                            </label_generator>
                             <additional>
                                 <relationship>crm:P2_has_type</relationship>
                                 <entity>
@@ -377,6 +362,21 @@
                                     </label_generator>
                                 </entity>
                             </additional>
+                        </entity>
+                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
+                        <entity>
+                            <type>crm:E33_E41_Linguistic_Appellation</type>
+                            <instance_generator name="Custom_GenericTwoArgHashedURI">
+                                <arg name="hierarchy" type="constant">dynasty</arg>
+                                <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
+                                <arg name="term_simple" type="constant">appellative_status</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                                <arg name="term_simple1" type="constant">appellation</arg>
+                                <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
+                            </instance_generator>
+                            <label_generator name="Custom_SimpleLabel">
+                                <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
                         </entity>
                         <relationship>crm:P190_has_symbolic_content</relationship>
                     </target_relation>

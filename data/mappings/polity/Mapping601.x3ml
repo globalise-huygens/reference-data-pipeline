@@ -214,6 +214,22 @@
                                 </label_generator>
                             </entity>
                         </additional>
+                        <additional>
+                            <relationship>crm:P2_has_type</relationship>
+                            <entity>
+                                <type>crm:E55_Type</type>
+                                <instance_info>
+                                    <constant>preferred term</constant>
+                                </instance_info>
+                                <instance_generator name="Custom_URIorUUID">
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
+                                </instance_generator>
+                                <label_generator name="Literal">
+                                    <arg name="text" type="constant">preferred term</arg>
+                                    <arg name="language" type="constant"/>
+                                </label_generator>
+                            </entity>
+                        </additional>
                     </entity>
                 </target_node>
             </domain>
@@ -240,22 +256,6 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">text()</arg>
                             </label_generator>
-                            <additional>
-                                <relationship>crm:P2_has_type</relationship>
-                                <entity>
-                                    <type>crm:E55_Type</type>
-                                    <instance_info>
-                                        <constant>preferred term</constant>
-                                    </instance_info>
-                                    <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
-                                    </instance_generator>
-                                    <label_generator name="Literal">
-                                        <arg name="text" type="constant">preferred term</arg>
-                                        <arg name="language" type="constant"/>
-                                    </label_generator>
-                                </entity>
-                            </additional>
                         </entity>
                         <relationship>crm:P190_has_symbolic_content</relationship>
                     </target_relation>
@@ -542,6 +542,22 @@
                                 </label_generator>
                             </entity>
                         </additional>
+                        <additional>
+                            <relationship>crm:P2_has_type</relationship>
+                            <entity>
+                                <type>crm:E55_Type</type>
+                                <instance_info>
+                                    <constant>alternative term</constant>
+                                </instance_info>
+                                <instance_generator name="Custom_URIorUUID">
+                                    <arg name="text" type="constant">http://vocab.getty.edu/aat/300417226</arg>
+                                </instance_generator>
+                                <label_generator name="Literal">
+                                    <arg name="text" type="constant">alternative term</arg>
+                                    <arg name="language" type="constant"/>
+                                </label_generator>
+                            </entity>
+                        </additional>
                     </entity>
                 </target_node>
             </domain>
@@ -568,22 +584,6 @@
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">text()</arg>
                             </label_generator>
-                            <additional>
-                                <relationship>crm:P2_has_type</relationship>
-                                <entity>
-                                    <type>crm:E55_Type</type>
-                                    <instance_info>
-                                        <constant>alternative term</constant>
-                                    </instance_info>
-                                    <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300417226</arg>
-                                    </instance_generator>
-                                    <label_generator name="Literal">
-                                        <arg name="text" type="constant">alternative term</arg>
-                                        <arg name="language" type="constant"/>
-                                    </label_generator>
-                                </entity>
-                            </additional>
                         </entity>
                         <relationship>crm:P190_has_symbolic_content</relationship>
                     </target_relation>

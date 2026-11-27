@@ -210,6 +210,62 @@
                     </target_node>
                 </range>
             </link>
+            <link template="SRDF.522_appellative_status_type">
+                <path>
+                    <source_relation>
+                        <relation>../label_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="PREF">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../label_type</source_node>
+                    <target_node>
+                        <entity variable="pref">
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">preferred term</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="SRDF.522_appellative_status_type">
+                <path>
+                    <source_relation>
+                        <relation>../label_type</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="ALT">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../label_type</source_node>
+                    <target_node>
+                        <entity variable="alt">
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">nonpreferred term</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
             <link template="LAF.25_timespan_begin_of_the_begin">
                 <path>
                     <source_relation>
@@ -756,62 +812,6 @@
                                 <arg name="text" type="xpath">text()</arg>
                                 <arg name="language" type="constant"/>
                             </instance_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
-            <link template="SRDF.522_appellative_status_type">
-                <path>
-                    <source_relation>
-                        <relation>../label_type</relation>
-                    </source_relation>
-                    <target_relation>
-                        <if>
-                            <equals value="PREF">text()</equals>
-                        </if>
-                        <relationship>crm:P2_has_type</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../label_type</source_node>
-                    <target_node>
-                        <entity variable="pref">
-                            <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
-                            </instance_generator>
-                            <label_generator name="Literal">
-                                <arg name="text" type="constant">preferred term</arg>
-                                <arg name="language" type="constant"/>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
-            <link template="SRDF.522_appellative_status_type">
-                <path>
-                    <source_relation>
-                        <relation>../label_type</relation>
-                    </source_relation>
-                    <target_relation>
-                        <if>
-                            <equals value="ALT">text()</equals>
-                        </if>
-                        <relationship>crm:P2_has_type</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../label_type</source_node>
-                    <target_node>
-                        <entity variable="alt">
-                            <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
-                            </instance_generator>
-                            <label_generator name="Literal">
-                                <arg name="text" type="constant">nonpreferred term</arg>
-                                <arg name="language" type="constant"/>
-                            </label_generator>
                         </entity>
                     </target_node>
                 </range>

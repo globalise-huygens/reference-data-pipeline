@@ -124,22 +124,6 @@
                                 <arg name="text1" type="xpath">../ORG_ID/text()</arg>
                             </label_generator>
                             <additional>
-                                <relationship>crm:P2_has_type</relationship>
-                                <entity>
-                                    <type>crm:E55_Type</type>
-                                    <instance_info>
-                                        <constant>preferred name</constant>
-                                    </instance_info>
-                                    <instance_generator name="Custom_URIorUUID">
-                                        <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
-                                    </instance_generator>
-                                    <label_generator name="Literal">
-                                        <arg name="text" type="constant">preferred term</arg>
-                                        <arg name="language" type="constant"/>
-                                    </label_generator>
-                                </entity>
-                            </additional>
-                            <additional>
                                 <relationship>aaao:ZP7_ascribes_appellative_relation</relationship>
                                 <entity>
                                     <type>crm:E55_Type</type>
@@ -227,62 +211,6 @@
                     </target_node>
                 </range>
             </link>
-            <link template="LAF.5_name_type">
-                <path>
-                    <source_relation>
-                        <relation>../LabelType</relation>
-                    </source_relation>
-                    <target_relation>
-                        <if>
-                            <equals value="pref">text()</equals>
-                        </if>
-                        <relationship>crm:P2_has_type</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../LabelType</source_node>
-                    <target_node>
-                        <entity>
-                            <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
-                            </instance_generator>
-                            <label_generator name="Literal">
-                                <arg name="text" type="constant">preferred term</arg>
-                                <arg name="language" type="constant"/>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
-            <link template="LAF.5_name_type">
-                <path>
-                    <source_relation>
-                        <relation>../LabelType</relation>
-                    </source_relation>
-                    <target_relation>
-                        <if>
-                            <equals value="alt">text()</equals>
-                        </if>
-                        <relationship>crm:P2_has_type</relationship>
-                    </target_relation>
-                </path>
-                <range>
-                    <source_node>../LabelType</source_node>
-                    <target_node>
-                        <entity>
-                            <type>crm:E55_Type</type>
-                            <instance_generator name="Custom_URIorUUID">
-                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
-                            </instance_generator>
-                            <label_generator name="Literal">
-                                <arg name="text" type="constant">nonpreferred term</arg>
-                                <arg name="language" type="constant"/>
-                            </label_generator>
-                        </entity>
-                    </target_node>
-                </range>
-            </link>
             <link template="LAF.7_name_language">
                 <path>
                     <source_relation>
@@ -328,6 +256,78 @@
                             </instance_generator>
                             <label_generator name="Custom_SimpleLabel">
                                 <arg name="label" type="xpath">text()</arg>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+        </mapping>
+        <mapping>
+            <domain>
+                <source_node>/data/item/Label</source_node>
+                <target_node>
+                    <entity>
+                        <type>aaao:ZE2_Appellative_Status</type>
+                        <instance_generator name="Custom_GenericOneArgHashedURI">
+                            <arg name="hierarchy" type="constant">group</arg>
+                            <arg name="hierarchy_id" type="xpath">../ORG_ID/text()</arg>
+                            <arg name="term_simple" type="constant">appellative_status</arg>
+                            <arg name="term_simple_HASHED_CONTENTS" type="xpath">text()</arg>
+                        </instance_generator>
+                    </entity>
+                </target_node>
+            </domain>
+            <link template="SRDF.522_appellative_status_type">
+                <path>
+                    <source_relation>
+                        <relation>../LabelType</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="pref">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../LabelType</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300404670</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">preferred term</arg>
+                                <arg name="language" type="constant"/>
+                            </label_generator>
+                        </entity>
+                    </target_node>
+                </range>
+            </link>
+            <link template="SRDF.522_appellative_status_type">
+                <path>
+                    <source_relation>
+                        <relation>../LabelType</relation>
+                    </source_relation>
+                    <target_relation>
+                        <if>
+                            <equals value="alt">text()</equals>
+                        </if>
+                        <relationship>crm:P2_has_type</relationship>
+                    </target_relation>
+                </path>
+                <range>
+                    <source_node>../LabelType</source_node>
+                    <target_node>
+                        <entity>
+                            <type>crm:E55_Type</type>
+                            <instance_generator name="Custom_URIorUUID">
+                                <arg name="text" type="constant">http://vocab.getty.edu/aat/300264273</arg>
+                            </instance_generator>
+                            <label_generator name="Literal">
+                                <arg name="text" type="constant">nonpreferred term</arg>
+                                <arg name="language" type="constant"/>
                             </label_generator>
                         </entity>
                     </target_node>

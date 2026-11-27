@@ -53,4 +53,4 @@ facets:
 
   person_polity: # keyword
     # Follows $.is_sovereign_of[*] -> sovereign (https://id.globalise.nl/hdl:20.500.14722/sovereign:index/page-1.json) -> exercised_authority_of[*].id -> polity (https://id.globalise.nl/hdl:20.500.14722/polity:index/page-1.json)
-    - "$.is_sovereign_of[*].exercised_authority_of[*].id"
+    - "$.exercised_authority_of[*].id|$.had_subject_population[*].id|$.is_appellative_subject_of[*].ascribes_appellation[?@.classified_as[?@.id=='http://vocab.getty.edu/aat/300404670']].content"

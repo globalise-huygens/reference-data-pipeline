@@ -248,6 +248,9 @@ data/output/polity/rdf/.stamp: data/input/polity/xml/.stamp
 	$(RUN_X3ML) data/input/polity/xml "Rulerships Labels.xml" data/mappings/polity/Mapping601.x3ml data/output/polity/rdf 601_rulership_labels
 	$(RUN_X3ML) data/input/polity/xml Rulers.xml data/mappings/polity/Mapping602.x3ml data/output/polity/rdf 602_rulers
 	$(RUN_X3ML) data/input/polity/xml Succession.xml data/mappings/polity/Mapping521.x3ml data/output/polity/rdf 521_succession
+	$(RUN_X3ML) data/input/polity/xml "Polity Type.xml" data/mappings/polity/Mapping598.x3ml data/output/polity/rdf 598_polity_type
+	$(RUN_X3ML) data/input/polity/xml PolityOrgLinks.xml data/mappings/polity/Mapping599.x3ml data/output/polity/rdf 599_polity_org_links
+	$(RUN_X3ML) data/input/polity/xml PolityPlaceLinks.xml data/mappings/polity/Mapping600.x3ml data/output/polity/rdf 600_polity_place_links
 	@touch $@
 
 data/output/polity/polity.ttl: data/output/polity/rdf/.stamp

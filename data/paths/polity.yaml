@@ -52,3 +52,6 @@ facets:
   polity_dynasty: # keyword
     # Follows $.was_subject_population_of[*].id -> rulership: dynasty/*.json (https://id.globalise.nl/hdl:20.500.14722/rulership:index/page-1.json)
     - "$.was_subject_population_of[*].id|$[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300386176')].id|$.is_appellative_subject_of[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300404670')].ascribes_appellation[*].content"
+
+  polity_type: # keyword
+    - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"

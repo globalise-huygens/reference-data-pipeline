@@ -7,6 +7,7 @@ fields:
 
   label:
     - "$.is_appellative_subject_of[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300404670')].ascribes_appellation[*].content"
+    - "?$._label"
 
   identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"

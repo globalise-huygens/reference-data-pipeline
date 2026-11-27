@@ -5,11 +5,14 @@ fields:
   id:
     - "$.id"
 
+  label:
+    - "$.is_identified_by[?(@.type=='Name')].content"
+
   identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
 
   title: # full-text
-    - "$._label"
+    - "$.is_identified_by[?(@.type=='Name')].content"
 
   description: []
 

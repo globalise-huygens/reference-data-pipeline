@@ -5,6 +5,9 @@ fields:
   id:
     - "$.id"
 
+  label:
+    - "$.is_appellative_subject_of[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300404670')].ascribes_appellation[*].content"
+
   identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
@@ -30,13 +33,13 @@ facets:
     - "$.is_classificatory_subject_of[*].ascribes_classification[*].id"
 
   place_hierarchy: # keyword
-    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P89_falls_within')].ascribes_place[*].id"
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id contains 'crm:P89_falls_within')].ascribes_place[*].id"
 
   place_latitude: # geoPoint
-    - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387565')].content"
+    - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300387565')].content"
 
   place_longitude: # geoPoint
-    - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387567')].content"
+    - "$.is_approximated_by_declarative_place.place_is_defined_by[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300387567')].content"
 
   place_country: # keyword
-    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id=='crm:P121_overlaps_with')].ascribes_place[?(@.classified_as[*].id=='http://vocab.getty.edu/aat/300387506')].identified_by[?(@.type=='Name')].content"
+    - "$.is_topographical_subject_of[?(@.ascribes_topographical_relation[*].id contains 'crm:P121_overlaps_with')].ascribes_place[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300387506')].identified_by[?(@.type=='Name')].content"

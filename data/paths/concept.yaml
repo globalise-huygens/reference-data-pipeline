@@ -5,6 +5,10 @@ fields:
   id:
     - "$.id"
 
+  label:
+    - "$.prefLabel[?(@['@language']=='en')]['@value']"
+    - "?$.prefLabel[?(@['@language']=='nl')]['@value']"
+
   identifier: # keyword
     - "$.notation[*]"
     - "$.exactMatch[*]"

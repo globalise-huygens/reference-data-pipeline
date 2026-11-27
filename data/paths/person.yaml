@@ -5,6 +5,9 @@ fields:
   id:
     - "$.id"
 
+  label:
+    - "$_label"
+
   identifier: # keyword
     - "$.identified_by[?(@.type=='Identifier')].content"
     - "$.is_similarity_subject_of[*].ascribes_similarity_target[*].id"
@@ -45,7 +48,7 @@ facets:
 
   person_occupation: # keyword
     # Follows $.is_social_status_subject_of[*].ascribes_social_status[*].id -> concept (https://id.globalise.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json)
-    - "$.is_social_status_subject_of[*].ascribes_social_status[?(@.inScheme[*].id=='https://id.globalise.nl/hdl:20.500.14722/thesaurus:225cef07-5b8e-4a8b-a141-2471a0cffce8')].id"
+    - "$.is_social_status_subject_of[*].ascribes_social_status[?(@.inScheme[*].id contains 'https://id.globalise.nl/hdl:20.500.14722/thesaurus:225cef07-5b8e-4a8b-a141-2471a0cffce8')].id"
 
   person_status: # keyword
     # Follows $.is_social_status_subject_of[*].ascribes_social_status[*].id -> concept (https://id.globalise.nl/hdl:20.500.14722/thesaurus:index/concept-page-1.json)
@@ -53,4 +56,4 @@ facets:
 
   person_polity: # keyword
     # Follows $.is_sovereign_of[*] -> sovereign (https://id.globalise.nl/hdl:20.500.14722/sovereign:index/page-1.json) -> exercised_authority_of[*].id -> polity (https://id.globalise.nl/hdl:20.500.14722/polity:index/page-1.json)
-    - "$.exercised_authority_of[*].id|$.had_subject_population[*].id|$.is_appellative_subject_of[*].ascribes_appellation[?@.classified_as[?@.id=='http://vocab.getty.edu/aat/300404670']].content"
+    - "$.exercised_authority_of[*].id|$.had_subject_population[*].id|$.is_appellative_subject_of[?(@.classified_as[*].id contains 'http://vocab.getty.edu/aat/300404670')].ascribes_appellation[*].content"

@@ -226,14 +226,14 @@
                         <if>
                             <exists>text()</exists>
                         </if>
-                        <relationship>crm:P1_is_identified_by</relationship>
+                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
                         <entity>
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
                                 <arg name="hierarchy" type="constant">dynasty</arg>
                                 <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
                                 <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Rulership_Label_Type/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Rulership_Label/text()</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>
@@ -554,14 +554,14 @@
                         <if>
                             <exists>text()</exists>
                         </if>
-                        <relationship>crm:P1_is_identified_by</relationship>
+                        <relationship>aaao:ZP6_ascribes_appellation</relationship>
                         <entity>
                             <type>crm:E33_E41_Linguistic_Appellation</type>
                             <instance_generator name="Custom_GenericTwoArgHashedURI">
                                 <arg name="hierarchy" type="constant">dynasty</arg>
                                 <arg name="hierarchy_id" type="xpath">../Rulership_ID/text()</arg>
                                 <arg name="term_simple" type="constant">appellative_status</arg>
-                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Rulership_Label_Type/text()</arg>
+                                <arg name="term_simple_HASHED_CONTENTS" type="xpath">../Rulership_Label/text()</arg>
                                 <arg name="term_simple1" type="constant">appellation</arg>
                                 <arg name="term_simple1_HASHED_CONTENTS" type="xpath">text()</arg>
                             </instance_generator>

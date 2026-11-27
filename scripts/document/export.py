@@ -558,8 +558,7 @@ def settlement_to_place_jsonld(settlement) -> Dict[str, Any]:
 
     if getattr(settlement, "glob_id", None):
         place_obj["id"] = (
-            "https://id.globalise.nl/hdl:20.500.14722/"
-            f"place:{settlement.glob_id}"
+            f"https://id.globalise.nl/hdl:20.500.14722/place:{settlement.glob_id}"
         )
 
     if deduped_labels:
@@ -1383,9 +1382,7 @@ def document_physical_to_jsonld(
         _root_id = doc_id
         _fragments = subdocument_fragments(document)
     assert _root_id is not None and _fragments is not None
-    base_id = (
-        f"https://id.globalise.nl/hdl:20.500.14722/document:{_root_id}"
-    )
+    base_id = f"https://id.globalise.nl/hdl:20.500.14722/document:{_root_id}"
     if not is_root:
         base_id = f"{base_id}#{_fragments[document.id]}"
     place = settlement_to_place_jsonld(document.location) if document.location else None
@@ -1437,11 +1434,6 @@ def document_physical_to_jsonld(
         },
         "part": parts,
         "carries": carries,
-        "subject_of": {
-            # "id": f"https://globalise.huygens.knaw.nl/document/{doc_id}", # TODO: viewer uri???
-            "type": "DigitalObject",
-            "_label": "This document shown by Globalise",
-        },
     }
     comments = document_comments_jsonld(document)
     if comments:
@@ -2347,7 +2339,9 @@ def inventory_to_manifest_jsonld(inventory, manifest_uri: str) -> Dict[str, Any]
         # Sort scans by filename for consistent ordering
         sorted_scans = sorted(inventory.scans, key=lambda s: s.filename or "")
         for scan in sorted_scans:
-            canvas_id = f"https://id.globalise.nl/hdl:20.500.14722/canvas:{scan.filename}"
+            canvas_id = (
+                f"https://id.globalise.nl/hdl:20.500.14722/canvas:{scan.filename}"
+            )
             # Determine recto/verso from related pages, if present
             rv_label = None
             if getattr(scan, "pages", None):

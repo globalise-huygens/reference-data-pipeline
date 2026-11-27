@@ -259,7 +259,7 @@ data/output/polity/polity.ttl: data/output/polity/rdf/.stamp
 $(S3_DIR)/.polity.stamp: data/output/polity/polity.ttl
 	@mkdir -p $(S3_DIR)
 	$(PYTHON) scripts/convert_to_json.py entity $< $(S3_DIR) data/frames/polity/polity.jsonld "https://ontology.swissartresearch.net/aaao/ZE39_Polity" $(GZIP_FLAG) $(S3_FLAGS)
-	$(PYTHON) scripts/convert_to_json.py entity $< $(S3_DIR) data/frames/polity/rulership.jsonld "https://ontology.swissartresearch.net/pwro/WE2_Sovereignty" $(GZIP_FLAG) $(S3_FLAGS)
+	$(PYTHON) scripts/convert_to_json.py entity $< $(S3_DIR) data/frames/polity/sovereignty.jsonld "https://ontology.swissartresearch.net/pwro/WE2_Sovereignty" $(GZIP_FLAG) $(S3_FLAGS)
 	@touch $@
 
 #------------------------------------------------------------
@@ -439,7 +439,7 @@ clean-polity:
 	rm -rf data/input/polity/xml data/input/polity/xml/.stamp
 	rm -rf data/output/polity/rdf data/output/polity/rdf/.stamp data/output/polity/rdf/.*.stamp
 	rm -rf data/output/polity/polity.ttl
-	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity $(S3_DIR)/rulership
+	rm -rf $(S3_DIR)/.polity.stamp $(S3_DIR)/polity $(S3_DIR)/sovereignty
 
 clean-ship:
 	rm -rf data/input/ship/csv data/input/ship/csv/.stamp

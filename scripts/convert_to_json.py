@@ -77,11 +77,11 @@ CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
         "uri_prefix": "polity:",
         "page_prefix": "",
     },
-    "rulership": {
-        "title": "Rulership Collection",
-        "type": "Rulership",
+    "sovereignty": {
+        "title": "Sovereignty Collection",
+        "type": "Sovereignty",
         "class_uri": "https://ontology.swissartresearch.net/pwro/WE2_Sovereignty",
-        "uri_prefix": "rulership:",
+        "uri_prefix": "sovereignty:",
         "page_prefix": "",
     },
     "ship": {
@@ -148,6 +148,38 @@ CATEGORY_HYDRA_METADATA: dict[str, dict[str, str]] = {
         "page_prefix": "",
     },
 }
+
+CATEGORY_URI_PREFIXES: dict[str, tuple[str, ...]] = {
+    "person": ("person:",),
+    "place": ("place:",),
+    "organization": ("group:",),
+    "polity": ("polity:",),
+    "sovereignty": ("dynasty:", "reign:"),
+    "ship": ("ship:",),
+    "voyage": ("voyage:",),
+    "conversion": ("conversion:",),
+    "occurrence": ("occurrence:",),
+}
+
+
+def select_entity_resources(
+    graph: Graph | Dataset,
+    resource_type: URIRef,
+    category_key: str | None = None,
+) -> set[URIRef]:
+    """
+    Select valid project root entities of ``resource_type`` matching ``category_key``'s URI prefix.
+    """
+    allowed_prefixes = CATEGORY_URI_PREFIXES.get(category_key or "")
+    return {
+        res
+        for res in graph.subjects(RDF.type, resource_type)
+        if isinstance(res, URIRef)
+        and PROJECT_URI_TOKEN in str(res)
+        and is_valid_entity_uri(res)
+        and (not allowed_prefixes or local_identifier(res).startswith(allowed_prefixes))
+    }
+
 
 CACHE_FILE = Path(BASE_DIR) / ".cache.sqlite"
 DOCUMENT_LOADER = SqliteCacheRequestsDocumentLoader(sqlite_file_path=CACHE_FILE)
@@ -637,13 +669,11 @@ def _process_entity_chunk(
     for pred in EXCLUDED_PREDICATES:
         g.remove((None, pred, None))
 
-    resources = {
-        res
-        for res in g.subjects(RDF.type, resource_type)
-        if isinstance(res, URIRef)
-        and PROJECT_URI_TOKEN in str(res)
-        and is_valid_entity_uri(res)
-    }
+    resources = select_entity_resources(
+        g,
+        resource_type,
+        os.path.splitext(os.path.basename(frame_path))[0],
+    )
 
     if not resources:
         return 0
@@ -836,6 +866,11 @@ def convert_entity(
             links_parquet, annotation_entity_type
         )
 
+    category_key = (
+        getattr(args, "category_key", None)
+        or os.path.splitext(os.path.basename(frame_path))[0]
+    )
+
     if os.path.isdir(input_path):
         ttl_files = sorted(
             glob.glob(os.path.join(input_path, "**", "*.ttl"), recursive=True)
@@ -881,10 +916,6 @@ def convert_entity(
         print(f"Framed {total_entities} entities across {len(ttl_files)} chunks.")
 
         if not getattr(args, "skip_hydra", False):
-            category_key = (
-                getattr(args, "category_key", None)
-                or os.path.splitext(os.path.basename(frame_path))[0]
-            )
             persons_csv = getattr(args, "persons_csv", None) or os.path.join(
                 BASE_DIR, "data", "input", "person", "csv", "persons.csv"
             )
@@ -910,13 +941,11 @@ def convert_entity(
     for pred in EXCLUDED_PREDICATES:
         g.remove((None, pred, None))
 
-    resources = {
-        res
-        for res in g.subjects(RDF.type, resource_type)
-        if isinstance(res, URIRef)
-        and PROJECT_URI_TOKEN in str(res)
-        and is_valid_entity_uri(res)
-    }
+    resources = select_entity_resources(
+        g,
+        resource_type,
+        os.path.splitext(os.path.basename(frame_path))[0],
+    )
 
     if not resources:
         print(
@@ -980,10 +1009,6 @@ def convert_entity(
         )
 
     if not getattr(args, "skip_hydra", False):
-        category_key = (
-            getattr(args, "category_key", None)
-            or os.path.splitext(os.path.basename(frame_path))[0]
-        )
         generate_hydra_collection(
             g,
             resources,
